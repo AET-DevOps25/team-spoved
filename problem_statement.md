@@ -18,7 +18,6 @@ We propose a modular AI-driven system that enables an effortless multimodal tick
 - Supports multimodal inputs (image, video, audio, and text)
 - Real-time transcription and issue description from voice inputs
 - API integration with existing large language models (LLMs) and vision-language models (VLMs)
-- Feedback loop for refining the AI model through user validation
 
 ### Users
 
