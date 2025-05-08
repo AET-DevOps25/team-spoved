@@ -41,6 +41,7 @@ Janitor noticed the stopped escalator of a mall:
 Coffee on the floor at the airport:
 - In an airport, someone split coffee on the floor. As soon as an employee observes, the employee logs into our application. He/She selects the voice chat system and describes the issue to it. The system transcribes the audio, creates a reasoning and a confidence level and based on that it generates a ticket to the cleaning services.
 
+## Technical Solution
 
 The system can be divided in 4 working modules:
 1. User interface
@@ -52,13 +53,13 @@ The system can be divided in 4 working modules:
 
 This service is responsible for taking in user input as either voice or images and will forward it to the relevant conversion service (2).
 
-Features:
-> Voice input 
-> Image input
-> Ticket submission + status dashboard
-> Authentication
+**Features:**
+- Voice input 
+- Image input
+- Ticket submission + status dashboard
+- Authentication
 
-Stack: React/ReactJS, Selenium, NodeJS, Typescript
+**Stack:** React/ReactJS, Selenium, NodeJS, Typescript
 
 ### 2. X-to-Text interface
 
@@ -66,19 +67,19 @@ Converts the input received from the UI to text
 - Speech -> Text and Text -> Speech (Google Speech-to-Text, Whisper API, DeepSpeech, ...)
 - Image -> Caption (Azure Vision, BLIP, CLIP, ...)
 
-Stack: Python, PyTorch, OpenCV
+**Stack:** Python, PyTorch, OpenCV
 
 ### 3. GenAI Service
 
-Receives any text/caption input and structures it into a ticket.
+Receives any text/caption input, process the input, analyze it and structures it into an output for a ticket.
 
-Stack: Python, LangChain, OpenAI API
+**Stack:** Python, LangChain, OpenAI API
 
-Example prompt: "Turn this input into a structured service ticket with title, description, category and priority"
+**Example prompt:** "Turn this input into a structured service ticket with title, description, category and priority"
 
 ### 4. Ticket Management
 
-Functionalities:
+**Functionalities:**
 - CRUD for tickets (OpenAPI)
 - Tracks ticket status (Open, In Progress, Resolved)
 - Persistence  Layer through PostgreSQL
