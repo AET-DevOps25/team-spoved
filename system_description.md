@@ -59,7 +59,7 @@ It includes all the tables for the project.
 
 ### Use Case Diagram
 
-![Alt text](./resoures/use_case_diagram.png)
+![Alt text](./resources/use_case_diagram.png)
 
 ### Class Diagram
 
