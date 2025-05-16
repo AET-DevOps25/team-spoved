@@ -73,3 +73,16 @@ From this, we identified the entities required for persisting the data generated
 Lastly, we specified the interfaces of the services required to fulfill the functional requirements identified in the user case diagram.
 
 ![Alt text](./resources/component%20diagram.png)
+
+## Backlog
+
+| Task ID | Task Description                              | Feature                             |
+|---------|-----------------------------------------------|-------------------------------------|
+| 1       | Design low-fidelity UI mockups                | Ticket submission dashboard, Auth UI |
+| 2       | Initialize React project with Typescript      | Client frontend setup               |
+| 3       | Create user authentication module (basic)     | User Authentication                 |
+| 4       | Set up PostgreSQL schema for Users and Tickets| User & Ticket data persistence      |
+| 5       | Set up Spring Boot server skeleton            | CRUD for tickets, API base          |
+
+
+
