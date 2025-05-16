@@ -1,5 +1,5 @@
 
-# System Overview —> Architecture
+# System Overview to Architecture
 
 ## Technical Solution
 
@@ -57,10 +57,19 @@ It includes all the tables for the project.
 1. CI/CD through Github Actions
 2. Monitoring with Grafana + Prometheus
 
+## System Modelling
+To better understand how the entities and service interactions are going to look like, we first derived an **Use Case Diagram**, with 8 common user flows. This diagram can be found below.
+
 ### Use Case Diagram
 
 ![Alt text](./resources/use_case_diagram.png)
 
 ### Class Diagram
+From this, we identified the entities required for persisting the data generated during the user flows. We see *Worker*, *Supervisor*, *Ticket* and *Media*.
 
 ![Alt text](./resources/class_diagram.png)
+
+### Component Diagram
+Lastly, we specified the interfaces of the services required to fulfill the functional requirements identified in the user case diagram.
+
+![Alt text](./resources/component%20diagram.png)
