@@ -379,3 +379,7 @@ sketch
 # gitignore template for Vue.js projects
 #
 # Recommended template: Node.gitignore
+.vscode
+.svelte-kit
+.gradle
+bin
