@@ -10,6 +10,9 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
+      - SPRING_DATASOURCE_USERNAME=spOveD
+      - SPRING_DATASOURCE_PASSWORD=secret
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 30s
@@ -18,15 +21,28 @@ services:
       start_period: 40s
     restart: unless-stopped
 
-  # client:
-  #   image: ghcr.io/aet-devops25/ticketing-service/client:latest
-  #   build:
-  #     context: ./client
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     - PUBLIC_API_URL=${PUBLIC_API_URL:-http://localhost:8080}
-  #   depends_on:
-  #     - server
-  #   restart: unless-stopped
+  client:
+    image: ghcr.io/aet-devops25/ticketing-service/client:latest
+    build:
+      context: ./client/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - PUBLIC_API_URL=${PUBLIC_API_URL:-http://localhost:8080}
+    depends_on:
+      - server
+    restart: unless-stopped
+
+  database:
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:
