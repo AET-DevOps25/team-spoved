@@ -1,20 +1,18 @@
 services:
   db:
+    image: team-spoved-db
     build:
       context: ./database
       dockerfile: Dockerfile
-
     environment:
       POSTGRES_USER: spOveD
       POSTGRES_PASSWORD: secret
       POSTGRES_DB: db
-
     volumes:
-      - ./database/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
       - pgdata:/var/lib/postgresql/data
-
     ports:
       - "5433:5432"
+
 
 volumes:
   pgdata:
