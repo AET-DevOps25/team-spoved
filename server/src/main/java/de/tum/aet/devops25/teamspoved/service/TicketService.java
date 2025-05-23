@@ -1,198 +1,77 @@
 package de.tum.aet.devops25.teamspoved.service;
 
 import de.tum.aet.devops25.teamspoved.dto.CreateTicketRequest;
-import de.tum.aet.devops25.teamspoved.model.Room;
-import de.tum.aet.devops25.teamspoved.model.Ticket;
-import de.tum.aet.devops25.teamspoved.model.User;
+import de.tum.aet.devops25.teamspoved.model.*;
+import de.tum.aet.devops25.teamspoved.repository.TicketRepository;
+import de.tum.aet.devops25.teamspoved.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TicketService {
+    private final TicketRepository ticketRepository;
+    private final UserRepository userRepository;
 
-    private final Clock clock;
-    private final Map<String, Ticket> tickets = new ConcurrentHashMap<>();
-    private final Map<String, User> users = new ConcurrentHashMap<>();
-    private final Map<String, Room> rooms = new ConcurrentHashMap<>();
-
-    public TicketService(Clock clock) {
-        this.clock = clock;
-        // Initialize with some sample data
-        initSampleData();
+    public TicketService(TicketRepository ticketRepository, UserRepository userRepository) {
+        this.ticketRepository = ticketRepository;
+        this.userRepository = userRepository;
     }
 
-    private void initSampleData() {
-        // Create sample rooms
-        Room room1 = new Room("R001", "Terminal A", "Gate A1", "1");
-        Room room2 = new Room("R002", "Terminal B", "Security Checkpoint", "G");
-        Room room3 = new Room("R003", "Terminal C", "Restroom", "2");
-        
-        rooms.put(room1.id(), room1);
-        rooms.put(room2.id(), room2);
-        rooms.put(room3.id(), room3);
-        
-        // Create sample users
-        LocalDateTime now = LocalDateTime.now(clock);
-        User user1 = new User("U001", "John Smith", User.Role.TECHNICIAN, now, now);
-        User user2 = new User("U002", "Jane Doe", User.Role.SUPERVISOR, now, now);
-        User user3 = new User("U003", "Admin User", User.Role.ADMIN, now, now);
-        
-        users.put(user1.id(), user1);
-        users.put(user2.id(), user2);
-        users.put(user3.id(), user3);
-        
-        // Create sample tickets
-        Ticket ticket1 = new Ticket(
-                "T001",
-                user1.id(),
-                now.minusDays(2),
-                null,
-                null,
-                user2.id(),
-                room1,
-                "Broken light fixture",
-                Ticket.Priority.MEDIUM,
-                Ticket.Status.OPEN
-        );
-        
-        Ticket ticket2 = new Ticket(
-                "T002",
-                user1.id(),
-                now.minusDays(5),
-                now.minusDays(4),
-                user1.id(),
-                user2.id(),
-                room2,
-                "Malfunctioning security scanner",
-                Ticket.Priority.HIGH,
-                Ticket.Status.SOLVED
-        );
-        
-        tickets.put(ticket1.ticketId(), ticket1);
-        tickets.put(ticket2.ticketId(), ticket2);
+    public List<TicketEntity> getAllTickets() {
+        return ticketRepository.findAll();
     }
 
-    public List<Ticket> getAllTickets() {
-        return new ArrayList<>(tickets.values());
+    public Optional<TicketEntity> getTicketById(Integer ticketId) {
+        return ticketRepository.findById(ticketId);
     }
 
-    public Optional<Ticket> getTicketById(String ticketId) {
-        return Optional.ofNullable(tickets.get(ticketId));
+    public List<TicketEntity> getTicketsByStatus(Status status) {
+        return ticketRepository.findAll().stream()
+                .filter(ticket -> ticket.getStatus() == status)
+                .toList();
     }
 
-    public List<Ticket> getTicketsByStatus(Ticket.Status status) {
-        return tickets.values().stream()
-                .filter(ticket -> ticket.status() == status)
-                .collect(Collectors.toList());
+    public List<TicketEntity> getTicketsByUser(Integer userId) {
+        return ticketRepository.findAll().stream()
+                .filter(ticket -> ticket.getCreatedBy().getUserId().equals(userId) ||
+                        ticket.getAssignedTo().getUserId().equals(userId))
+                .toList();
     }
 
-    public List<Ticket> getTicketsByUser(String userId) {
-        return tickets.values().stream()
-                .filter(ticket -> ticket.createdBy().equals(userId) || 
-                                 (ticket.solvedBy() != null && ticket.solvedBy().equals(userId)) || 
-                                 ticket.supervisor().equals(userId))
-                .collect(Collectors.toList());
+    @Transactional
+    public TicketEntity createTicket(CreateTicketRequest request) {
+        UserEntity createdBy = userRepository.findById(request.createdBy()).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        UserEntity assignedTo = userRepository.findById(request.assignedTo()).orElseThrow(() -> new IllegalArgumentException("Assigned user not found"));
+        TicketEntity ticket = new TicketEntity();
+        ticket.setCreatedBy(createdBy);
+        ticket.setAssignedTo(assignedTo);
+        ticket.setTitle(request.title());
+        ticket.setDescription(request.description());
+        ticket.setStatus(Status.IN_PROGRESS);
+        ticket.setDueDate(request.dueDate());
+        ticket.setLocation(request.location());
+        ticket.setMediaType(request.mediaType());
+        return ticketRepository.save(ticket);
     }
 
-    public Ticket createTicket(CreateTicketRequest request) {
-        // Validate if user exists
-        if (!users.containsKey(request.createdBy())) {
-            throw new IllegalArgumentException("User not found");
-        }
-        
-        // Validate if room exists
-        Room room = rooms.get(request.roomId());
-        if (room == null) {
-            throw new IllegalArgumentException("Room not found");
-        }
-        
-        // Generate ticket ID
-        String ticketId = "T" + String.format("%03d", tickets.size() + 1);
-        LocalDateTime now = LocalDateTime.now(clock);
-        
-        // Find a supervisor (simple assignment - in real system would be more complex)
-        String supervisorId = users.values().stream()
-                .filter(user -> user.role() == User.Role.SUPERVISOR)
-                .findFirst()
-                .map(User::id)
-                .orElse(null);
-        
-        Ticket newTicket = new Ticket(
-                ticketId,
-                request.createdBy(),
-                now,
-                null,
-                null,
-                supervisorId,
-                room,
-                request.description(),
-                request.priority(),
-                Ticket.Status.OPEN
-        );
-        
-        tickets.put(ticketId, newTicket);
-        return newTicket;
+    @Transactional
+    public Optional<TicketEntity> updateTicketStatus(Integer ticketId, Status newStatus) {
+        Optional<TicketEntity> ticketOpt = ticketRepository.findById(ticketId);
+        ticketOpt.ifPresent(ticket -> {
+            ticket.setStatus(newStatus);
+            ticketRepository.save(ticket);
+        });
+        return ticketOpt;
     }
 
-    public Optional<Ticket> updateTicketStatus(String ticketId, Ticket.Status newStatus, String userId) {
-        Ticket existingTicket = tickets.get(ticketId);
-        if (existingTicket == null) {
-            return Optional.empty();
-        }
-        
-        LocalDateTime now = LocalDateTime.now(clock);
-        Ticket updatedTicket;
-        
-        if (newStatus == Ticket.Status.SOLVED) {
-            updatedTicket = new Ticket(
-                    existingTicket.ticketId(),
-                    existingTicket.createdBy(),
-                    existingTicket.createdAt(),
-                    now,
-                    userId,
-                    existingTicket.supervisor(),
-                    existingTicket.room(),
-                    existingTicket.description(),
-                    existingTicket.priority(),
-                    newStatus
-            );
-        } else {
-            updatedTicket = new Ticket(
-                    existingTicket.ticketId(),
-                    existingTicket.createdBy(),
-                    existingTicket.createdAt(),
-                    existingTicket.solvedAt(),
-                    existingTicket.solvedBy(),
-                    existingTicket.supervisor(),
-                    existingTicket.room(),
-                    existingTicket.description(),
-                    existingTicket.priority(),
-                    newStatus
-            );
-        }
-        
-        tickets.put(ticketId, updatedTicket);
-        return Optional.of(updatedTicket);
+    public List<UserEntity> getAllUsers() {
+        return userRepository.findAll();
     }
 
-    public List<Room> getAllRooms() {
-        return new ArrayList<>(rooms.values());
-    }
-
-    public Optional<Room> getRoomById(String roomId) {
-        return Optional.ofNullable(rooms.get(roomId));
-    }
-
-    public List<User> getAllUsers() {
-        return new ArrayList<>(users.values());
-    }
-
-    public Optional<User> getUserById(String userId) {
-        return Optional.ofNullable(users.get(userId));
+    public Optional<UserEntity> getUserById(Integer userId) {
+        return userRepository.findById(userId);
     }
 }

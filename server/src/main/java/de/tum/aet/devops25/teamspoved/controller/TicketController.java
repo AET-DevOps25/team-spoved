@@ -5,9 +5,9 @@
 package de.tum.aet.devops25.teamspoved.controller;
 
 import de.tum.aet.devops25.teamspoved.dto.CreateTicketRequest;
-import de.tum.aet.devops25.teamspoved.model.Room;
-import de.tum.aet.devops25.teamspoved.model.Ticket;
-import de.tum.aet.devops25.teamspoved.model.User;
+import de.tum.aet.devops25.teamspoved.model.TicketEntity;
+import de.tum.aet.devops25.teamspoved.model.UserEntity;
+import de.tum.aet.devops25.teamspoved.model.Status;
 import de.tum.aet.devops25.teamspoved.service.TicketService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1")
 public class TicketController {
-
     private final TicketService ticketService;
 
     public TicketController(TicketService ticketService) {
@@ -27,34 +26,34 @@ public class TicketController {
 
     // Ticket endpoints
     @GetMapping("/tickets")
-    public ResponseEntity<List<Ticket>> getAllTickets() {
-        List<Ticket> tickets = ticketService.getAllTickets();
+    public ResponseEntity<List<TicketEntity>> getAllTickets() {
+        List<TicketEntity> tickets = ticketService.getAllTickets();
         return ResponseEntity.ok(tickets);
     }
 
     @GetMapping("/tickets/{ticketId}")
-    public ResponseEntity<Ticket> getTicketById(@PathVariable String ticketId) {
+    public ResponseEntity<TicketEntity> getTicketById(@PathVariable Integer ticketId) {
         return ticketService.getTicketById(ticketId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/tickets/status/{status}")
-    public ResponseEntity<List<Ticket>> getTicketsByStatus(@PathVariable Ticket.Status status) {
-        List<Ticket> tickets = ticketService.getTicketsByStatus(status);
+    public ResponseEntity<List<TicketEntity>> getTicketsByStatus(@PathVariable Status status) {
+        List<TicketEntity> tickets = ticketService.getTicketsByStatus(status);
         return ResponseEntity.ok(tickets);
     }
 
     @GetMapping("/tickets/user/{userId}")
-    public ResponseEntity<List<Ticket>> getTicketsByUser(@PathVariable String userId) {
-        List<Ticket> tickets = ticketService.getTicketsByUser(userId);
+    public ResponseEntity<List<TicketEntity>> getTicketsByUser(@PathVariable Integer userId) {
+        List<TicketEntity> tickets = ticketService.getTicketsByUser(userId);
         return ResponseEntity.ok(tickets);
     }
 
     @PostMapping("/tickets")
-    public ResponseEntity<Ticket> createTicket(@Valid @RequestBody CreateTicketRequest request) {
+    public ResponseEntity<TicketEntity> createTicket(@Valid @RequestBody CreateTicketRequest request) {
         try {
-            Ticket newTicket = ticketService.createTicket(request);
+            TicketEntity newTicket = ticketService.createTicket(request);
             return ResponseEntity.ok(newTicket);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
@@ -62,38 +61,23 @@ public class TicketController {
     }
 
     @PutMapping("/tickets/{ticketId}/status")
-    public ResponseEntity<Ticket> updateTicketStatus(
-            @PathVariable String ticketId,
-            @RequestParam Ticket.Status status,
-            @RequestParam String userId) {
-        return ticketService.updateTicketStatus(ticketId, status, userId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    // Room endpoints
-    @GetMapping("/rooms")
-    public ResponseEntity<List<Room>> getAllRooms() {
-        List<Room> rooms = ticketService.getAllRooms();
-        return ResponseEntity.ok(rooms);
-    }
-
-    @GetMapping("/rooms/{roomId}")
-    public ResponseEntity<Room> getRoomById(@PathVariable String roomId) {
-        return ticketService.getRoomById(roomId)
+    public ResponseEntity<TicketEntity> updateTicketStatus(
+            @PathVariable Integer ticketId,
+            @RequestParam Status status) {
+        return ticketService.updateTicketStatus(ticketId, status)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     // User endpoints
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = ticketService.getAllUsers();
+    public ResponseEntity<List<UserEntity>> getAllUsers() {
+        List<UserEntity> users = ticketService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<User> getUserById(@PathVariable String userId) {
+    public ResponseEntity<UserEntity> getUserById(@PathVariable Integer userId) {
         return ticketService.getUserById(userId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
