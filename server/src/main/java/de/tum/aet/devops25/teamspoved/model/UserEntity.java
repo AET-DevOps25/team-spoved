@@ -3,7 +3,7 @@ package de.tum.aet.devops25.teamspoved.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users", schema = "db.role")
+@Table(name = "users", schema = "db")
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

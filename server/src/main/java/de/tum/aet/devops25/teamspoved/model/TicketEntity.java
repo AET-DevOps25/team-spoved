@@ -39,9 +39,10 @@ public class TicketEntity {
     @Column(name = "media_type", nullable = false, columnDefinition = "db.media_type")
     private MediaTypeEnum mediaType;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "db.role")
-    private Role supervisor;
+    // TODO Think whether this appear in the final version of the Ticket entity
+    // @Enumerated(EnumType.STRING)
+    // @Column(nullable = false, columnDefinition = "db.role")
+    // private Role supervisor;
 
     // Getters and setters
     public Integer getTicketId() { return ticketId; }
@@ -62,7 +63,4 @@ public class TicketEntity {
     public void setLocation(String location) { this.location = location; }
     public MediaTypeEnum getMediaType() { return mediaType; }
     public void setMediaType(MediaTypeEnum mediaType) { this.mediaType = mediaType; }
-    public Role getSupervisor() { return supervisor; }
-    public void setSupervisor(Role supervisor) { this.supervisor = supervisor; }
-
 }

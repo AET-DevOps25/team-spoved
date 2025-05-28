@@ -35,9 +35,14 @@ services:
     restart: unless-stopped
 
   database:
+    image: team-spoved-db
     build:
       context: ./database
       dockerfile: Dockerfile
+    environment:
+      - POSTGRES_USER=spOveD
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=db
     ports:
       - "5432:5432"
     volumes:
