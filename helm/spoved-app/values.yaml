@@ -1,0 +1,37 @@
+# TODO Add prefix we will use for the deployment
+prefix: team-spoved
+
+namespace:
+  create: false
+
+server:
+  image:
+    repository: ghcr.io/aet-devops25/team-spoved/server
+    tag: latest
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 8080
+    targetPort: 8080
+  replicaCount: 1
+  env:
+    - name: SPRING_PROFILES_ACTIVE
+      value: docker
+
+client:
+  image:
+    repository: ghcr.io/aet-devops25/team-spoved/client
+    tag: latest
+    pullPolicy: Always
+  service:
+    type: ClusterIP
+    port: 3000
+    targetPort: 3000
+  replicaCount: 1
+
+ingress:
+  enabled: true
+  className: "nginx"
+  tls: true
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
