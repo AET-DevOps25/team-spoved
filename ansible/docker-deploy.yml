@@ -76,23 +76,3 @@
         name: ubuntu
         groups: docker
         append: yes
-
-- name: Deploy containers with Compose v2
-  hosts: all
-  remote_user: ubuntu
-  become: yes
-  gather_facts: yes
-  collections:
-    - community.docker
-  tasks:
-    - name: Copy docker-compose.yml to remote
-      copy:
-        src: ../docker-compose.yml
-        dest: /home/ubuntu/docker-compose.yml
-        owner: ubuntu
-        mode: '0644'
-
-    - name: Launch containers with Compose v2
-      community.docker.docker_compose_v2:
-        project_src: /home/ubuntu
-        state: present
