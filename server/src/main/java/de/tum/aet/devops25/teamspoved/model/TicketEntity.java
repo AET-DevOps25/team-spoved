@@ -12,7 +12,7 @@ public class TicketEntity {
     private Integer ticketId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assigned_to", nullable = false)
+    @JoinColumn(name = "assigned_to", nullable = true)
     private UserEntity assignedTo;
 
     @ManyToOne(fetch = FetchType.LAZY)

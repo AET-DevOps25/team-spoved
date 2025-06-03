@@ -5,6 +5,8 @@
 package de.tum.aet.devops25.teamspoved.controller;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,6 +25,7 @@ import de.tum.aet.devops25.teamspoved.model.TicketEntity;
 import de.tum.aet.devops25.teamspoved.model.UserEntity;
 import de.tum.aet.devops25.teamspoved.service.TicketService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 
 @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
 @RestController
@@ -79,7 +82,6 @@ public class TicketController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // User endpoints
     @GetMapping("/users")
     public ResponseEntity<List<UserEntity>> getAllUsers() {
         List<UserEntity> users = ticketService.getAllUsers();
@@ -91,5 +93,34 @@ public class TicketController {
         return ticketService.getUserById(userId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/users/filtered")
+    public ResponseEntity<List<Map<String, Object>>> getAllUsers(
+            @RequestParam(required = false) String supervisor,
+            @RequestParam(required = false) String name) {
+
+        try {
+            List<UserEntity> users = ticketService.getAllUsers();
+
+            List<UserEntity> filteredUsers = users.stream()
+                .filter(user -> supervisor == null || user.getSupervisor().name().equals(supervisor))
+                .filter(user -> name == null || user.getName().toLowerCase().startsWith(name.toLowerCase()))
+                .collect(Collectors.toList());
+
+            List<Map<String, Object>> result = filteredUsers.stream()
+                .map(user -> Map.of(
+                    "userId", (Object)user.getUserId(),
+                    "name", (Object)user.getName(),
+                    "supervisor", (Object)user.getSupervisor().name()
+                ))
+                .collect(Collectors.toList());
+
+            return ResponseEntity.ok(result);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }

@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS db.users (
 -- Create tickets table
 CREATE TABLE IF NOT EXISTS db.tickets (
   ticket_id   SERIAL          PRIMARY KEY,
-  assigned_to INTEGER         NOT NULL
+  assigned_to INTEGER         
                    REFERENCES db.users(user_id)
                    ON DELETE RESTRICT,
   created_by  INTEGER         NOT NULL
@@ -47,14 +47,14 @@ ALTER COLUMN status TYPE VARCHAR;
 
 
 -- 1. Insert users without ticket references
---INSERT INTO db.users (name, supervisor)
---VALUES
---  ('Alice', 'SUPERVISOR'),   -- user_id = 1
---  ('Bob', 'WORKER'),         -- user_id = 2
---  ('Charlie', 'WORKER');     -- user_id = 3
+INSERT INTO db.users (name, supervisor)
+VALUES
+  ('Alice', 'SUPERVISOR'),   -- user_id = 1
+  ('Bob', 'WORKER'),         -- user_id = 2
+  ('Charlie', 'WORKER');     -- user_id = 3
 
 -- 2. Insert tickets (must use existing user_ids for assigned_to, created_by)
---INSERT INTO db.tickets (assigned_to, created_by, title, description, status, due_date, location, media_type)
---VALUES
---  (2, 1, 'Fix Login Bug', 'User unable to log in via web app', 'IN_PROGRESS', '2025-06-10', 'Berlin Office', 'PHOTO'), -- ticket_id = 1
---  (3, 1, 'Database Migration', 'Move DB to cloud infrastructure', 'IN_PROGRESS', '2025-06-15', 'Remote', 'VIDEO');   -- ticket_id = 2
+INSERT INTO db.tickets (assigned_to, created_by, title, description, status, due_date, location, media_type)
+VALUES
+  (2, 1, 'Fix Login Bug', 'User unable to log in via web app', 'IN_PROGRESS', '2025-06-10', 'Berlin Office', 'PHOTO'), -- ticket_id = 1
+  (3, 1, 'Database Migration', 'Move DB to cloud infrastructure', 'IN_PROGRESS', '2025-06-15', 'Remote', 'VIDEO');   -- ticket_id = 2

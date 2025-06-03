@@ -37,14 +37,17 @@ public class TicketService {
     public List<TicketEntity> getTicketsByUser(Integer userId) {
         return ticketRepository.findAll().stream()
                 .filter(ticket -> ticket.getCreatedBy().getUserId().equals(userId) ||
-                        ticket.getAssignedTo().getUserId().equals(userId))
+                        (ticket.getAssignedTo() != null && ticket.getAssignedTo().getUserId().equals(userId)))
                 .toList();
     }
 
     @Transactional
     public TicketEntity createTicket(CreateTicketRequest request) {
         UserEntity createdBy = userRepository.findById(request.createdBy()).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        UserEntity assignedTo = userRepository.findById(request.assignedTo()).orElseThrow(() -> new IllegalArgumentException("Assigned user not found"));
+        UserEntity assignedTo = null;
+        if (request.assignedTo() != null) {
+            assignedTo = userRepository.findById(request.assignedTo()).orElse(null);
+        }
         TicketEntity ticket = new TicketEntity();
         ticket.setCreatedBy(createdBy);
         ticket.setAssignedTo(assignedTo);
@@ -73,5 +76,23 @@ public class TicketService {
 
     public Optional<UserEntity> getUserById(Integer userId) {
         return userRepository.findById(userId);
+    }
+
+    // Filter users by role and name
+    public List<UserEntity> getFilteredUsers(String roleStr, String name) {
+        Role role = null;
+        if (roleStr != null) {
+            try {
+                role = Role.valueOf(roleStr.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid role type: " + roleStr);
+            }
+        }
+        
+        // Convert name to lowercase for case-insensitive search
+        String searchName = name != null ? name.toLowerCase() : null;
+        
+        // Pass the role string directly to the repository
+        return userRepository.findFilteredUsers(roleStr, searchName);
     }
 }
