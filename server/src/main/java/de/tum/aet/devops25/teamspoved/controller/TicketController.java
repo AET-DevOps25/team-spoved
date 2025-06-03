@@ -4,17 +4,27 @@
 
 package de.tum.aet.devops25.teamspoved.controller;
 
-import de.tum.aet.devops25.teamspoved.dto.CreateTicketRequest;
-import de.tum.aet.devops25.teamspoved.model.TicketEntity;
-import de.tum.aet.devops25.teamspoved.model.UserEntity;
-import de.tum.aet.devops25.teamspoved.model.Status;
-import de.tum.aet.devops25.teamspoved.service.TicketService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
-
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import de.tum.aet.devops25.teamspoved.dto.CreateTicketRequest;
+import de.tum.aet.devops25.teamspoved.model.Status;
+import de.tum.aet.devops25.teamspoved.model.TicketEntity;
+import de.tum.aet.devops25.teamspoved.model.UserEntity;
+import de.tum.aet.devops25.teamspoved.service.TicketService;
+import jakarta.validation.Valid;
+
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1")
 public class TicketController {

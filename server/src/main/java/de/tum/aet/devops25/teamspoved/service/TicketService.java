@@ -50,7 +50,7 @@ public class TicketService {
         ticket.setAssignedTo(assignedTo);
         ticket.setTitle(request.title());
         ticket.setDescription(request.description());
-        ticket.setStatus(Status.IN_PROGRESS);
+        ticket.setStatus(Status.OPEN);
         ticket.setDueDate(request.dueDate());
         ticket.setLocation(request.location());
         ticket.setMediaType(request.mediaType());

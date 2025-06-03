@@ -27,7 +27,7 @@ public class TicketEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "db.status")
-    private Status status = Status.IN_PROGRESS;
+    private Status status = Status.OPEN;
 
     @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
