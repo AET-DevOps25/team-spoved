@@ -24,7 +24,7 @@ import de.tum.aet.devops25.teamspoved.model.UserEntity;
 import de.tum.aet.devops25.teamspoved.service.TicketService;
 import jakarta.validation.Valid;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
 @RestController
 @RequestMapping("/api/v1")
 public class TicketController {
