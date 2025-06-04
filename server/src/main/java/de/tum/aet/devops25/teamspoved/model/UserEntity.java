@@ -1,8 +1,10 @@
 package de.tum.aet.devops25.teamspoved.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Table(name = "users", schema = "db")
 public class UserEntity {
     @Id
@@ -17,10 +19,6 @@ public class UserEntity {
     @Column(nullable = false)
     private Role supervisor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ticket_id")
-    private TicketEntity ticket;
-
     // Getters and setters
     public Integer getUserId() { return userId; }
     public void setUserId(Integer userId) { this.userId = userId; }
@@ -28,6 +26,4 @@ public class UserEntity {
     public void setName(String name) { this.name = name; }
     public Role getSupervisor() { return supervisor; }
     public void setSupervisor(Role supervisor) { this.supervisor = supervisor; }
-    public TicketEntity getTicket() { return ticket; }
-    public void setTicket(TicketEntity ticket) { this.ticket = ticket; }
 }
