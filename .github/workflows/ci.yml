@@ -30,7 +30,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [server, client]
+        include:
+          - service: server
+            context: ./server
+            dockerfile: ./server/Dockerfile
+          - service: client
+            context: ./client/frontend
+            dockerfile: ./client/frontend/Dockerfile
+
 
     steps:
       - name: Checkout
@@ -68,8 +75,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: ./${{ matrix.service }}
-          file: ./${{ matrix.service }}/Dockerfile
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
