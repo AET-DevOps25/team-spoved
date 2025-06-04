@@ -17,6 +17,18 @@ server:
   env:
     - name: SPRING_PROFILES_ACTIVE
       value: docker
+    - name: SPRING_DATASOURCE_URL
+      value: "jdbc:postgresql://database-service:5432/db"
+    - name: SPRING_DATASOURCE_USERNAME
+      valueFrom:
+        secretKeyRef:
+          name: db-credentials
+          key: username
+    - name: SPRING_DATASOURCE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: db-credentials
+          key: password
 
 client:
   image:
@@ -28,6 +40,27 @@ client:
     port: 3000
     targetPort: 3000
   replicaCount: 1
+
+database:
+  image:
+    repository: postgres
+    tag: "15-alpine"
+    pullPolicy: IfNotPresent
+  service:
+    name: database-service
+    port: 5432
+  storage:
+    size: 128Mi
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+  credentials:
+    username: spOveD
+    password: secret
 
 ingress:
   enabled: true

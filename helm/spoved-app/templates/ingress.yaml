@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: "canteen-ingress"
+  name: "team-spoved-ingress"
   namespace: "{{ .Values.prefix }}-devops25"
   {{- $annotations := .Values.ingress.annotations | default dict }}
   {{- if $annotations }}
@@ -14,7 +14,7 @@ spec:
   tls:
     - hosts:
         - "{{ .Values.prefix }}-devops25.student.k8s.aet.cit.tum.de"
-      secretName: "canteen-devops25-tls"
+      secretName: "team-spoved-devops25-tls"
   {{- end }}
   rules:
     - host: "{{ .Values.prefix }}-devops25.student.k8s.aet.cit.tum.de"

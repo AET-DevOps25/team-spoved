@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: canteen-server
+  name: spoved-server
   namespace: "{{ .Values.prefix }}-devops25"
 spec:
   replicas: {{ .Values.server.replicaCount }}
@@ -11,7 +11,7 @@ spec:
   template:
     metadata:
       labels:
-        app: canteen-server-selector
+        app: spoved-server-selector
     spec:
       containers:
         - name: server

@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-schema-init-job
+  namespace: "{{ .Values.prefix }}-devops25"
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: db-init
+          image: postgres:15-alpine
+          command: ['sh', '-c']
+          args:
+            - |
+              echo "Waiting for database to be ready..."
+              until PGPASSWORD=$POSTGRES_PASSWORD psql -h database-service -U $POSTGRES_USER -d $POSTGRES_DB -c '\l' > /dev/null 2>&1; do
+                echo "Database not ready, waiting..."
+                sleep 5
+              done
+              echo "Database is ready. Applying schema..."
+              PGPASSWORD=$POSTGRES_PASSWORD psql -h database-service -U $POSTGRES_USER -d $POSTGRES_DB -f /init-scripts/init.sql
+              echo "Schema initialization completed successfully"
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+            - name: POSTGRES_DB
+              value: "db"
+          volumeMounts:
+            - name: init-script
+              mountPath: /init-scripts
+      volumes:
+        - name: init-script
+          configMap:
+            name: db-init-script
