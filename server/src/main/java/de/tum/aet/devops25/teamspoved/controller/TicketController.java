@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +27,6 @@ import de.tum.aet.devops25.teamspoved.model.TicketEntity;
 import de.tum.aet.devops25.teamspoved.model.UserEntity;
 import de.tum.aet.devops25.teamspoved.service.TicketService;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 
 @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
 @RestController
@@ -78,6 +79,15 @@ public class TicketController {
             @PathVariable Integer ticketId,
             @RequestParam Status status) {
         return ticketService.updateTicketStatus(ticketId, status)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/tickets/{ticketId}/assign")
+    public ResponseEntity<TicketEntity> assignTicket(
+        @PathVariable Integer ticketId, 
+        @RequestParam Integer userId) {
+        return ticketService.assignTicket(ticketId, userId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

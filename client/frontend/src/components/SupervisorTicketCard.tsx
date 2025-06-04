@@ -1,18 +1,39 @@
 import {
 	CalendarDaysIcon,
 	MapPinIcon,
+	UserPlusIcon,
 } from '@heroicons/react/20/solid';
 import type { TicketDto } from '../types/TicketDto';
+import type { UserDto } from '../types/UserDto';
 
 interface SupervisorTicketCardProps {
 	ticket: TicketDto;
+	users: UserDto[];
 	onView: (ticket: TicketDto) => void;
+	onAssign: (ticket: TicketDto) => void;
 }
 
 const SupervisorTicketCard = ({
 	ticket,
+	users,
 	onView,
+	onAssign,
 }: SupervisorTicketCardProps) => {
+
+	const isAlreadyAssigned = ticket.assignedTo !== null;
+	
+	const assignedUser = users.find((user) => user.userId === ticket.assignedTo);
+
+	const getInitials = (user: UserDto) =>
+		`${user.name?? ''}`.toUpperCase();
+
+	const handleAssignClick = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		if (onAssign) {
+			onAssign(ticket);
+		}
+	};
+
 	return (
 		<div
 			onClick={() => onView(ticket)}
@@ -23,6 +44,25 @@ const SupervisorTicketCard = ({
 				<h3 className="text-lg font-semibold text-[#1A1A1A]">
 					{ticket.title}
 				</h3>
+
+				{ticket.status !== "FINISHED" && (
+					<button
+						className={`flex items-center justify-center px-3 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+							isAlreadyAssigned
+								? 'bg-green-100 text-green-800 ring-1 ring-green-500'
+								: 'bg-[#EAF2FE] text-[#1A97FE] ring-1 ring-[#1A97FE] hover:bg-[#D4E8FD]'
+						}`}
+						onClick={handleAssignClick}
+					>
+						{isAlreadyAssigned && assignedUser ? (
+							<div className="h-4 w-4 rounded-full text-green-500 text-xs font-bold flex items-center justify-center">
+								{getInitials(assignedUser)}
+							</div>
+						) : (
+							<UserPlusIcon className="h-4 w-4" />
+						)}
+					</button>
+				)}
 
 			</div>
 

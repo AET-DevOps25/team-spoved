@@ -6,8 +6,7 @@ export type MediaType =
 export type Status =
     | 'OPEN'
     | 'IN_PROGRESS'
-    | 'CLOSED'
-    | 'ARCHIVED';
+    | 'FINISHED';
 
 export interface TicketDto {
     ticketId: number;

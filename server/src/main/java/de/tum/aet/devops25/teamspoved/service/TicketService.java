@@ -1,14 +1,18 @@
 package de.tum.aet.devops25.teamspoved.service;
 
-import de.tum.aet.devops25.teamspoved.dto.CreateTicketRequest;
-import de.tum.aet.devops25.teamspoved.model.*;
-import de.tum.aet.devops25.teamspoved.repository.TicketRepository;
-import de.tum.aet.devops25.teamspoved.repository.UserRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import de.tum.aet.devops25.teamspoved.dto.CreateTicketRequest;
+import de.tum.aet.devops25.teamspoved.model.Role;
+import de.tum.aet.devops25.teamspoved.model.Status;
+import de.tum.aet.devops25.teamspoved.model.TicketEntity;
+import de.tum.aet.devops25.teamspoved.model.UserEntity;
+import de.tum.aet.devops25.teamspoved.repository.TicketRepository;
+import de.tum.aet.devops25.teamspoved.repository.UserRepository;
 
 @Service
 public class TicketService {
@@ -66,6 +70,15 @@ public class TicketService {
         ticketOpt.ifPresent(ticket -> {
             ticket.setStatus(newStatus);
             ticketRepository.save(ticket);
+        });
+        return ticketOpt;
+    }
+
+    @Transactional
+    public Optional<TicketEntity> assignTicket(Integer ticketId, Integer userId) {
+        Optional<TicketEntity> ticketOpt = ticketRepository.findById(ticketId);
+        ticketOpt.ifPresent(ticket -> {
+            ticket.setAssignedTo(userRepository.findById(userId).orElse(null));
         });
         return ticketOpt;
     }

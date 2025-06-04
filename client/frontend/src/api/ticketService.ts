@@ -18,4 +18,6 @@ export const getTickets = async (): Promise<TicketDto[]> => {
   console.log(response.data);
   return response.data;
 };
-
+export const assignWorker = async (ticketId: number, userId: number) => {
+  return axios.put(`${BASE_URL}/${ticketId}/assign?userId=${userId}`)
+}

@@ -1,9 +1,9 @@
 import { useState, type ChangeEvent } from 'react';
 import type { MediaType } from '../types/TicketDto';
 // import type { UserDto } from '../types/UserDto';
-// import { getAllUsers } from '../api/userService';
+//import { getFilteredUsers } from '../api/userService';
 
-interface CreateTaskModalProps {
+interface CreateTicketModalProps {
 	onCreate: (ticket: {
 		assignedTo: number | null;
 		createdBy: number;
@@ -16,7 +16,7 @@ interface CreateTaskModalProps {
 	onClose: () => void;
 }
 
-const CreateTaskModal = ({ onCreate, onClose }: CreateTaskModalProps) => {
+const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
 	const [dueDate, setDueDate] = useState('');
@@ -175,4 +175,4 @@ const CreateTaskModal = ({ onCreate, onClose }: CreateTaskModalProps) => {
 	);
 };
 
-export default CreateTaskModal;
+export default CreateTicketModal;
