@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [server]
+        service: [server, client]
 
     steps:
       - name: Checkout
