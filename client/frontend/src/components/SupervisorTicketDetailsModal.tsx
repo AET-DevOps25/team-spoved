@@ -49,7 +49,7 @@ const SupervisorTicketDetailsModal: React.FC<SupervisorTicketDetailsModalProps> 
         <div className="space-y-2 text-xl text-gray-700">
           <p><strong>Status:</strong> {
             ticket.status === "OPEN" ? "Open" :
-              ticket.status === "CLOSED" ? "Closed" :
+              ticket.status === "FINISHED" ? "Finished" :
                 ticket.status === "IN_PROGRESS" ? "In Progress" :
                   "Unknown"
           }</p>
