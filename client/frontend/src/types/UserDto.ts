@@ -1,12 +1,11 @@
-export type UserType =
+export type Role =
 	| 'WORKER'
 	| 'SUPERVISOR';
 
 export interface UserDto {
-	id: string;
-	user_id: string;
+	userId: number;
 	name: string;
-	supervisor: UserType;
+	role: Role;
 }
 
-export type UserDtoInput = Omit<UserDto, 'id'>;
+export type UserDtoInput = Omit<UserDto, 'userId'>;
