@@ -14,17 +14,17 @@ export const getUserById = async (userId: number): Promise<UserDto> => {
     return response.data;
 };
 
-export const getFilteredUsers = async (supervisor?: string, name?: string): Promise<UserDto[]> => {
-    const params = new URLSearchParams();
-    if (supervisor) params.append('supervisor', supervisor);
+export const getFilteredUsers = async (role?: string, name?: string, id?: number): Promise<UserDto[]> => {
+const params = new URLSearchParams();
+    if (role) params.append('role', role);
     if (name) params.append('name', name);
-  
-    const response = await axios.get(`${BASE_URL}/filtered?${params.toString()}`);
+    if (id !== undefined) params.append('id', id.toString());
+    const response = await axios.get(`${BASE_URL}?${params.toString()}`);
     
-    // Transform the response to match UserDto interface
-    return response.data.map((user: any) => ({
+    const data = Array.isArray(response.data) ? response.data : [];
+    return data.map((user: any) => ({
         userId: user.userId,
         name: user.name,
-        role: user.supervisor // The supervisor field contains the user's role
+        role: user.role
     }));
 };
