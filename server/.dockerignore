@@ -1,0 +1,21 @@
+# Ignore Gradle build directory
+build/
+.gradle/
+
+# Ignore Git directory
+.git/
+.gitignore
+
+# Ignore IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+
+# Ignore log files
+*.log
+
+# Ignore Docker files (to prevent copy loop)
+Dockerfile
+.dockerignore
