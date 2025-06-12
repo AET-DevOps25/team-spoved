@@ -22,7 +22,7 @@ public class UserController {
             @RequestParam(required = false) Role role,
             @RequestParam(required = false) String name
     ) {
-        List<UserEntity> users = ticketService.getFilteredUsers(id, role, name);
+        List<UserEntity> users = ticketService.getFilteredUsers(id, role != null ? role.name() : null, name);
         return ResponseEntity.ok(users);
     }
 

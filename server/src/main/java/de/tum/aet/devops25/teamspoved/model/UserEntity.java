@@ -16,7 +16,7 @@ public class UserEntity {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "db.role", name = "role")
     private Role role;
 
     // Getters and setters

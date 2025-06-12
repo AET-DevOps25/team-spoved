@@ -66,7 +66,7 @@ public class TicketService {
         return userRepository.findById(userId);
     }
 
-    public List<UserEntity> getFilteredUsers(Integer id, Role role, String name) {
+    public List<UserEntity> getFilteredUsers(Integer id, String role, String name) {
         return userRepository.findFilteredUsers(id, role, name);
     }
 
