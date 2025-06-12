@@ -39,7 +39,7 @@ const SupervisorTicketCard = ({
 			onClick={() => onView(ticket)}
 			className="rounded-xl p-4 flex flex-col gap-6 cursor-pointer border border-[#E8E8E8] transition sm:p-6 bg-white"
 		>
-			{/* Header */}
+			{/* ------------------ Header ------------------ */}
 			<div className="flex justify-between items-start">
 				<h3 className="text-lg font-semibold text-[#1A1A1A]">
 					{ticket.title}
@@ -66,7 +66,7 @@ const SupervisorTicketCard = ({
 
 			</div>
 
-			{/* Due Date & Location */}
+			{/* ------------------ Due Date & Location ------------------ */}
 			<div className="flex items-start gap-6">
 				<div className="flex items-start gap-2 w-1/3">
 					<CalendarDaysIcon className="h-5 w-5 text-[#1A97FE]" />

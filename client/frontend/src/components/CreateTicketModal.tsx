@@ -50,13 +50,13 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 
 	return (
 		<>
-			{/* Background Overlay */}
+			{/* ------------------ Background Overlay ------------------ */}
 			<div
 				className="fixed inset-0 bg-gray-500/75 transition-opacity"
 				aria-hidden="true"
 			></div>
 
-			{/* Modal Container */}
+			{/* ------------------ Modal Container ------------------ */}
 			<div className="fixed inset-0 z-10 w-full overflow-y-auto mt-20">
 				<div className="flex min-h-full items-end justify-center p-4 sm:items-center sm:p-6">
 					<div className="relative w-full max-w-sm sm:max-w-lg transform overflow-hidden rounded-lg bg-white shadow-xl transition-all">
@@ -66,7 +66,7 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 							</h3>
 
 							<div className="space-y-4">
-								{/* Title */}
+								{/* ------------------ Title ------------------ */}
 								<div>
 									<label className="block text-sm font-medium text-gray-700">
 										Title
@@ -81,7 +81,7 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 									/>
 								</div>
 
-								{/* Description */}
+								{/* ------------------ Description ------------------ */}
 								<div>
 									<label className="block text-sm font-medium text-gray-700">
 										Description
@@ -96,7 +96,7 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 									/>
 								</div>
 
-								{/* Due Date */}
+								{/* ------------------ Due Date ------------------ */}
 								<div>
 									<label className="block text-sm font-medium text-gray-700">
 										Due Date
@@ -111,7 +111,7 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 									/>
 								</div>
 
-								{/* Location */}
+								{/* ------------------ Location ------------------ */}
 								<div>
 									<label className="block text-sm font-medium text-gray-700">
 										Location
@@ -126,7 +126,7 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 									/>
 								</div>
 
-								{/* Media Type Selector */}
+								{/* ------------------ Media Type Selector ------------------ */}
 								<div className="mb-6">
 									<label className="block text-sm font-medium text-gray-700 mb-1">
 										Media Type
@@ -152,7 +152,7 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
                             </div> 
 
 
-							{/* Footer Buttons */}
+							{/* ------------------ Footer Buttons ------------------ */}
 							<div className="mt-6 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
 								<button
 									onClick={onClose}

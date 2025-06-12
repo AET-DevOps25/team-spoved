@@ -86,7 +86,7 @@ const AssignModal: React.FC<AssignModalProps> = ({
 
 	return (
 		<>
-			{/* Overlay */}
+			{/* ------------------ Overlay ------------------ */}
 			<div
 				className="fixed inset-0 bg-gray-500/75 transition-opacity"
 				onClick={onClose}
@@ -104,7 +104,7 @@ const AssignModal: React.FC<AssignModalProps> = ({
 						Assign Maintenance Worker
 					</h3>
 
-					{/* Assigned cleaner (if any) */}
+					{/* ------------------ Assigned worker (if any) ------------------ */}
 					{assignedUser && (
 						<div className="mb-4">
 							<h4 className="text-sm font-medium text-gray-700 mb-2">
@@ -116,7 +116,7 @@ const AssignModal: React.FC<AssignModalProps> = ({
 						</div>
 					)}
 
-					{/* Search input with dropdown */}
+					{/* ------------------ Search input with dropdown ------------------ */}
 					<div className="mb-6 relative dropdown-container">
 						<label className="block text-sm font-medium text-gray-700 mb-1">
 							Name
@@ -164,7 +164,7 @@ const AssignModal: React.FC<AssignModalProps> = ({
 						</div>
 					)}
 
-					{/* Footer */}
+					{/* ------------------ Footer ------------------ */}
 					<div className="flex justify-end">
 						<button
 							onClick={onClose}
