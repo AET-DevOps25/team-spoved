@@ -26,13 +26,25 @@ services:
     build:
       context: ./client/frontend
       dockerfile: Dockerfile
+    deploy:
+      replicas: 3
     ports:
-      - "3000:3000"
+      - "3001-3003:3000"
     environment:
       - PUBLIC_API_URL=${PUBLIC_API_URL:-http://localhost:8080}
     depends_on:
       - server
     restart: unless-stopped
+
+  nginx:
+    image: load_balancer
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - client
 
   database:
     image: team-spoved-db
