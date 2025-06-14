@@ -15,9 +15,9 @@ CREATE TYPE db.media_type AS ENUM ('PHOTO', 'VIDEO', 'AUDIO');
 
 -- Create users table
 CREATE TABLE IF NOT EXISTS db.users (
-  user_id    SERIAL    PRIMARY KEY,
-  name       VARCHAR(50) NOT NULL,
-  supervisor db.role   NOT NULL
+  user_id    SERIAL       PRIMARY KEY,
+  name       VARCHAR(50)  NOT NULL,
+  role       db.role      NOT NULL
 );
 
 -- Create tickets table
@@ -47,7 +47,7 @@ ALTER COLUMN status TYPE VARCHAR;
 
 
 -- 1. Insert users without ticket references
-INSERT INTO db.users (name, supervisor)
+INSERT INTO db.users (name, role)
 VALUES
   ('Alice', 'SUPERVISOR'),   -- user_id = 1
   ('Bob', 'WORKER'),         -- user_id = 2

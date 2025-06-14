@@ -4,9 +4,14 @@ FROM gradle:8.14-jdk21 AS build
 # Set working directory
 WORKDIR /app
 
-# Copy gradle configuration files
+# Copy gradle configuration files first (better caching)
 COPY build.gradle settings.gradle ./
+
+# Copy just the gradle wrapper
 COPY gradle ./gradle
+
+# Download dependencies only when build.gradle changes
+RUN gradle dependencies --no-daemon
 
 # Copy source code
 COPY src ./src
