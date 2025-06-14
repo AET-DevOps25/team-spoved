@@ -6,6 +6,8 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
+      cache_from:
+        - ghcr.io/aet-devops25/ticketing-service/server:latest
     ports:
       - "8080:8080"
     environment:
@@ -26,10 +28,12 @@ services:
     build:
       context: ./client/frontend
       dockerfile: Dockerfile
+      args:
+        VITE_SERVER_API_URL: ${VITE_SERVER_API_URL:-http://localhost:8080/api/v1}
     ports:
       - "3000:3000"
     environment:
-      - PUBLIC_API_URL=${PUBLIC_API_URL:-http://localhost:8080}
+      - VITE_SERVER_API_URL=${VITE_SERVER_API_URL:-http://localhost:8080/api/v1}
     depends_on:
       - server
     restart: unless-stopped

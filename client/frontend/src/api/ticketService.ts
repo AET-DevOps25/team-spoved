@@ -15,9 +15,29 @@ export const getTicketById = async (id: number): Promise<TicketDto> => {
 
 export const getTickets = async (): Promise<TicketDto[]> => {
   const response = await axios.get(BASE_URL);
-  console.log(response.data);
   return response.data;
 };
+
+// Add support for filtered ticket queries
+export const getFilteredTickets = async (filters: {
+  assignedToId?: number;
+  createdById?: number;
+  status?: string;
+  dueDate?: string;
+  location?: string;
+  mediaType?: string;
+} = {}): Promise<TicketDto[]> => {
+  const params = new URLSearchParams();
+  if (filters.assignedToId !== undefined) params.append('assignedToId', filters.assignedToId.toString());
+  if (filters.createdById !== undefined) params.append('createdById', filters.createdById.toString());
+  if (filters.status) params.append('status', filters.status);
+  if (filters.dueDate) params.append('dueDate', filters.dueDate);
+  if (filters.location) params.append('location', filters.location);
+  if (filters.mediaType) params.append('mediaType', filters.mediaType);
+  const response = await axios.get(`${BASE_URL}?${params.toString()}`);
+  return response.data;
+};
+
 export const assignWorker = async (ticketId: number, userId: number) => {
-  return axios.put(`${BASE_URL}/${ticketId}/assign?userId=${userId}`)
-}
+  return axios.put(`${BASE_URL}/${ticketId}/assign?userId=${userId}`);
+};
