@@ -1,18 +1,47 @@
-version: '3.8'
-
 services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - --configFile=/etc/traefik/traefik.yml
+    ports:
+      - "8080:8080"            # ← all web traffic (SPA, API, dashboard)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml
+    labels:
+      - "traefik.enable=true"
+      # expose Traefik’s internal dashboard at /dashboard
+      - "traefik.http.routers.traefik.rule=PathPrefix(`/dashboard`)"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.priority=200"
+
   server:
     image: ghcr.io/aet-devops25/ticketing-service/server:latest
     build:
       context: ./server
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
       - SPRING_DATASOURCE_USERNAME=spOveD
       - SPRING_DATASOURCE_PASSWORD=secret
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info
+      - MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS=always
+    labels:
+      - "traefik.enable=true"
+
+      # name the load-balanced service and tell it to listen on 8080
+      - "traefik.http.services.server-svc.loadbalancer.server.port=8080"
+
+      # strip /api prefix before forwarding
+      - "traefik.http.middlewares.strip-api.stripprefix.prefixes=/api"
+
+      # router for /api → use strip-api → server-svc
+      - "traefik.http.routers.api.rule=PathPrefix(`/api`)"
+      - "traefik.http.routers.api.entrypoints=web"
+      - "traefik.http.routers.api.middlewares=strip-api"
+      - "traefik.http.routers.api.service=server-svc"
+      - "traefik.http.routers.api.priority=100"
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 30s
@@ -25,38 +54,29 @@ services:
     image: ghcr.io/aet-devops25/ticketing-service/client:latest
     build:
       context: ./client/frontend
-      dockerfile: Dockerfile
-    deploy:
-      replicas: 3
-    ports:
-      - "3001-3003:3000"
     environment:
-      - PUBLIC_API_URL=${PUBLIC_API_URL:-http://localhost:8080}
+      # now defaults to the Traefik‐fronted API route
+      - PUBLIC_API_URL=${PUBLIC_API_URL:-http://localhost:8080/api}
+    labels:
+      - "traefik.enable=true"
+      # catch-all for everything except /api so the SPA doesn’t hijack API calls
+      - "traefik.http.routers.frontend.rule=PathPrefix(`/`) && !PathPrefix(`/api`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.routers.frontend.service=frontend-svc"
+      - "traefik.http.services.frontend-svc.loadbalancer.server.port=3000"
+      - "traefik.http.routers.frontend.priority=1"
     depends_on:
       - server
     restart: unless-stopped
-
-  nginx:
-    image: load_balancer
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
-    ports:
-      - "80:80"
-    depends_on:
-      - client
 
   database:
     image: team-spoved-db
     build:
       context: ./database
-      dockerfile: Dockerfile
     environment:
       - POSTGRES_USER=spOveD
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=db
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
