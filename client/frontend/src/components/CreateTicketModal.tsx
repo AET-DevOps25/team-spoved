@@ -1,7 +1,5 @@
 import { useState, type ChangeEvent } from 'react';
 import type { MediaType } from '../types/TicketDto';
-// import type { UserDto } from '../types/UserDto';
-//import { getFilteredUsers } from '../api/userService';
 
 interface CreateTicketModalProps {
 	onCreate: (ticket: {
@@ -25,8 +23,6 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 	const [mediaType, setMediaType] = useState<MediaType>('PHOTO');
 	const userId = localStorage.getItem('userId') || '';
 	const [selectedMediaType, setSelectedMediaType] = useState<string>('');
-	//const [users, setUsers] = useState<UserDto[]>([]);
-	// const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
 
 	const handleSubmit = () => {

@@ -1,7 +1,6 @@
 // This view is the top-level view that renders
 // the application from the supervisor's POV.
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import type { CreateTicketRequest, TicketDto } from "../types/TicketDto";
 import { getTickets, createTicket, assignWorker } from "../api/ticketService";
 
@@ -35,9 +34,6 @@ function SupervisorTicketsView() {
 
   // Users variables
   const [users, setUsers] = useState<UserDto[]>([]);
-
-  // Navigation
-  const navigate = useNavigate();
 
   /**
    * Fetches the tickets and the users from the server when the component mounts.
@@ -105,21 +101,6 @@ function SupervisorTicketsView() {
     } catch (error) {
       console.error("Error creating ticket:", error);
     }
-  };
-
-  /**
-   * Handles the logout process.
-   * Cleans the local storage and navigates to the login page.
-   * @returns void
-   */
-  const handleLogout = () => {
-    // Clean the local storage
-    localStorage.removeItem("role");
-    localStorage.removeItem("name");
-    localStorage.removeItem("userId");
-
-    // Navigate to the login page
-    navigate("/");
   };
 
   /**
