@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { createMedia } from '../api/mediaService';
-import type { MediaType } from '../types/MediaDto';
 
 interface UsePhotoCaptureReturn {
   videoRef: React.RefObject<HTMLVideoElement>;
@@ -12,8 +11,8 @@ interface UsePhotoCaptureReturn {
   errorMsg: string;
   handleCameraChange: (deviceId: string) => void;
   takePhoto: () => void;
-  clearPhotos: () => void;
   handleSendPhoto: () => Promise<void>;
+  removePhoto: (index: number) => void;
 }
 
 export const usePhotoCapture = (onUploadComplete: () => void): UsePhotoCaptureReturn => {
@@ -67,8 +66,6 @@ export const usePhotoCapture = (onUploadComplete: () => void): UsePhotoCaptureRe
     setPhotos(prev => [...prev, dataUrl]);
   };
 
-  const clearPhotos = () => setPhotos([]);
-
   const handleSendPhoto = async () => {
     if (photos.length === 0) return;
     setUploading(true);
@@ -106,6 +103,10 @@ export const usePhotoCapture = (onUploadComplete: () => void): UsePhotoCaptureRe
     }
   };
 
+  const removePhoto = (index: number) => {
+    setPhotos(prev => prev.filter((_, i) => i !== index));
+  };
+
   useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ video: { facingMode: { ideal: 'environment' } } })
@@ -138,7 +139,7 @@ export const usePhotoCapture = (onUploadComplete: () => void): UsePhotoCaptureRe
     errorMsg,
     handleCameraChange,
     takePhoto,
-    clearPhotos,
-    handleSendPhoto
+    handleSendPhoto,
+    removePhoto
   };
 };

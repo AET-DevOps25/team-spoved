@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { MediaDto, CreateMediaRequest } from '../types/MediaDto';
+import type { MediaDto } from '../types/MediaDto';
 
 const BASE_URL = import.meta.env.VITE_SERVER_API_URL + '/media';
 

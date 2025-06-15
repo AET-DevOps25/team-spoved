@@ -1,7 +1,6 @@
 // hooks/useVideoRecorder.ts
 import { useEffect, useRef, useState } from 'react';
 import { createMedia } from '../api/mediaService';
-import type { MediaType } from '../types/MediaDto';
 
 interface UseVideoRecorderReturn {
   videoRef: React.RefObject<HTMLVideoElement>;
