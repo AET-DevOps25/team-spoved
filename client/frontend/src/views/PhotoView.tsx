@@ -2,6 +2,8 @@ import newDesign from "../assets/image_no_bg_left_screen.png";
 import LogoutModal from "../components/LogoutModal";
 import { usePhotoCapture } from "../hooks/PhotoHook";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 
 
@@ -19,8 +21,8 @@ export default function PhotoView() {
     errorMsg,
     handleCameraChange,
     takePhoto,
-    clearPhotos,
     handleSendPhoto,
+    removePhoto,
   } = usePhotoCapture(() => {
     if (videoRef.current?.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
@@ -102,7 +104,7 @@ export default function PhotoView() {
               {/* Send Button */}
               <button
                 onClick={handleSendPhoto}
-                disabled={photos.length === 0}
+                disabled={photos.length === 0 || uploading}
                 className={`w-1/2 text-white font-bold py-2 px-4 rounded ${
                   photos.length === 0
                     ? 'bg-gray-400 cursor-not-allowed'
@@ -119,12 +121,20 @@ export default function PhotoView() {
             <div className="w-full max-w-xl h-64 overflow-y-auto mt-4 bg-white rounded-lg p-4 shadow-inner">
               <div className="grid grid-cols-2 gap-4">
                 {photos.map((src, index) => (
-                  <img
-                    key={index}
-                    src={src}
-                    alt={`Captured ${index}`}
-                    className="rounded shadow-md object-cover w-full"
-                  />
+                  <div key={index} className="relative">
+                    <img
+                      src={src}
+                      alt={`Captured ${index}`}
+                      className="rounded shadow-md object-cover w-full"
+                    />
+                    <button
+                      onClick={() => removePhoto(index)}
+                      className="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 w-6 h-6 flex items-center justify-center shadow-md"
+                      aria-label="Delete photo"
+                    >
+                      <FontAwesomeIcon icon={faTimes} className="w-3 h-3" />
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
