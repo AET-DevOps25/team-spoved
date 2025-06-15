@@ -10,5 +10,6 @@ public record CreateTicketRequest(
     String description,
     LocalDate dueDate,
     String location,
-    MediaTypeEnum mediaType
+    MediaTypeEnum mediaType,
+    Integer mediaId 
 ) {}

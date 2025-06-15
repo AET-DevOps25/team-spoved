@@ -39,6 +39,9 @@ public class TicketEntity {
     @Column(name = "media_type", nullable = false, columnDefinition = "db.media_type")
     private MediaTypeEnum mediaType;
 
+    @Column(name="media_id", nullable = true)
+    private Integer mediaId;
+
     // TODO Think whether this appear in the final version of the Ticket entity
     // @Enumerated(EnumType.STRING)
     // @Column(nullable = false, columnDefinition = "db.role")
@@ -63,4 +66,6 @@ public class TicketEntity {
     public void setLocation(String location) { this.location = location; }
     public MediaTypeEnum getMediaType() { return mediaType; }
     public void setMediaType(MediaTypeEnum mediaType) { this.mediaType = mediaType; }
+    public Integer getMediaId() { return mediaId; }
+    public void setMediaId(Integer mediaId) { this.mediaId = mediaId; }
 }
