@@ -1,5 +1,7 @@
 // hooks/useVideoRecorder.ts
 import { useEffect, useRef, useState } from 'react';
+import { createMedia } from '../api/mediaService';
+import type { MediaType } from '../types/MediaDto';
 
 interface UseVideoRecorderReturn {
   videoRef: React.RefObject<HTMLVideoElement>;
@@ -68,11 +70,19 @@ export const useVideoRecorder = (onUploadComplete: () => void): UseVideoRecorder
   const startRecording = () => {
     setRecordedChunks([]);
     if (currentStream) {
+      // Define compression settings
+      const compressionSettings = {
+        videoBitsPerSecond: 1000000, // 1 Mbps - adjust this value to control quality/size
+        audioBitsPerSecond: 128000,  // 128 kbps for audio
+      };
 
       let mimeType = 'video/webm';
+      let videoBitsPerSecond = compressionSettings.videoBitsPerSecond;
 
+      // Try to use VP9 with compression if supported
       if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
         mimeType = 'video/webm;codecs=vp9';
+        videoBitsPerSecond = 800000; // VP9 is more efficient, can use lower bitrate
       } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
         mimeType = 'video/webm;codecs=vp8';
       } else if (MediaRecorder.isTypeSupported('video/webm')) {
@@ -84,10 +94,26 @@ export const useVideoRecorder = (onUploadComplete: () => void): UseVideoRecorder
       }
 
       try {
-
         const mediaRecorder = new MediaRecorder(currentStream, {
           mimeType: mimeType,
+          videoBitsPerSecond: videoBitsPerSecond,
+          audioBitsPerSecond: compressionSettings.audioBitsPerSecond,
         });
+        
+        // Add quality settings for the video track
+        const videoTrack = currentStream.getVideoTracks()[0];
+        if (videoTrack) {
+          const capabilities = videoTrack.getCapabilities();
+          if (capabilities.width && capabilities.height) {
+            // Set a reasonable resolution (e.g., 720p)
+            const constraints = {
+              width: { ideal: 1280 },
+              height: { ideal: 720 },
+              frameRate: { ideal: 30 }
+            };
+            videoTrack.applyConstraints(constraints).catch(console.error);
+          }
+        }
         
         mediaRecorder.ondataavailable = (event) => {
           if (event.data.size > 0) {
@@ -145,24 +171,26 @@ export const useVideoRecorder = (onUploadComplete: () => void): UseVideoRecorder
     if (!recordedChunks.length) return;
     setUploading(true);
 
-    const now = new Date();
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    const filename = `video-${pad(now.getHours())}-${pad(now.getMinutes())}-${pad(now.getDate())}-${pad(now.getMonth() + 1)}-${now.getFullYear()}.webm`;
-
     const blob = new Blob(recordedChunks, { type: 'video/webm' });
-    const file = new File([blob], filename, { type: 'video/webm' });
-
+    
     try {
-     
-      onUploadComplete();
+        const formData = new FormData();
+        formData.append('file', blob, 'video.webm');
+        formData.append('mediaType', 'VIDEO');
+        formData.append('blobType', 'video/webm');
 
-      if (currentStream) {
-        currentStream.getTracks().forEach(track => track.stop());
-        setCurrentStream(null); // Clear the stream reference
-      }
+        await createMedia(formData);
 
-      // Reload the page after successful upload
-      window.location.reload();
+
+        onUploadComplete();
+
+        if (currentStream) {
+          currentStream.getTracks().forEach(track => track.stop());
+          setCurrentStream(null); // Clear the stream reference
+        }
+
+        // Reload the page after successful upload
+        window.location.reload();
 
     } catch (err) {
       

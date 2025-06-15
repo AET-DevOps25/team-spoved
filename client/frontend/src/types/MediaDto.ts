@@ -1,12 +1,12 @@
 export type MediaType =
-    | 'photo'
-    | 'video'
-    | 'audio';
+    | 'PHOTO'
+    | 'VIDEO'
+    | 'AUDIO';
 
 export interface MediaDto {
     mediaId: number;
     mediaType: MediaType;
-    content: Blob;
+    content: string;
     blobType: string;
 }
 

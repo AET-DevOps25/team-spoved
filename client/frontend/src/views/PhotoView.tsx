@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 
 export default function PhotoView() {
+
   const navigate = useNavigate();
 
   const {
@@ -14,6 +15,7 @@ export default function PhotoView() {
     photos,
     cameras,
     selectedCamera,
+    uploading,
     errorMsg,
     handleCameraChange,
     takePhoto,
@@ -37,6 +39,8 @@ export default function PhotoView() {
           alt="Globe Design"
           className="w-full h-full object-cover"
         />
+        
+        {/* ------------------ Overlay Title Positioned on Globe ------------------ */}
         <div className="absolute top-[20%] right-[48%] transform -translate-x-1/2 -translate-y-1/2">
           <h1 className="text-7xl font-bold text-black drop-shadow-md">
             SPOVED

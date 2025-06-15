@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { createMedia } from '../api/mediaService';
+import type { MediaType } from '../types/MediaDto';
 
 interface UsePhotoCaptureReturn {
   videoRef: React.RefObject<HTMLVideoElement>;
@@ -6,6 +8,7 @@ interface UsePhotoCaptureReturn {
   photos: string[];
   cameras: MediaDeviceInfo[];
   selectedCamera: string;
+  uploading: boolean;
   errorMsg: string;
   handleCameraChange: (deviceId: string) => void;
   takePhoto: () => void;
@@ -20,6 +23,7 @@ export const usePhotoCapture = (onUploadComplete: () => void): UsePhotoCaptureRe
   const [photos, setPhotos] = useState<string[]>([]);
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
   const [selectedCamera, setSelectedCamera] = useState('');
+  const [uploading, setUploading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
   const startCamera = async (deviceId: string) => {
@@ -67,16 +71,41 @@ export const usePhotoCapture = (onUploadComplete: () => void): UsePhotoCaptureRe
 
   const handleSendPhoto = async () => {
     if (photos.length === 0) return;
-    onUploadComplete();
+    setUploading(true);
 
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-      setStream(null);
+    try {
+      // Convert each photo data URL to blob and upload
+      for (const photoDataUrl of photos) {
+        // Convert data URL to blob
+        const response = await fetch(photoDataUrl);
+        const blob = await response.blob();
+        
+        const formData = new FormData();
+        formData.append('file', blob, 'photo.png');
+        formData.append('mediaType', 'PHOTO');
+        formData.append('blobType', 'image/png');
+
+        await createMedia(formData);
+      }
+
+      onUploadComplete();
+
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        setStream(null);
+      }
+
+      // Reload the page after successful upload
+      window.location.reload();
+
+    } catch (err) {
+      setErrorMsg('Hochladen fehlgeschlagen');
+      console.error(err);
+    } finally {
+      setUploading(false);
     }
-
-    // Reload the page after successful upload
-    window.location.reload();
   };
+
   useEffect(() => {
     navigator.mediaDevices
       .getUserMedia({ video: { facingMode: { ideal: 'environment' } } })
@@ -105,6 +134,7 @@ export const usePhotoCapture = (onUploadComplete: () => void): UsePhotoCaptureRe
     photos,
     cameras,
     selectedCamera,
+    uploading,
     errorMsg,
     handleCameraChange,
     takePhoto,

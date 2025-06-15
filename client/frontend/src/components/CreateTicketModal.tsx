@@ -12,6 +12,7 @@ interface CreateTicketModalProps {
 		dueDate: string;
 		location: string;
 		mediaType: MediaType;
+		mediaId: number | null;
 	}) => void;
 	onClose: () => void;
 }
@@ -21,7 +22,7 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 	const [description, setDescription] = useState('');
 	const [dueDate, setDueDate] = useState('');
 	const [location, setLocation] = useState('');
-	const [mediaType, setMediaType] = useState<MediaType>('photo');
+	const [mediaType, setMediaType] = useState<MediaType>('PHOTO');
 	const userId = localStorage.getItem('userId') || '';
 	const [selectedMediaType, setSelectedMediaType] = useState<string>('');
 	//const [users, setUsers] = useState<UserDto[]>([]);
@@ -29,7 +30,6 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 
 
 	const handleSubmit = () => {
-		console.log("User ID: " + userId);
 		onCreate({
 			assignedTo: null,
 			createdBy: parseInt(userId),
@@ -38,13 +38,8 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 			dueDate,
 			location,
 			mediaType,
+			mediaId: null,
 		});
-		console.log(userId);
-		console.log(title);
-		console.log(description);
-		console.log(dueDate);
-		console.log(location);
-		console.log(mediaType);
 		onClose();
 	};
 

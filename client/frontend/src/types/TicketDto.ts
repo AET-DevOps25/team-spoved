@@ -1,7 +1,7 @@
 export type MediaType =
-    | 'photo'
-    | 'video'
-    | 'audio';
+    | 'PHOTO'
+    | 'VIDEO'
+    | 'AUDIO';
 
 export type Status =
     | 'OPEN'
@@ -18,6 +18,7 @@ export interface TicketDto {
     dueDate: string;
     location: string;
     mediaType: MediaType;
+    mediaId: number | null;
 }
 
 export type CreateTicketRequest = Omit<TicketDto, 'ticketId' | 'status' >

@@ -1,23 +1,23 @@
 import axios from 'axios';
-import type { TicketDto, CreateTicketRequest } from '../types/TicketDto';
+import type { MediaDto, CreateMediaRequest } from '../types/MediaDto';
 
-const BASE_URL = import.meta.env.VITE_SERVER_API_URL + '/tickets';
+const BASE_URL = import.meta.env.VITE_SERVER_API_URL + '/media';
 
-export const createTicket = async (ticket: CreateTicketRequest): Promise<TicketDto> => {
-  const response = await axios.post(BASE_URL, ticket);
-  return response.data;
+export const createMedia = async (formData: FormData) => {
+    const response = await axios.post(BASE_URL, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+    return response.data;
 };
 
-export const getTicketById = async (id: number): Promise<TicketDto> => {
+export const getMediaById = async (id: number): Promise<MediaDto> => {
   const response = await axios.get(`${BASE_URL}/${id}`);
   return response.data;
 };
 
-export const getTickets = async (): Promise<TicketDto[]> => {
+export const getMedia = async (): Promise<MediaDto[]> => {
   const response = await axios.get(BASE_URL);
-  console.log(response.data);
   return response.data;
 };
-export const assignWorker = async (ticketId: number, userId: number) => {
-  return axios.put(`${BASE_URL}/${ticketId}/assign?userId=${userId}`)
-}

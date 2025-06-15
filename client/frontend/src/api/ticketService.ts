@@ -15,7 +15,6 @@ export const getTicketById = async (id: number): Promise<TicketDto> => {
 
 export const getTickets = async (): Promise<TicketDto[]> => {
   const response = await axios.get(BASE_URL);
-  console.log(response.data);
   return response.data;
 };
 export const assignWorker = async (ticketId: number, userId: number) => {
