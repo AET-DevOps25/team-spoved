@@ -53,5 +53,18 @@ services:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
 
+  auth:
+    image: auth-service
+    build:
+      context: ./auth
+      dockerfile: Dockerfile
+    ports:
+      - "8030:8030"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
+      - SPRING_DATASOURCE_USERNAME=spOveD
+      - SPRING_DATASOURCE_PASSWORD=secret
+
 volumes:
   pgdata:
