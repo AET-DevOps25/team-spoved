@@ -1,4 +1,4 @@
-package de.tum.aet.devops25.team_spoved.auth_service;
+package de.tum.aet.devops25.team_spoved;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
