@@ -2,8 +2,8 @@
 // React
 import React from "react";
 // Dtos
-import type { TicketDto} from "../types/TicketDto";
-
+import type { TicketDto } from "../types/TicketDto";
+import type { MediaDto } from "../types/MediaDto";
 
 /**
  * SupervisorTicketDetailsModal component displays the details of a single ticket
@@ -13,17 +13,18 @@ import type { TicketDto} from "../types/TicketDto";
  */
 interface SupervisorTicketDetailsModalProps {
   ticket: TicketDto;
+  media: MediaDto | null;
   onClose: () => void;
 }
 
 /**
  * SupervisorTicketDetailsModal component displays the details of a single ticket
  * @param ticket - The ticket to display
+ * @param media - The media to display
  * @param onClose - The function to call when the ticket is closed
  * @returns The SupervisorTicketDetailsModal component
  */
-const SupervisorTicketDetailsModal: React.FC<SupervisorTicketDetailsModalProps> = ({ ticket, onClose }) => {
-
+const SupervisorTicketDetailsModal: React.FC<SupervisorTicketDetailsModalProps> = ({ ticket, media, onClose }) => {
 
   // ------------------------ JSX: Ticket Details Modal Layout ------------------------
   return (
@@ -59,7 +60,40 @@ const SupervisorTicketDetailsModal: React.FC<SupervisorTicketDetailsModalProps> 
             day: 'numeric'
           })}</p>
           <p><strong>Location:</strong> {ticket.location}</p>
-          <p><strong>Media Type:</strong> {ticket.mediaType}</p>
+          {/*<p><strong>Media Type:</strong> {ticket.mediaType}</p>*/}
+
+          {/* ------------------ Media ------------------ */}
+          {media && (
+            <div className="mt-4">
+              {media.mediaType === "VIDEO" && (
+                <video 
+                  src={`data:${media.blobType};base64,${media.content}`}
+                  controls 
+                  autoPlay
+                  className="w-full max-w-md h-64 rounded-md object-cover"
+                  preload="metadata"
+                >
+                  Your browser does not support the video tag.
+                </video>
+              )}
+              {media.mediaType === "PHOTO" && (
+                <img 
+                  src={`data:${media.blobType};base64,${media.content}`}
+                  alt="Ticket media" 
+                  className="w-full max-w-md h-64 rounded-md object-cover" 
+                />
+              )}
+              {media.mediaType === "AUDIO" && (
+                <audio 
+                  src={`data:${media.blobType};base64,${media.content}`}
+                  controls 
+                  className="w-full max-w-md"
+                >
+                  Your browser does not support the audio tag.
+                </audio>
+              )}
+            </div>
+          )}
 
         </div>
       </div>

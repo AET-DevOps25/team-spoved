@@ -45,13 +45,9 @@ export const triggerAutoTicketGeneration = async (
     return response.data;
 };
 
+
 export const getMediaById = async (id: number): Promise<MediaDto> => {
   const response = await axios.get(`${BASE_URL}/${id}`);
-  return response.data;
-};
-
-export const getMediaMetadataById = async (id: number): Promise<MediaDto> => {
-  const response = await axios.get(`${BASE_URL}/${id}/metadata`);
   return response.data;
 };
 

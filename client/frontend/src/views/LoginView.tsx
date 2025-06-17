@@ -33,7 +33,6 @@ const LoginView = () => {
       .then(setUsers)
       .catch((err: Error) => console.error("Error fetching users:", err));
 
-    console.log("Users: " + users);
   }, [selectedRole, debouncedSearchTerm]);
 
   useEffect(() => {
@@ -74,8 +73,6 @@ const LoginView = () => {
       return;
     }
 
-    console.log("Selected User: " + selectedUser);
-
     // Set the role, name and user id
     localStorage.setItem("role", selectedRole);
     localStorage.setItem("name", selectedUser?.name || "");
@@ -84,10 +81,6 @@ const LoginView = () => {
     const userId = user.find((u) => u.name === selectedUser?.name)?.userId || 0;
 
     localStorage.setItem("userId", userId.toString());
-
-    console.log("Selected Role: " + selectedRole);
-    console.log("Selected User: " + selectedUser?.name);
-    console.log("Selected ID:" + selectedUser?.userId);
 
     if (selectedRole === "WORKER") {
       navigate("/worker");
