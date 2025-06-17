@@ -22,31 +22,25 @@ def fetch_ticket_by_id(ticket_id: int):
     response = requests.get(f"{API_URL}/tickets/{ticket_id}")
     return response.json()
 
-def determine_media_type_from_blob(blob_type: str) -> str:
-    """Determine if the blob type is for image or video processing"""
-    if blob_type.startswith('image/'):
-        return 'photo'
-    elif blob_type.startswith('video/'):
-        return 'video'
-    else:
-        raise ValueError(f'Unsupported media type: {blob_type}')
 
 def create_ticket(ticket: dict):
     # Fetch media metadata to determine the blob type
     media = fetch_media_by_id(ticket['media_id'])
-    blob_type = media["blobType"]
+    print(media)
     
     # Route to appropriate processor based on blob type
-    media_type = determine_media_type_from_blob(blob_type)
+    media_type = media['mediaType']
     
-    if media_type == 'photo':
+    if media_type == 'PHOTO':
         model_ticket = generate_photo_ticket(ticket['media_id'])
-    elif media_type == 'video':
+    elif media_type == 'VIDEO':
         model_ticket = generate_ticket_from_video(ticket['media_id'])
     else:
         raise ValueError(f'Unsupported media type: {media_type}')
     
     due_date = (datetime.now() + timedelta(days=7)).strftime('%Y-%m-%d')
+
+    int_media_id = int(ticket['media_id'])
     
     ticket_json = {
         "assignedTo": None,
@@ -57,7 +51,7 @@ def create_ticket(ticket: dict):
         "dueDate": due_date,
         "location": model_ticket.location,
         "mediaType": model_ticket.media_type,
-        "mediaId": ticket['media_id'],
+        "mediaId": int_media_id,
     }
 
     update_result(ticket['media_id'], model_ticket.result)

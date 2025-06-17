@@ -47,8 +47,8 @@ async def auto_create_ticket(request: AutoTicketRequest):
         )
         
     except Exception as e:
-        print(f"💥 [ERROR] Exception in auto_create_ticket: {str(e)}")
-        print(f"📊 [ERROR] Traceback: {traceback.format_exc()}")
+        print(f"[ERROR] Exception in auto_create_ticket: {str(e)}")
+        print(f"[ERROR] Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=f"Error creating automated ticket: {str(e)}")
 
 

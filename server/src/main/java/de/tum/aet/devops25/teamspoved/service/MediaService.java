@@ -37,9 +37,6 @@ public class MediaService {
         return mediaRepository.findById(mediaId).orElseThrow(() -> new IllegalArgumentException("Media not found"));
     }
 
-    public MediaEntity getMediaMetadata(Integer mediaId) {
-        return mediaRepository.findById(mediaId).orElseThrow(() -> new IllegalArgumentException("Media not found"));
-    }
 
     public List<MediaEntity> getAllMedia() {
         return mediaRepository.findAll();

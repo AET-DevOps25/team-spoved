@@ -94,8 +94,8 @@ async def execute_automation(request: AutoTicketRequest):
         
     except Exception as e:
         # Log error (in production, use proper logging and potentially retry logic)
-        print(f"💥 [ERROR] Error in automation ticket_processing_workflow for media {request.media_id}: {str(e)}")
-        print(f"📊 [ERROR] Traceback: {traceback.format_exc()}")
+        print(f"[ERROR] Error in automation ticket_processing_workflow for media {request.media_id}: {str(e)}")
+        print(f"[ERROR] Traceback: {traceback.format_exc()}")
 
 @router.post("/webhook/media-uploaded")
 async def media_upload_webhook(event: MediaUploadEvent, background_tasks: BackgroundTasks):
@@ -103,14 +103,12 @@ async def media_upload_webhook(event: MediaUploadEvent, background_tasks: Backgr
     Webhook endpoint that can be called by the main backend API
     when new media is uploaded to automatically trigger ticket creation.
     """
-    print(f"🪝 [DEBUG] Webhook called with event: {event}")
     
     try:
-        print(f"🔗 [DEBUG] Calling trigger_automation_ticket_processing_workflow")
         result = await trigger_automation_ticket_processing_workflow(event, background_tasks)
-        print(f"📤 [DEBUG] Webhook returning: {result}")
+
         return result
     except Exception as e:
-        print(f"💥 [ERROR] Exception in webhook: {str(e)}")
-        print(f"📊 [ERROR] Traceback: {traceback.format_exc()}")
+        print(f"[ERROR] Exception in webhook: {str(e)}")
+        print(f"[ERROR] Traceback: {traceback.format_exc()}")
         raise

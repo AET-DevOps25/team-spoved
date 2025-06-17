@@ -16,7 +16,7 @@ def fetch_media():
 
 # Fetch media by id
 def fetch_media_by_id(media_id: int):
-    response = requests.get(f"{API_URL}/media/{media_id}/metadata")
+    response = requests.get(f"{API_URL}/media/{media_id}")
     return response.json()
 
 @router.get("/")

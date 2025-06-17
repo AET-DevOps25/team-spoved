@@ -36,7 +36,7 @@ public class MediaController {
         }
     }
 
-    @GetMapping("/{mediaId}")
+    /*@GetMapping("/{mediaId}/wrong")
     public ResponseEntity<byte[]> getMediaById(@PathVariable Integer mediaId) {
         try {
             MediaEntity media = mediaService.getMediaById(mediaId);
@@ -46,10 +46,10 @@ public class MediaController {
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Media not found");
         }
-    }
+    }*/
 
-    @GetMapping("/{mediaId}/metadata")
-    public ResponseEntity<MediaEntity> getMediaMetadata(@PathVariable Integer mediaId) {
+    @GetMapping("/{mediaId}")
+    public ResponseEntity<MediaEntity> getMediaById(@PathVariable Integer mediaId) {
         try {
             MediaEntity media = mediaService.getMediaById(mediaId);
             return ResponseEntity.ok(media);

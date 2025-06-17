@@ -16,19 +16,16 @@ def fetch_data_video_photo(media_id: int):
 
 # Update analyzed status
 def update_analyzed(media_id: int, analyzed: bool):
-    print(f"Updating analyzed status for media {media_id} with bool {analyzed}")
     response = requests.put(f"{API_URL}/media/{media_id}/analyzed", json=analyzed)
     return response.json()
 
 # Update result
 def update_result(media_id: int, result: str):
-    print(f"Updating result for media {media_id} with result {result}")
     response = requests.put(f"{API_URL}/media/{media_id}/result", json=result)
     return response.json()
 
 # Update reason
 def update_reason(media_id: int, reason: str):  
-    print(f"Updating reason for media {media_id} with reason {reason}")
     response = requests.put(f"{API_URL}/media/{media_id}/reason", json=reason)
     return response.json()
 
