@@ -61,7 +61,7 @@ cd team-spoved
 cd client
 npm run dev
 ```
-The client will be available at [http://localhost:3000](http://localhost:3000).
+The client will be available at [http://localhost:5173](http://localhost:5173) or [http://localhost:3000](http://localhost:3000).
 
 ### Start the Server
 
@@ -69,6 +69,14 @@ The client will be available at [http://localhost:3000](http://localhost:3000).
 cd server
 ./gradlew bootRun
 ```
+
+### Start the GenAI Server (locally)
+
+```bash
+cd genai
+uvicorn src.server:app --host 0.0.0.0 --port 8000 --reload
+```
+
 The server API will be available at [http://localhost:8080](http://localhost:8080).
 
 ## Development Workflow
