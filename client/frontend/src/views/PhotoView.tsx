@@ -19,6 +19,7 @@ export default function PhotoView() {
     selectedCamera,
     uploading,
     errorMsg,
+    autoTicketStatus,
     handleCameraChange,
     takePhoto,
     handleSendPhoto,
@@ -115,7 +116,41 @@ export default function PhotoView() {
               </button>
             </div>
 
+            {/* ------------------ Auto Ticket Status ------------------ */}
+            {autoTicketStatus !== 'idle' && (
+              <div className="mt-4 text-center">
+                <p className={`text-sm ${
+                  autoTicketStatus === 'success' ? 'text-green-600' : 
+                  autoTicketStatus === 'failed' ? 'text-red-600' : 
+                  'text-gray-600'
+                }`}>
+                  {autoTicketStatus === 'generating' ? 'Generating ticket...' : 
+                  autoTicketStatus === 'success' ? 'Ticket generated successfully!' : 
+                  'Failed to generate ticket'}
+                </p>
+              </div>
+            )}
+
+            {autoTicketStatus === 'generating' && (
+              <div className="mt-4 p-3 bg-blue-100 text-blue-800 rounded-lg text-center">
+                🤖 AI is analyzing your photo and creating a ticket...
+              </div>
+            )}
+
+            {autoTicketStatus === 'success' && (
+              <div className="mt-4 p-3 bg-green-100 text-green-800 rounded-lg text-center">
+                ✅ Ticket automatically created from your photo!
+              </div>
+            )}
+
+            {autoTicketStatus === 'failed' && (
+              <div className="mt-4 p-3 bg-yellow-100 text-yellow-800 rounded-lg text-center">
+                ⚠️ Photo uploaded successfully, but automatic ticket creation failed. You can create a ticket manually.
+              </div>
+            )}
+
           </div>
+          
           {/* ------------------ Photo Gallery ------------------ */}
           {photos.length > 0 && (
             <div className="w-full max-w-xl h-64 overflow-y-auto mt-4 bg-white rounded-lg p-4 shadow-inner">

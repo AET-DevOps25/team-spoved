@@ -1,6 +1,7 @@
 // hooks/useVideoRecorder.ts
 import { useEffect, useRef, useState } from 'react';
-import { createMedia } from '../api/mediaService';
+import { createMedia, triggerAutoTicketGeneration } from '../api/mediaService';
+
 
 interface UseVideoRecorderReturn {
   videoRef: React.RefObject<HTMLVideoElement>;
@@ -172,30 +173,28 @@ export const useVideoRecorder = (onUploadComplete: () => void): UseVideoRecorder
 
     const blob = new Blob(recordedChunks, { type: 'video/webm' });
     
-    try {
+    try {        
         const formData = new FormData();
         formData.append('file', blob, 'video.webm');
         formData.append('mediaType', 'VIDEO');
         formData.append('blobType', 'video/webm');
 
+        // createMedia already triggers automation internally
         await createMedia(formData);
-
 
         onUploadComplete();
 
         if (currentStream) {
           currentStream.getTracks().forEach(track => track.stop());
-          setCurrentStream(null); // Clear the stream reference
+          setCurrentStream(null);
         }
 
         // Reload the page after successful upload
         window.location.reload();
 
     } catch (err) {
-      
       setErrorMsg('Hochladen fehlgeschlagen');
       console.error(err);
-    
     } finally {
       setUploading(false);
     }

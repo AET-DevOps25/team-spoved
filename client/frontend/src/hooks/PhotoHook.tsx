@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { createMedia } from '../api/mediaService';
+import { createMedia, triggerAutoTicketGeneration } from '../api/mediaService';
 
 interface UsePhotoCaptureReturn {
   videoRef: React.RefObject<HTMLVideoElement>;
@@ -9,6 +9,7 @@ interface UsePhotoCaptureReturn {
   selectedCamera: string;
   uploading: boolean;
   errorMsg: string;
+  autoTicketStatus: 'idle' | 'generating' | 'success' | 'failed';
   handleCameraChange: (deviceId: string) => void;
   takePhoto: () => void;
   handleSendPhoto: () => Promise<void>;
@@ -24,6 +25,7 @@ export const usePhotoCapture = (onUploadComplete: () => void): UsePhotoCaptureRe
   const [selectedCamera, setSelectedCamera] = useState('');
   const [uploading, setUploading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [autoTicketStatus, setAutoTicketStatus] = useState<'idle' | 'generating' | 'success' | 'failed'>('idle');
 
   const startCamera = async (deviceId: string) => {
     try {
@@ -69,6 +71,7 @@ export const usePhotoCapture = (onUploadComplete: () => void): UsePhotoCaptureRe
   const handleSendPhoto = async () => {
     if (photos.length === 0) return;
     setUploading(true);
+    setAutoTicketStatus('generating');
 
     try {
       // Convert each photo data URL to blob and upload
@@ -82,9 +85,11 @@ export const usePhotoCapture = (onUploadComplete: () => void): UsePhotoCaptureRe
         formData.append('mediaType', 'PHOTO');
         formData.append('blobType', 'image/png');
 
+        // createMedia already triggers automation internally
         await createMedia(formData);
       }
 
+      setAutoTicketStatus('success');
       onUploadComplete();
 
       if (stream) {
@@ -93,9 +98,10 @@ export const usePhotoCapture = (onUploadComplete: () => void): UsePhotoCaptureRe
       }
 
       // Reload the page after successful upload
-      window.location.reload();
+      setTimeout(() => window.location.reload(), 2000);
 
     } catch (err) {
+      setAutoTicketStatus('failed');
       setErrorMsg('Hochladen fehlgeschlagen');
       console.error(err);
     } finally {
@@ -137,6 +143,7 @@ export const usePhotoCapture = (onUploadComplete: () => void): UsePhotoCaptureRe
     selectedCamera,
     uploading,
     errorMsg,
+    autoTicketStatus,
     handleCameraChange,
     takePhoto,
     handleSendPhoto,

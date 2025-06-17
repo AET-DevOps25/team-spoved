@@ -1,0 +1,19 @@
+[project]
+name = "ticket-generator"
+version = "0.1.0"
+description = "AI Ticket Generator"
+authors = [{ name = "Andreea Lupu" }]
+dependencies = [
+    "opencv-python",
+    "python-dotenv",
+    "appwrite",
+    "fastapi",
+    "uvicorn",
+    "google-generativeai",
+    "pydantic",
+    "python-multipart"
+]
+
+[tool.setuptools]
+packages = ["ticket-generator"]
+package-dir = { "" = "src" }
