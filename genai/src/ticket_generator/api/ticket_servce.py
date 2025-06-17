@@ -6,6 +6,7 @@ from ticket_generator.media.photo.model.gemini_photo import generate_ticket as g
 from ticket_generator.media.video.model.gemini_video import generate_ticket_from_video
 from ticket_generator.api.media_service import fetch_media_by_id
 from datetime import datetime, timedelta
+from ticket_generator.api.video_photo_service import update_result, update_reason, update_analyzed
 
 load_dotenv()
 
@@ -58,6 +59,10 @@ def create_ticket(ticket: dict):
         "mediaType": model_ticket.media_type,
         "mediaId": ticket['media_id'],
     }
+
+    update_result(ticket['media_id'], model_ticket.result)
+    update_reason(ticket['media_id'], model_ticket.reason)
+    update_analyzed(ticket['media_id'], True)
 
     response = requests.post(f"{API_URL}/tickets", json=ticket_json)
     return response.json()

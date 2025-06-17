@@ -28,10 +28,10 @@ public class MediaEntity {
     @Column(name = "analyzed", table = "video_photo", nullable = false)
     private boolean analyzed = false;
 
-    @Column(name = "result", length = 500, nullable = false, table = "video_photo")
+    @Column(name = "result", length = 999, nullable = false, table = "video_photo")
     private String result = "No result available";
 
-    @Column(name = "reason", length = 800, nullable = false, table = "video_photo")
+    @Column(name = "reason", length = 999, nullable = false, table = "video_photo")
     private String reason = "No reasoning available";
 
 

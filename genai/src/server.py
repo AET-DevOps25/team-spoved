@@ -10,8 +10,8 @@ from fastapi.responses import JSONResponse
 from ticket_generator.api.media_service import router as mediaServiceRouter
 from ticket_generator.api.video_photo_service import router as videoPhotoServiceRouter
 from ticket_generator.api.ticket_servce import router as ticketServiceRouter
-from ticket_generator.gemini.model import router as geminiRouter
-from ticket_generator.automation.workflow import router as automationRouter
+from ticket_generator.gemini.ticket_data_models import router as geminiRouter
+from ticket_generator.automation.ticket_processing_workflow import router as automationRouter
 
 app = FastAPI()
 

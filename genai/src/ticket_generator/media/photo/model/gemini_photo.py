@@ -40,12 +40,12 @@ def build_prompt():
         "Title: <short, specific summary of the issue>\n"
         "Description: <detailed explanation of what the issue is, based on the photo>\n"
         "Location: <estimated or inferred location of the issue>\n"
-        "Reason: <probable cause or rationale for why the ticket should be created>\n"
+        "Reason: <probable cause or rationale for why the ticket should be created, detailed explanation of the issue>\n"
+        "Result: <short explanation of what should be done to fix the issue>\n"
         "```\n\n"
-        "Result:\n"
         "- Use professional and concise language.\n"
-        "- Do not include headers, commentary, or any content outside the 4 fields.\n"
-        "- Always fill in all 4 fields, even if you must infer based on context.\n"
+        "- Do not include headers, commentary, or any content outside the 5 fields.\n"
+        "- Always fill in all 5 fields, even if you must infer based on context.\n"
     )
 
 def parse_ticket_output(text: str, media_id: int, content: bytes) -> Ticket:
@@ -64,7 +64,7 @@ def parse_ticket_output(text: str, media_id: int, content: bytes) -> Ticket:
         media_type=PHOTO,
         content=content,
         reason=fields.get('reason', ''),
-        result=text,
+        result=fields.get('result', ''),
         analyzed=True
     )
 

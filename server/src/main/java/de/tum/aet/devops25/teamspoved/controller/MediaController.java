@@ -69,7 +69,7 @@ public class MediaController {
         }
     }
 
-    @PutMapping("/media/{mediaId}/analyzed")
+    @PutMapping("/{mediaId}/analyzed")
     public ResponseEntity<MediaEntity> updateAnalyzed(@PathVariable Integer mediaId, @RequestBody Boolean analyzed) {
         MediaEntity mediaEntity = mediaService.updateAnalyzed(mediaId, analyzed);
 
@@ -80,7 +80,7 @@ public class MediaController {
         return ResponseEntity.ok(mediaEntity);
     }
 
-    @PutMapping("/media/{mediaId}/result")
+    @PutMapping("/{mediaId}/result")
     public ResponseEntity<MediaEntity> updateResult(@PathVariable Integer mediaId, @RequestBody String result) {
         MediaEntity mediaEntity = mediaService.updateResult(mediaId, result);
 
@@ -91,7 +91,7 @@ public class MediaController {
         return ResponseEntity.ok(mediaEntity);
     }
 
-    @PutMapping("/media/{mediaId}/reason")
+    @PutMapping("/{mediaId}/reason")
     public ResponseEntity<MediaEntity> updateReason(@PathVariable Integer mediaId, @RequestBody String reason) {
         MediaEntity mediaEntity = mediaService.updateReason(mediaId, reason);
 

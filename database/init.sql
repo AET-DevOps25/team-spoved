@@ -38,11 +38,11 @@ CREATE TABLE IF NOT EXISTS db.tickets (
   created_by  INTEGER         NOT NULL
                    REFERENCES db.users(user_id)
                    ON DELETE RESTRICT,
-  title       VARCHAR(100)    NOT NULL DEFAULT 'New Ticket',
-  description VARCHAR(500)    NOT NULL DEFAULT 'Description of the ticket',
+  title       VARCHAR(999)    NOT NULL DEFAULT 'New Ticket',
+  description VARCHAR(999)    NOT NULL DEFAULT 'Description of the ticket',
   status      db.status       NOT NULL DEFAULT 'OPEN',
   due_date    DATE            NOT NULL CHECK (due_date >= CURRENT_DATE), -- Check if the introduced date is in the future
-  location    VARCHAR(50)     NOT NULL,
+  location    VARCHAR(999)     NOT NULL,
   media_type  db.media_type   NOT NULL DEFAULT 'PHOTO', -- Default value if not specified
   media_id    INTEGER         REFERENCES db.media(media_id)
                    ON DELETE RESTRICT
@@ -66,8 +66,8 @@ CREATE TABLE IF NOT EXISTS db.video_photo (
                   ON DELETE RESTRICT,
 
   analyzed  BOOLEAN       DEFAULT false,
-  result    VARCHAR(500)  NOT NULL DEFAULT 'No result available',
-  reason    VARCHAR(800)  NOT NULL DEFAULT 'No reasoning available'
+  result    VARCHAR(999)  DEFAULT 'No result available',
+  reason    VARCHAR(999)  DEFAULT 'No reasoning available'
 );
 
 

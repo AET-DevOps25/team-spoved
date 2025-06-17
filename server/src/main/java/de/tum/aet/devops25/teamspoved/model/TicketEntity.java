@@ -19,10 +19,10 @@ public class TicketEntity {
     @JoinColumn(name = "created_by", nullable = false)
     private UserEntity createdBy;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 999)
     private String title = "New Ticket";
 
-    @Column(nullable = false, length = 500)
+    @Column(nullable = false, length = 999)
     private String description = "Description of the ticket";
 
     @Enumerated(EnumType.STRING)
@@ -32,7 +32,7 @@ public class TicketEntity {
     @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 999)
     private String location;
 
     @Enumerated(EnumType.STRING)
