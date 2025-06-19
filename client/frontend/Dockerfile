@@ -13,6 +13,11 @@ COPY *.json *.ts *.js *.html ./
 ARG VITE_SERVER_API_URL
 ENV VITE_SERVER_API_URL=$VITE_SERVER_API_URL
 
+ENV NODE_ENV=dev
+
+# Install all necessary dependencies
+RUN npm install
+
 # Build the project
 RUN npm run build
 
