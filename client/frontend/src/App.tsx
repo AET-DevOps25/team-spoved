@@ -6,12 +6,15 @@ import CameraView from "./views/CameraView"
 import VideoRecordingView from "./views/VideoRecordingView"
 import WorkerTicketView from "./views/WorkerTicketView"
 import MicrophoneView from "./views/MicrophoneView"
+import RegisterView from "./views/RegisterView"
+
 function App() {
 
   return (
     <Router>
       <Routes>
         <Route path="/" element={<LoginView />} />
+        <Route path="/register" element={<RegisterView />} />
         <Route path="/supervisor" element={<SupervisorTicketView />} />
         <Route path="/worker" element={<WorkerView />} />
         <Route path="/worker/camera" element={<CameraView />} />
