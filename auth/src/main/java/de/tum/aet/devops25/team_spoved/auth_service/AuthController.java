@@ -2,7 +2,6 @@ package de.tum.aet.devops25.team_spoved.auth_service;
 
 import java.util.Map;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;

@@ -10,6 +10,7 @@ import com.auth0.jwt.algorithms.Algorithm;
  
 @Component
 public class JwtUtil {
+    // FIXME This needs to be out-of-source
     private final String SECRET = "supersecret123";
 
     public String generateToken(Integer userId, String name, String role) {

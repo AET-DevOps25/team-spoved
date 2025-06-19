@@ -58,4 +58,19 @@ public class TicketEntity {
     public void setLocation(String location) { this.location = location; }
     public MediaTypeEnum getMediaType() { return mediaType; }
     public void setMediaType(MediaTypeEnum mediaType) { this.mediaType = mediaType; }
+
+    @Override
+    public String toString() {
+        return "TicketEntity{" +
+                "ticketId=" + ticketId +
+                ", assignedTo=" + (assignedTo != null ? assignedTo.getUserId() : null) +
+                ", createdBy=" + (createdBy != null ? createdBy.getUserId() : null) +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
+                ", dueDate=" + dueDate +
+                ", location='" + location + '\'' +
+                ", mediaType=" + mediaType +
+                '}';
+    }
 }
