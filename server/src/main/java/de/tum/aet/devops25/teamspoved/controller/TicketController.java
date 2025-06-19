@@ -81,8 +81,12 @@ public class TicketController {
     public ResponseEntity<TicketEntity> assignTicket(
             @PathVariable Integer ticketId,
             @RequestParam Integer userId) {
-        return ticketService.assignTicket(ticketId, userId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        try {
+            return ticketService.assignTicket(ticketId, userId)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 }
