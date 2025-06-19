@@ -2,6 +2,7 @@ package de.tum.aet.devops25.team_spoved.auth_service;
 
 import java.util.Map;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,11 +26,15 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+        if (!repo.findByName(request.name()).isEmpty()) {
+            return ResponseEntity.badRequest().body("User already exists");    
+        }
+
         UserEntity user = new UserEntity();
         user.setName(request.name());
         user.setPasswordHash(encoder.encode(request.password()));
-        user.setRole(request.role()); // or default to Role.WORKER
-        repo.save(user);
+        user.setRole(request.role());
+
         return ResponseEntity.ok("User registered");
     }
 

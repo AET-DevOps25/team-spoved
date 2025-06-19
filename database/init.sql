@@ -16,10 +16,13 @@ CREATE TYPE db.media_type AS ENUM ('PHOTO', 'VIDEO', 'AUDIO');
 -- Create users table
 CREATE TABLE IF NOT EXISTS db.users (
   user_id       SERIAL       PRIMARY KEY,
-  name          VARCHAR(50)  NOT NULL,
+  name          VARCHAR(50)  UNIQUE NOT NULL,
   role          db.role      NOT NULL,
   password_hash  VARCHAR(100) NOT NULL
 );
+
+
+
 
 -- Create tickets table
 CREATE TABLE IF NOT EXISTS db.tickets (
