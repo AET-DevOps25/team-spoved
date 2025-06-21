@@ -34,6 +34,8 @@ public class AuthController {
         user.setPasswordHash(encoder.encode(request.password()));
         user.setRole(request.role());
 
+        repo.save(user);
+        
         return ResponseEntity.ok("User registered");
     }
 
