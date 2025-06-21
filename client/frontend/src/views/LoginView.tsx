@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../api/userService";
+import { jwtDecode } from "jwt-decode";
+
 import newDesign from "../assets/image_no_bg_left_screen.png";
 
 const LoginView = () => {
@@ -17,11 +19,18 @@ const LoginView = () => {
     try {
       const credentials = {name : username, password: password};
       const data = await loginUser(credentials);
-      localStorage.setItem("jwt", data.token);
-      localStorage.setItem("name", username);
-      navigate("/tickets");
-    } catch {
-      setError("Invalid credentials");
+
+      const decoded = jwtDecode(data.token);
+      
+      sessionStorage.setItem("jwt", data.token);
+      sessionStorage.setItem("name", username);
+
+      const role = decoded.role.toLowerCase();
+
+      navigate(`/${role}`);
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("Authentication failed. Please try again.");
     }
   };
 

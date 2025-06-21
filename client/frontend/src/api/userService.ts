@@ -35,7 +35,7 @@ const params = new URLSearchParams();
 export const loginUser = async (credentials: LoginUserRequest): Promise<Jwt> => {
   try {
     const response = await axios.post(
-      AUTH_BASE_URL + '/login',
+      `${AUTH_BASE_URL}/login`,
       credentials,
       { headers: { 'Content-Type': 'application/json' } }
     );
@@ -49,7 +49,7 @@ export const loginUser = async (credentials: LoginUserRequest): Promise<Jwt> => 
 export const registerUser = async (credentials : RegisterUserRequest): Promise<string> => {
     try {
         const response = await axios.post(
-            AUTH_BASE_URL + '/register',
+            `${AUTH_BASE_URL}/register`,
             credentials,
             { headers : {"Content-Type" : "application/json"}}
         )
