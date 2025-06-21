@@ -24,7 +24,10 @@ public class SecurityConfig {
         // FIXME Right now, everyone has the same level of authorization, change this to have 
         // RBAC for the API points 
         http
-            .csrf(csrf -> csrf.disable())  // Disable CSRF for API endpoints
+            .csrf(csrf -> {
+                    csrf.ignoringRequestMatchers("/api/v1/*");
+                })  
+            .cors(cors -> cors.configure(http))
             .authorizeHttpRequests(auth -> auth
                 .anyRequest().authenticated() 
             )

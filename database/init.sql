@@ -58,7 +58,7 @@ VALUES
   ('Charlie', 'WORKER', 'hash3');     -- user_id = 3
 
 -- -- 2. Insert tickets (must use existing user_ids for assigned_to, created_by)
--- INSERT INTO db.tickets (assigned_to, created_by, title, description, status, due_date, location, media_type)
--- VALUES
---   (2, 1, 'Fix Login Bug', 'User unable to log in via web app', 'IN_PROGRESS', '2025-06-10', 'Berlin Office', 'PHOTO'), -- ticket_id = 1
---   (3, 1, 'Database Migration', 'Move DB to cloud infrastructure', 'IN_PROGRESS', '2025-06-15', 'Remote', 'VIDEO');   -- ticket_id = 2
+INSERT INTO db.tickets (assigned_to, created_by, title, description, status, due_date, location, media_type)
+VALUES
+  (2, 1, 'Fix Login Bug', 'User unable to log in via web app', 'IN_PROGRESS', '2025-06-10', 'Berlin Office', 'PHOTO'), -- ticket_id = 1
+  (3, 1, 'Database Migration', 'Move DB to cloud infrastructure', 'IN_PROGRESS', '2025-06-15', 'Remote', 'VIDEO');   -- ticket_id = 2
