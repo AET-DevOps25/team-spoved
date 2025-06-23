@@ -22,7 +22,7 @@ const AssignModal: React.FC<AssignModalProps> = ({
 	const [showDropdown, setShowDropdown] = useState(false);
 
 	// Assigned user
-	const assignedUser = users.find((u) => u.userId === ticket.assignedTo);
+	const assignedUser = users.find((u) => u.userId === ticket.assignedTo?.userId);
 
 	// Debounce search term
 	useEffect(() => {
@@ -35,7 +35,7 @@ const AssignModal: React.FC<AssignModalProps> = ({
 	// Alphabetically sorted and filtered list of other users
 	const filteredUsers = useMemo(() => {
 		const list = users
-			.filter((u) => u.userId !== ticket.assignedTo)
+			.filter((u) => u.userId !== ticket.assignedTo?.userId)
 			.sort((a, b) => {
 				const nameA = `${a.name}`.toLowerCase();
 				const nameB = `${b.name}`.toLowerCase();
@@ -86,7 +86,7 @@ const AssignModal: React.FC<AssignModalProps> = ({
 
 	return (
 		<>
-			{/* Overlay */}
+			{/* ------------------ Overlay ------------------ */}
 			<div
 				className="fixed inset-0 bg-gray-500/75 transition-opacity"
 				onClick={onClose}
@@ -104,7 +104,7 @@ const AssignModal: React.FC<AssignModalProps> = ({
 						Assign Maintenance Worker
 					</h3>
 
-					{/* Assigned cleaner (if any) */}
+					{/* ------------------ Assigned worker (if any) ------------------ */}
 					{assignedUser && (
 						<div className="mb-4">
 							<h4 className="text-sm font-medium text-gray-700 mb-2">
@@ -116,8 +116,8 @@ const AssignModal: React.FC<AssignModalProps> = ({
 						</div>
 					)}
 
-					{/* Search input with dropdown */}
-					<div className="mb-6 relative dropdown-container">
+					{/* ------------------ Search input with dropdown ------------------ */}
+					<div className="mb-6 dropdown-container">
 						<label className="block text-sm font-medium text-gray-700 mb-1">
 							Name
 						</label>
@@ -132,19 +132,28 @@ const AssignModal: React.FC<AssignModalProps> = ({
 							} focus:outline-none focus:ring-2 focus:ring-[#1A97FE] focus:border-[#1A97FE]`}
 						/>
 						{showDropdown && !selectedUser && (
-							<ul className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md max-h-40 overflow-y-auto shadow-sm">
+							<ul 
+								className={`mt-1 w-full bg-white border border-gray-200 rounded-md shadow-sm ${
+									filteredUsers.length > 3 
+										? 'max-h-[9rem] overflow-y-auto' 
+										: ''
+								}`}
+								style={{
+									maxHeight: filteredUsers.length > 3 ? '9rem' : 'auto'
+								}}
+							>
 								{filteredUsers.length > 0 ? (
 									filteredUsers.map((user) => (
 										<li
 											key={user.userId}
 											onClick={() => handleUserSelect(user)}
-											className="px-3 py-2 cursor-pointer hover:bg-blue-50"
+											className="px-3 py-2 cursor-pointer hover:bg-blue-50 flex items-center min-h-[3rem]"
 										>
 											{user.name}
 										</li>
 									))
 								) : (
-									<li className="px-3 py-2 text-gray-500">
+									<li className="px-3 py-2 text-gray-500 flex items-center min-h-[3rem]">
 										No maintenance worker found
 									</li>
 								)}
@@ -164,7 +173,7 @@ const AssignModal: React.FC<AssignModalProps> = ({
 						</div>
 					)}
 
-					{/* Footer */}
+					{/* ------------------ Footer ------------------ */}
 					<div className="flex justify-end">
 						<button
 							onClick={onClose}
