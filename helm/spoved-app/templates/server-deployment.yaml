@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: spoved-server
-  namespace: "{{ .Values.prefix }}-devops25"
+  namespace: "spoved"
 spec:
   replicas: {{ .Values.server.replicaCount }}
   selector:

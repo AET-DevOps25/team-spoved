@@ -3,7 +3,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: "team-spoved-ingress"
-  namespace: "{{ .Values.prefix }}-devops25"
+  namespace: "spoved"
   {{- $annotations := .Values.ingress.annotations | default dict }}
   {{- if $annotations }}
   annotations:
@@ -13,11 +13,11 @@ spec:
   {{- if .Values.ingress.tls }}
   tls:
     - hosts:
-        - "{{ .Values.prefix }}-devops25.student.k8s.aet.cit.tum.de"
+        - "team-spoved.student.k8s.aet.cit.tum.de"
       secretName: "team-spoved-devops25-tls"
   {{- end }}
   rules:
-    - host: "{{ .Values.prefix }}-devops25.student.k8s.aet.cit.tum.de"
+    - host: "team-spoved.devops25.student.k8s.aet.cit.tum.de"
       http:
         paths:
           - path: /

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-pvc
-  namespace: "{{ .Values.prefix }}-devops25"
+  namespace: "spoved"
 spec:
   accessModes:
     - ReadWriteOnce

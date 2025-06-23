@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: db-init-script
-  namespace: "{{ .Values.prefix }}-devops25"
+  namespace: "spoved"
 data:
   init.sql: |-
     CREATE SCHEMA IF NOT EXISTS db AUTHORIZATION "spOveD";

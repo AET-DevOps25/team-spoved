@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: spoved-client
-  namespace: "{{ .Values.prefix }}-devops25"
+  namespace: "spoved"
 spec:
   replicas: {{ .Values.client.replicaCount }}
   selector:
@@ -27,8 +27,9 @@ spec:
           ports:
             - containerPort: {{ .Values.client.service.targetPort }}
           env:
-            - name: PUBLIC_API_URL
+            - name: VITE_SERVER_API_URL
               valueFrom:
                 configMapKeyRef:
                   name: app-config
                   key: api_url
+                  
