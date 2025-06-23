@@ -1,12 +1,8 @@
 import axios from 'axios';
 import type { TicketDto, CreateTicketRequest } from '../types/TicketDto';
+import { getAuthHeaders } from './utils';
 
 const BASE_URL = import.meta.env.VITE_SERVER_API_URL + '/tickets';
-
-const getAuthHeaders = () => {
-  const token = sessionStorage.getItem('jwt');
-  return { Authorization: `Bearer ${token}` };
-};
 
 export const createTicket = async (ticket: CreateTicketRequest): Promise<TicketDto> => {
   const response = await axios.post(BASE_URL, ticket, { headers: getAuthHeaders() });

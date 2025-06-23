@@ -1,15 +1,11 @@
 import axios from 'axios';
 import type { UserDto, LoginUserRequest, RegisterUserRequest } from '../types/UserDto';
 import type { Jwt } from '../types/Jwt';
+import { getAuthHeaders } from './utils';
 
 // User endpoints
 const BASE_URL = import.meta.env.VITE_SERVER_API_URL + '/users';
 const AUTH_BASE_URL = import.meta.env.VITE_AUTH_API_URL + '/auth';
-
-const getAuthHeaders = () => {
-  const token = sessionStorage.getItem('jwt');
-  return { Authorization: `Bearer ${token}` };
-};
 
 export const getUsers = async (): Promise<UserDto[]> => {
     const response = await axios.get(BASE_URL, {headers: getAuthHeaders()});
