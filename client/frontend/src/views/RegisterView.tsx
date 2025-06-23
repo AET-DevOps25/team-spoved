@@ -9,15 +9,19 @@ export default function RegisterView() {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState<Role>('WORKER');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
+
     try {
       const credentials = { name, password, role };
       await registerUser(credentials);
-      navigate('/');
+      setSuccess('Registration successful!');
+      setTimeout(() => navigate('/'), 3000); // Debounce navigation
     } catch {
       setError('Registration failed');
     }
@@ -77,6 +81,7 @@ export default function RegisterView() {
                 </select>
               </div>
               {error && <div className="text-red-500 mb-2">{error}</div>}
+              {success && <div className="text-green-500 mb-2">{success}</div>} {/* Display success message */}
               <button
                 type="submit"
                 className="w-full rounded-md bg-[#1A97FE] py-2 text-white font-semibold hover:bg-[#1A97FE] disabled:bg-gray-400"
