@@ -2,6 +2,12 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "../api/userService";
 import { jwtDecode } from "jwt-decode";
+import type { JwtPayload } from "jwt-decode";
+
+// Custom interface for JWT payload that includes 'role'
+interface CustomJwtPayload extends JwtPayload {
+  role: string;
+}
 
 import newDesign from "../assets/image_no_bg_left_screen.png";
 
@@ -16,11 +22,12 @@ const LoginView = () => {
       setError("Please enter username and password.");
       return;
     }
+
     try {
       const credentials = {name : username, password: password};
       const data = await loginUser(credentials);
 
-      const decoded = jwtDecode(data.token);
+      const decoded = jwtDecode<CustomJwtPayload>(data.token);
       
       sessionStorage.setItem("jwt", data.token);
       sessionStorage.setItem("name", username);
@@ -28,7 +35,7 @@ const LoginView = () => {
       const role = decoded.role.toLowerCase();
 
       navigate(`/${role}`);
-    } catch (error) {
+   } catch (error) {
       console.error("Login error:", error);
       setError("Authentication failed. Please try again.");
     }

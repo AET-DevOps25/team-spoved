@@ -23,6 +23,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // FIXME Right now, everyone has the same level of authorization, change this to have 
         // RBAC for the API points 
+        // FIXME No CSRF is unsafe
         http
             .csrf(csrf -> {
                     csrf.ignoringRequestMatchers("/api/v1/*");

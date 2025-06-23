@@ -17,7 +17,7 @@ export default function RegisterView() {
     try {
       const credentials = { name, password, role };
       await registerUser(credentials);
-      navigate('/login');
+      navigate('/');
     } catch {
       setError('Registration failed');
     }

@@ -4,7 +4,7 @@ import type { TicketDto, CreateTicketRequest } from '../types/TicketDto';
 const BASE_URL = import.meta.env.VITE_SERVER_API_URL + '/tickets';
 
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('jwt');
+  const token = sessionStorage.getItem('jwt');
   return { Authorization: `Bearer ${token}` };
 };
 
