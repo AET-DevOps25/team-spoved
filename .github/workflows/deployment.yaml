@@ -1,0 +1,25 @@
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  test:
+    name: Run CI 
+    uses: ./.github/workflows/ci.yml
+
+  # Call the kubernetes_deploy workflow to deploy to Rancher
+#   deploy_kubernetes:
+#     name: Deploy to Kubernetes Cluster
+#     needs: test
+#     uses: ./.github/workflows/k8s-deployment.yml
+#     secrets: # Pass KUBECONFIG to called workflow
+#       KUBECONFIG: ${{ secrets.KUBECONFIG }}
+
+  # Call the aws_deploy workflow to deploy to AWS
+  # deploy_aws:
+  #  name: Deploy to AWS
+  #  needs: build
+  #  uses: ./.github/workflows/aws_deploy.yml
