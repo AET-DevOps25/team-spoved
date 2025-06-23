@@ -12,6 +12,7 @@ from ticket_generator.api.video_photo_service import router as videoPhotoService
 from ticket_generator.api.ticket_servce import router as ticketServiceRouter
 from ticket_generator.gemini.ticket_data_models import router as geminiRouter
 from ticket_generator.automation.ticket_processing_workflow import router as automationRouter
+from ticket_generator.api.voice_service import router as voiceServiceRouter
 
 app = FastAPI()
 
@@ -50,6 +51,7 @@ app.include_router(videoPhotoServiceRouter, prefix="/video-photo", tags=["video-
 app.include_router(ticketServiceRouter, prefix="/tickets", tags=["tickets"])
 app.include_router(geminiRouter, prefix="/gemini", tags=["gemini"])
 app.include_router(automationRouter, prefix="/automation", tags=["automation"])
+app.include_router(voiceServiceRouter, prefix="/voice", tags=["voice"])
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

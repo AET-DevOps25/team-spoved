@@ -382,3 +382,5 @@ sketch
 .svelte-kit
 .gradle
 bin
+
+*/src/ticket_generator/credentials/credentials.json

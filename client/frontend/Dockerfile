@@ -4,7 +4,7 @@ WORKDIR /app
 
 # Copy only package files to leverage Docker cache
 COPY package.json package-lock.json* ./
-
+RUN npm install
 # Copy source code (after dependencies are installed)
 COPY public ./public
 COPY src ./src
@@ -12,6 +12,7 @@ COPY *.json *.ts *.js *.html ./
 
 ARG VITE_SERVER_API_URL
 ENV VITE_SERVER_API_URL=$VITE_SERVER_API_URL
+
 
 # Build the project
 RUN npm run build

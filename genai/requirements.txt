@@ -3,3 +3,8 @@ python-dotenv
 fastapi
 uvicorn
 google-generativeai
+google-cloud-speech
+google-cloud-texttospeech
+pydub
+ffmpeg-python
+python-multipart
