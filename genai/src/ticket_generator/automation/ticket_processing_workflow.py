@@ -30,7 +30,7 @@ async def handle_media_upload(event: MediaUploadEvent, background_tasks: Backgro
     Handle media upload events and trigger appropriate processing
     """
     try:
-        if event.media_type.upper() == "PHOTO" or event.media_type.upper() == "VIDEO":
+        if event.media_type.upper() == "PHOTO" or event.media_type.upper() == "VIDEO" or event.media_type.upper() == "AUDIO":
             background_tasks.add_task(
                 auto_create_ticket,
                 AutoTicketRequest(
@@ -38,7 +38,7 @@ async def handle_media_upload(event: MediaUploadEvent, background_tasks: Backgro
                     created_by=event.uploaded_by
                 )
             )
-            return {"status": "success", "message": "Photo processing queued"}
+            return {"status": "success", "message": "Media processing queued"}
             
         else:
             return {"status": "info", "message": f"Media type {event.media_type} not supported for auto-processing"}
@@ -56,7 +56,7 @@ async def trigger_automation_ticket_processing_workflow(event: MediaUploadEvent,
     
     try:
         # Only process photos for now (can be extended for videos)
-        if event.media_type.upper() not in ['PHOTO', 'VIDEO']:
+        if event.media_type.upper() not in ['PHOTO', 'VIDEO', 'AUDIO']:
             return WorkflowResponse(
                 success=False,
                 message=f"Automation not supported for media type: {event.media_type}"

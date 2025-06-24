@@ -4,11 +4,7 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from ticket_generator.media.photo.model.gemini_photo import generate_ticket
-from ticket_generator.media.video.model.gemini_video import generate_ticket_from_video
-from ticket_generator.api.video_photo_service import update_analyzed, update_result, update_reason
 from ticket_generator.api.ticket_servce import create_ticket
-from ticket_generator.api.media_service import fetch_media_by_id
 load_dotenv()
 
 router = APIRouter()

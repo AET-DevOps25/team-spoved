@@ -154,9 +154,6 @@ function SupervisorTicketsView() {
       setMediaLoading(true);
       try {
         const data =  await getMediaById(ticket.mediaId);
-        console.log(data.content.length); // Log the length of the content
-        console.log(data.blobType); // Log the blob type
-        console.log(data.mediaType); // Log the media type
         setMedia(data);
       } catch (error) {
         console.error("Error fetching media:", error);

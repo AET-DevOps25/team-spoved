@@ -31,7 +31,7 @@ try:
     speech_client = speech.SpeechClient(credentials=credentials)
     tts_client = texttospeech.TextToSpeechClient(credentials=credentials)
 except Exception as e:
-    print(f"Warning: Could not initialize Google Cloud clients: {e}")
+    print(f"[ERROR] Could not initialize Google Cloud clients: {e}")
     speech_client = None
     tts_client = None
 
@@ -78,11 +78,10 @@ def convert_webm_to_wav(webm_data: bytes) -> bytes:
         os.unlink(webm_path)
         os.unlink(wav_path)
         
-        print(f"Audio converted: 16kHz, mono, 16-bit, size: {len(wav_data)} bytes")
         return wav_data
         
     except Exception as e:
-        print(f"Audio conversion error: {e}")
+        print(f"[ERROR] Audio conversion error: {e}")
         raise Exception(f"Failed to convert audio: {str(e)}")
 
 @router.post("/speech-to-text", response_model=SpeechToTextResponse)
@@ -94,21 +93,17 @@ async def speech_to_text(audio: UploadFile = File(...)):
     try:
         # Read the uploaded audio file
         audio_content = await audio.read()
-        print(f"Received audio file: {audio.filename}, type: {audio.content_type}, size: {len(audio_content)} bytes")
-        
+
         # Convert WebM to WAV if necessary
         if audio.content_type and 'webm' in audio.content_type:
-            print(f"Converting WebM audio to 16-bit WAV...")
             audio_content = convert_webm_to_wav(audio_content)
             encoding = speech.RecognitionConfig.AudioEncoding.LINEAR16
             sample_rate = 16000
         else:
             # Try to handle as WAV directly
-            print(f"Processing as WAV audio...")
             encoding = speech.RecognitionConfig.AudioEncoding.LINEAR16
             sample_rate = 16000
         
-        print(f"Using encoding: {encoding}, sample rate: {sample_rate}")
         
         # Configure recognition
         config = speech.RecognitionConfig(
@@ -124,8 +119,7 @@ async def speech_to_text(audio: UploadFile = File(...)):
             audio=speech.RecognitionAudio(content=audio_content)
         )
         
-        # Perform the recognition
-        print("Sending audio to Google Cloud Speech-to-Text...")
+
         response = speech_client.recognize(request=request)
         
         # Extract transcript
@@ -136,56 +130,78 @@ async def speech_to_text(audio: UploadFile = File(...)):
         if not transcript.strip():
             raise HTTPException(status_code=400, detail="No speech detected in audio")
         
-        print(f"Transcription successful: {transcript}")
         return SpeechToTextResponse(transcript=transcript.strip())
         
     except Exception as e:
-        print(f"Speech-to-text error: {e}")
+        print(f"[ERROR] Speech-to-text error: {e}")
         raise HTTPException(status_code=500, detail=f"Speech recognition failed: {str(e)}")
 
 @router.post("/query-ai", response_model=QueryAIResponse)
 async def query_ai(request: QueryAIRequest):
     """Query Gemini AI for a response based on user input and conversation history"""
     try:
-        conversation_historic = request.conversation_historic + f"\nUser: {request.prompt}"
+        # System instructions for the assistant
+        system_instruction = (
+            "You are a voice-based ticket assistant. Your goal is to collect information to generate a service ticket. "
+            "Ask exactly and only the following four questions, one at a time, waiting for the user's response after each question:\n"
+            "1. Where is the issue located?\n"
+            "2. What is the issue?\n"
+            "3. Can you describe it in detail?\n"
+            "4. Do you want to add something else?\n"
+            "After all four questions are answered, say: 'Thank you for the information, I am creating a ticket for you.' "
+            "Do not ask any other questions or make small talk. End the conversation after completing this flow."
+        )
         
-        context = "I am currently an employee from a company and I want to report a maintenance issue."
+        # Prepare chat history for Gemini (only user and model roles)
+        chat_history = []
         
-        adjusted_prompt = f"{context}{conversation_historic}"
+        # If there's conversation history, parse it and add to chat_history
+        if request.conversation_historic:
+            for line in request.conversation_historic.strip().split('\n'):
+                if line.startswith("User:"):
+                    chat_history.append({"role": "user", "parts": [{"text": line[len("User: "):]}]})
+                elif line.startswith("AI:"):
+                    chat_history.append({"role": "model", "parts": [{"text": line[len("AI: "):]}]})
         
-        model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        # If this is the first message (no history), include system instructions with the user's prompt
+        if not chat_history:
+            user_message = f"{system_instruction}\n\nUser: {request.prompt}"
+            chat_history.append({"role": "user", "parts": [{"text": user_message}]})
+        else:
+            # Add current user input to existing conversation
+            chat_history.append({"role": "user", "parts": [{"text": request.prompt}]})
+
+        # Instantiate Gemini model with system instruction
+        model = genai.GenerativeModel(
+            'gemini-2.0-flash-exp',
+            system_instruction=system_instruction
+        )
+
+        # Get response
         response = model.generate_content(
-            contents=[
-                {"role": "user", "parts": [
-                    {
-                        "text": "You are a ticket generator for a company. You are given a description of the issue and you need to generate a ticket for it. "
-                        "In order to generate the ticket, you need to ask the user for the following information: "
-                        "1. Where is the issue located? "
-                        "2. What is the issue? "
-                        "3. Can you describe it in detail? "
-                        "4. Do you want to add something else? "
-                        "If all of the questions have been answered say: Thank you for the information, I am creating a ticket for you. "
-                        + adjusted_prompt
-                    }
-                ]}
-            ],
+            contents=chat_history,
             generation_config={
                 "temperature": 0.7,
                 "top_p": 0.95,
                 "top_k": 40
             }
         )
-        
-        response_text = response.text
-        updated_history = conversation_historic + f"\nAI: {response_text}"
-        
+
+        response_text = response.text.strip()
+
+        # Build updated conversation history
+        updated_history = (
+            request.conversation_historic.strip() + 
+            f"\nUser: {request.prompt}\nAI: {response_text}"
+        ).strip()
+
         return QueryAIResponse(
             response=response_text,
             updatedHistory=updated_history
         )
-        
+
     except Exception as e:
-        print(f"AI query error: {e}")
+        print(f"[ERROR] AI query error: {e}")
         raise HTTPException(status_code=500, detail=f"AI query failed: {str(e)}")
 
 @router.post("/text-to-speech")
@@ -225,5 +241,5 @@ async def text_to_speech(request: TextToSpeechRequest):
         )
         
     except Exception as e:
-        print(f"Text-to-speech error: {e}")
+        print(f"[ERROR] Text-to-speech error: {e}")
         raise HTTPException(status_code=500, detail=f"Text-to-speech failed: {str(e)}")

@@ -1,25 +1,22 @@
 import newDesign from "../assets/image_no_bg_left_screen.png"
 import LogoutModal from "../components/LogoutModal"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMicrophone, faStop, faTrash, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { faMicrophone, faStop, faTrash, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { useVoiceToVoice } from "../hooks/MicrophoneHook";
 
 export default function MicrophoneView() {
-  const navigate = useNavigate();
   const {
     messages,
     isRecording,
     isPlaying,
     errorMsg,
+    completed,
     startVoiceConversation,
     stopRecording,
-    clearConversation
+    clearConversation,
+    handleSendMessage,
   } = useVoiceToVoice();
 
-  const handleBack = () => {
-    navigate("/worker/tickets");
-  };
 
   return (
     <div className="flex h-screen gap-0">
@@ -44,16 +41,6 @@ export default function MicrophoneView() {
         {/* ------------------ Logout Modal ------------------ */}
         <div className="absolute top-6 left-6 z-50">
           <LogoutModal />
-        </div>
-
-        {/* ------------------ Back Button ------------------ */}
-        <div className="absolute top-6 right-6 z-50">
-          <button
-            onClick={handleBack}
-            className="bg-gray-500 text-white rounded-full w-12 h-12 flex items-center justify-center hover:bg-gray-600 transition-colors"
-          >
-            <FontAwesomeIcon icon={faArrowLeft} />
-          </button>
         </div>
 
         <div className="flex flex-col items-center justify-center h-full max-w-2xl mx-auto">
@@ -116,7 +103,7 @@ export default function MicrophoneView() {
             {(isRecording || isPlaying) && (
               <button
                 onClick={stopRecording}
-                className="w-16 h-16 bg-red-500 text-white rounded-full hover:bg-red-600 flex items-center justify-center text-xl shadow-lg transition-all hover:scale-105"
+                className="w-20 h-20 bg-red-500 text-white rounded-full hover:bg-red-600 flex items-center justify-center text-2xl shadow-lg transition-all hover:scale-105"
               >
                 <FontAwesomeIcon icon={faStop} />
               </button>
@@ -127,7 +114,7 @@ export default function MicrophoneView() {
               <button
                 onClick={clearConversation}
                 disabled={isRecording || isPlaying}
-                className={`w-16 h-16 rounded-full flex items-center justify-center text-white text-xl shadow-lg transition-all ${
+                className={`w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl shadow-lg transition-all ${
                   isRecording || isPlaying
                     ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-orange-500 hover:bg-orange-600 hover:scale-105'
@@ -136,7 +123,20 @@ export default function MicrophoneView() {
                 <FontAwesomeIcon icon={faTrash} />
               </button>
             )}
+
+            {/* ------------------ Send Button ------------------ */}
+          {completed && (
+            <button
+              onClick={handleSendMessage}
+              disabled={!completed}
+              className="w-20 h-20 bg-green-500 text-white rounded-full flex items-center justify-center hover:bg-green-600 transition-colors"
+            >
+              <FontAwesomeIcon icon={faPaperPlane} />
+            </button>
+          )}
+
           </div>
+
 
           {/* ------------------ Status Indicator ------------------ */}
           <div className="mt-6 text-center">
@@ -146,8 +146,11 @@ export default function MicrophoneView() {
             {isRecording && (
               <p className="text-red-600 font-semibold animate-pulse">🎤 Listening...</p>
             )}
-            {!isRecording && !isPlaying && messages.length > 0 && (
+            {!isRecording && !isPlaying && messages.length > 0 && !completed && (
               <p className="text-green-600 font-semibold">✓ Ready for next interaction</p>
+            )}
+            {completed && (
+              <p className="text-green-600 font-semibold">✓ Conversation completed</p>
             )}
           </div>
         </div>

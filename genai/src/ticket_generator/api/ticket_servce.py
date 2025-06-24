@@ -4,6 +4,7 @@ from fastapi import APIRouter
 from dotenv import load_dotenv
 from ticket_generator.media.photo.model.gemini_photo import generate_ticket as generate_photo_ticket
 from ticket_generator.media.video.model.gemini_video import generate_ticket_from_video
+from ticket_generator.media.voice.model.gemini_audio import generate_ticket_from_audio
 from ticket_generator.api.media_service import fetch_media_by_id
 from datetime import datetime, timedelta
 from ticket_generator.api.video_photo_service import update_result, update_reason, update_analyzed
@@ -26,7 +27,6 @@ def fetch_ticket_by_id(ticket_id: int):
 def create_ticket(ticket: dict):
     # Fetch media metadata to determine the blob type
     media = fetch_media_by_id(ticket['media_id'])
-    print(media)
     
     # Route to appropriate processor based on blob type
     media_type = media['mediaType']
@@ -35,6 +35,8 @@ def create_ticket(ticket: dict):
         model_ticket = generate_photo_ticket(ticket['media_id'])
     elif media_type == 'VIDEO':
         model_ticket = generate_ticket_from_video(ticket['media_id'])
+    elif media_type == 'AUDIO':
+        model_ticket = generate_ticket_from_audio(ticket['media_id'])
     else:
         raise ValueError(f'Unsupported media type: {media_type}')
     
