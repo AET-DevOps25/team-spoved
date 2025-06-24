@@ -24,6 +24,8 @@ interface UseVoiceToVoiceReturn {
     errorMsg: string;
     conversationHistoric: string;
     completed: boolean;
+    recordingTimeLeft: number;
+    audioLevel: number;
     startRecording: () => void;
     stopRecording: () => void;
     clearConversation: () => void;
@@ -38,6 +40,8 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
     const [errorMsg, setErrorMsg] = useState('');
     const [isRecording, setIsRecording] = useState(false);
     const [completed, setCompleted] = useState(false);
+    const [recordingTimeLeft, setRecordingTimeLeft] = useState(30);
+    const [audioLevel, setAudioLevel] = useState(0);
 
     // Refs for managing audio recording and playback
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -49,10 +53,65 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
     const audioSegmentsRef = useRef<AudioSegment[]>([]);
     const conversationHistoricRef = useRef<string>('');
 
+    // Add refs for audio analysis
+    const audioContextRef = useRef<AudioContext | null>(null);
+    const analyserRef = useRef<AnalyserNode | null>(null);
+    const animationFrameRef = useRef<number>(0);
+    const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const recordingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
     const navigate = useNavigate();
 
     // Completion phrase to detect
     const COMPLETION_PHRASE = "Thank you for the information, I am creating a ticket for you.";
+
+    /**
+     * Monitor audio levels to ensure speech is being captured
+     */
+    const startAudioLevelMonitoring = (stream: MediaStream) => {
+        try {
+            audioContextRef.current = new AudioContext();
+            analyserRef.current = audioContextRef.current.createAnalyser();
+            
+            const source = audioContextRef.current.createMediaStreamSource(stream);
+            source.connect(analyserRef.current);
+            
+            analyserRef.current.fftSize = 256;
+            const bufferLength = analyserRef.current.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            
+            const updateAudioLevel = () => {
+                if (analyserRef.current) {
+                    analyserRef.current.getByteFrequencyData(dataArray);
+                    
+                    // Calculate average volume
+                    const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
+                    setAudioLevel(Math.round(average));
+                    
+                    animationFrameRef.current = requestAnimationFrame(updateAudioLevel);
+                }
+            };
+            
+            updateAudioLevel();
+        } catch (error) {
+            console.warn('Audio level monitoring failed:', error);
+        }
+    };
+
+    /**
+     * Stop audio level monitoring
+     */
+    const stopAudioLevelMonitoring = () => {
+        if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
+        }
+        if (audioContextRef.current) {
+            audioContextRef.current.close();
+            audioContextRef.current = null;
+        }
+        analyserRef.current = null;
+        setAudioLevel(0);
+    };
 
     /**
      * Convert audio blob to consistent format for merging with compression
@@ -365,8 +424,7 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
     };
 
     /**
-     * Start recording function adapted from Google's streaming recognition sample
-     * Uses browser MediaRecorder API instead of node-record-lpcm16
+     * Enhanced start recording with better audio settings and monitoring
      */
     const startRecording = async (): Promise<void> => {
         if (isRecording || isProcessing || isPlaying) {
@@ -377,22 +435,48 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
             setErrorMsg('');
             setIsRecording(true);
             audioChunksRef.current = [];
+            setRecordingTimeLeft(30);
 
-            // Get user media (similar to Google's microphone input setup)
+            // Enhanced audio constraints for better quality
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: {
-                    sampleRate: 16000,  // Same as Google's sample (16kHz)
-                    channelCount: 1,    // Mono, like Google's LINEAR16 encoding
+                    sampleRate: 44100, // Higher sample rate for better quality
+                    channelCount: 1,
                     echoCancellation: true,
-                    noiseSuppression: true
+                    noiseSuppression: true,
+                    autoGainControl: true,
+                    //googEchoCancellation: true,
+                    //googNoiseSuppression: true,
+                    //googAutoGainControl: true,
+                    //googHighpassFilter: true, 
+                    //googTypingNoiseDetection: true,
+                    // Volume constraints
+                    //volume: 1.0,
                 }
             });
 
             audioStreamRef.current = stream;
+            
+            // Start audio level monitoring
+            startAudioLevelMonitoring(stream);
 
-            // Create MediaRecorder (browser equivalent of Google's streaming setup)
+            // Try different MIME types for better compatibility
+            let mimeType = 'audio/webm;codecs=opus';
+            if (!MediaRecorder.isTypeSupported(mimeType)) {
+                mimeType = 'audio/webm';
+                if (!MediaRecorder.isTypeSupported(mimeType)) {
+                    mimeType = 'audio/mp4';
+                    if (!MediaRecorder.isTypeSupported(mimeType)) {
+                        mimeType = ''; // Let browser choose
+                    }
+                }
+            }
+
+            console.log(`Using MIME type: ${mimeType || 'browser default'}`);
+
             const mediaRecorder = new MediaRecorder(stream, {
-                mimeType: 'audio/webm;codecs=opus'
+                mimeType: mimeType || undefined,
+                audioBitsPerSecond: 128000, // 128 kbps for good quality
             });
 
             mediaRecorderRef.current = mediaRecorder;
@@ -400,22 +484,43 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
             mediaRecorder.ondataavailable = (event) => {
                 if (event.data.size > 0) {
                     audioChunksRef.current.push(event.data);
+                    console.log(`Audio chunk: ${event.data.size} bytes, Total chunks: ${audioChunksRef.current.length}`);
                 }
             };
 
             mediaRecorder.onstop = async () => {
+                console.log('MediaRecorder stopped');
                 setIsRecording(false);
                 setIsProcessing(true);
+                
+                // Stop audio monitoring
+                stopAudioLevelMonitoring();
+
+                // Clear timers
+                if (countdownIntervalRef.current) {
+                    clearInterval(countdownIntervalRef.current);
+                    countdownIntervalRef.current = null;
+                }
+                if (recordingTimeoutRef.current) {
+                    clearTimeout(recordingTimeoutRef.current);
+                    recordingTimeoutRef.current = null;
+                }
 
                 try {
-                    // Create audio blob from recorded chunks
-                    const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+                    const audioBlob = new Blob(audioChunksRef.current, { 
+                        type: mimeType || 'audio/webm' 
+                    });
+                    
+                    console.log(`Final audio blob: ${audioBlob.size} bytes, type: ${audioBlob.type}`);
                     
                     if (audioBlob.size === 0) {
-                        throw new Error('No audio recorded');
+                        throw new Error('No audio data was recorded. Please check your microphone.');
                     }
 
-                    // Process the recorded audio through our pipeline
+                    if (audioBlob.size < 1000) { // Less than 1KB is likely silent
+                        throw new Error('Audio recording too short or silent. Please speak louder and try again.');
+                    }
+
                     await processRecordedAudio(audioBlob);
 
                 } catch (error) {
@@ -426,19 +531,41 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
                 }
             };
 
-            mediaRecorder.start();
+            mediaRecorder.onerror = (event) => {
+                console.error('MediaRecorder error:', event);
+                setErrorMsg('Recording failed. Please check your microphone permissions.');
+                stopRecording();
+            };
 
-            // Auto-stop after 10 seconds (similar to timeout in Google samples)
-            setTimeout(() => {
+            // Start with timeslice for regular data collection
+            mediaRecorder.start(500); // Collect data every 500ms
+            console.log('Recording started with timeslice: 500ms');
+
+            // Start countdown
+            countdownIntervalRef.current = setInterval(() => {
+                setRecordingTimeLeft(prev => {
+                    if (prev <= 1) {
+                        stopRecording();
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+
+            // Backup timeout
+            recordingTimeoutRef.current = setTimeout(() => {
+                console.log('Recording timeout reached');
                 if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
                     stopRecording();
                 }
-            }, 20000);
+            }, 30000);
 
         } catch (error) {
             console.error('Recording start error:', error);
-            setErrorMsg(`Failed to start recording: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            setErrorMsg(`Failed to start recording: ${error instanceof Error ? error.message : 'Microphone access denied or unavailable'}`);
             setIsRecording(false);
+            setRecordingTimeLeft(30);
+            stopAudioLevelMonitoring();
         }
     };
 
@@ -471,21 +598,41 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
     };
 
     /**
-     * Stop recording function
+     * Enhanced stop recording with proper cleanup
      */
     const stopRecording = (): void => {
+        console.log('stopRecording called');
+        
+        // Clear all timers
+        if (countdownIntervalRef.current) {
+            clearInterval(countdownIntervalRef.current);
+            countdownIntervalRef.current = null;
+        }
+        if (recordingTimeoutRef.current) {
+            clearTimeout(recordingTimeoutRef.current);
+            recordingTimeoutRef.current = null;
+        }
+
+        // Stop audio monitoring
+        stopAudioLevelMonitoring();
+
         if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
             mediaRecorderRef.current.stop();
         }
 
         if (audioStreamRef.current) {
-            audioStreamRef.current.getTracks().forEach(track => track.stop());
+            audioStreamRef.current.getTracks().forEach(track => {
+                track.stop();
+                console.log(`Stopped track: ${track.label}, kind: ${track.kind}`);
+            });
             audioStreamRef.current = null;
         }
 
         if (audioRef.current) {
             audioRef.current.pause();
         }
+
+        setRecordingTimeLeft(30);
     };
 
     /**
@@ -532,6 +679,8 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
         errorMsg,
         conversationHistoric: conversationHistoricRef.current,
         completed,
+        recordingTimeLeft,
+        audioLevel,
         startRecording,
         stopRecording,
         clearConversation,

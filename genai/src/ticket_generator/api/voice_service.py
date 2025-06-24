@@ -2,6 +2,8 @@ import os
 import io
 import tempfile
 import subprocess
+import wave
+import struct
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -84,33 +86,128 @@ def convert_webm_to_wav(webm_data: bytes) -> bytes:
         print(f"[ERROR] Audio conversion error: {e}")
         raise Exception(f"Failed to convert audio: {str(e)}")
 
+def analyze_audio_content(audio_data: bytes) -> dict:
+    """Analyze audio content to check if it contains actual speech"""
+    try:
+        # Basic audio file analysis
+        file_size = len(audio_data)
+        
+        # Try to read as WAV to get more details
+        try:
+            with tempfile.NamedTemporaryFile(suffix='.wav') as temp_wav:
+                temp_wav.write(audio_data)
+                temp_wav.flush()
+                
+                with wave.open(temp_wav.name, 'rb') as wav_file:
+                    frames = wav_file.getnframes()
+                    sample_rate = wav_file.getframerate()
+                    duration = frames / sample_rate
+                    
+                    # Read some audio data to check for silence
+                    wav_file.setpos(0)
+                    sample_data = wav_file.readframes(min(frames, sample_rate))  # Read up to 1 second
+                    
+                    # Convert to amplitude values
+                    if wav_file.getsampwidth() == 2:  # 16-bit
+                        samples = struct.unpack(f'<{len(sample_data)//2}h', sample_data)
+                        max_amplitude = max(abs(s) for s in samples) if samples else 0
+                        avg_amplitude = sum(abs(s) for s in samples) / len(samples) if samples else 0
+                    else:
+                        max_amplitude = 0
+                        avg_amplitude = 0
+                        
+                    return {
+                        'file_size': file_size,
+                        'duration': duration,
+                        'sample_rate': sample_rate,
+                        'frames': frames,
+                        'max_amplitude': max_amplitude,
+                        'avg_amplitude': avg_amplitude,
+                        'has_content': max_amplitude > 1000,  # Threshold for actual speech
+                    }
+        except Exception:
+            # If WAV analysis fails, just return basic info
+            return {
+                'file_size': file_size,
+                'duration': None,
+                'has_content': file_size > 1000,  # Basic size check
+            }
+            
+    except Exception as e:
+        print(f"[ERROR] Audio analysis failed: {e}")
+        return {'error': str(e)}
+
 @router.post("/speech-to-text", response_model=SpeechToTextResponse)
 async def speech_to_text(audio: UploadFile = File(...)):
-    """Convert speech audio to text using Google Cloud Speech-to-Text"""
+    """Convert speech audio to text using Google Cloud Speech-to-Text with enhanced debugging"""
     if not speech_client:
         raise HTTPException(status_code=500, detail="Speech-to-Text service not available")
     
     try:
         # Read the uploaded audio file
         audio_content = await audio.read()
-
+        
+        # Analyze original audio
+        original_analysis = analyze_audio_content(audio_content)
+        
         # Convert WebM to WAV if necessary
         if audio.content_type and 'webm' in audio.content_type:
-            audio_content = convert_webm_to_wav(audio_content)
+            try:
+                audio_content = convert_webm_to_wav(audio_content)
+                
+                # Analyze converted audio
+                converted_analysis = analyze_audio_content(audio_content)
+                
+                # Check if conversion resulted in silence
+                if not converted_analysis.get('has_content', True):
+                    raise HTTPException(
+                        status_code=400, 
+                        detail="Audio appears to be silent after conversion. Please speak louder or check your microphone."
+                    )
+                    
+            except Exception as e:
+                print(f"[ERROR] Audio conversion failed: {e}")
+                raise HTTPException(
+                    status_code=400, 
+                    detail=f"Audio conversion failed: {str(e)}. Please try recording again."
+                )
+            
             encoding = speech.RecognitionConfig.AudioEncoding.LINEAR16
             sample_rate = 16000
         else:
             # Try to handle as WAV directly
             encoding = speech.RecognitionConfig.AudioEncoding.LINEAR16
             sample_rate = 16000
-        
-        
-        # Configure recognition
+
+        # Enhanced recognition configuration
         config = speech.RecognitionConfig(
             encoding=encoding,
             sample_rate_hertz=sample_rate,
             language_code='en-US',
             enable_automatic_punctuation=True,
+            enable_word_confidence=True,
+            enable_spoken_punctuation=True,
+            enable_spoken_emojis=True,
+            use_enhanced=True,
+            # Audio channel configuration
+            audio_channel_count=1,
+            enable_separate_recognition_per_channel=False,
+            # Alternative language codes
+            alternative_language_codes=['en-GB', 'en-AU'],
+            # Profanity filter
+            profanity_filter=False,
+            # Speech contexts for better recognition
+            speech_contexts=[
+                speech.SpeechContext(
+                    phrases=[
+                        "issue", "problem", "broken", "not working", "error",
+                        "location", "building", "floor", "room", "office",
+                        "computer", "printer", "network", "internet", "email",
+                        "software", "hardware", "application", "system"
+                    ],
+                    boost=10.0
+                )
+            ]
         )
         
         # Create the request
@@ -119,19 +216,46 @@ async def speech_to_text(audio: UploadFile = File(...)):
             audio=speech.RecognitionAudio(content=audio_content)
         )
         
-
         response = speech_client.recognize(request=request)
-        
-        # Extract transcript
+
+        # Extract transcript with detailed logging
         transcript = ""
-        for result in response.results:
-            transcript += result.alternatives[0].transcript
+        total_confidence = 0
+        result_count = 0
+        
+        for i, result in enumerate(response.results):
+            alternative = result.alternatives[0]
+            transcript += alternative.transcript
+            
+            
+            if hasattr(alternative, 'confidence'):
+                total_confidence += alternative.confidence
+                result_count += 1
+        
+        avg_confidence = total_confidence / result_count if result_count > 0 else 0
         
         if not transcript.strip():
-            raise HTTPException(status_code=400, detail="No speech detected in audio")
+            # Provide more specific error based on audio analysis
+            audio_analysis = analyze_audio_content(audio_content)
+            if audio_analysis.get('duration', 0) < 0.5:
+                error_msg = "Recording too short (less than 0.5 seconds). Please record for longer."
+            elif not audio_analysis.get('has_content', True):
+                error_msg = "No speech detected - audio appears to be silent. Please speak louder."
+            else:
+                error_msg = "No speech detected in audio. Please speak more clearly and ensure your microphone is working."
+                
+            raise HTTPException(status_code=400, detail=error_msg)
+        
+        # Check confidence level
+        if avg_confidence < 0.5:
+            print(f"[WARN] Low confidence transcript: {avg_confidence:.3f}")
+            # Still return the transcript but log the warning
         
         return SpeechToTextResponse(transcript=transcript.strip())
         
+    except HTTPException:
+        # Re-raise HTTP exceptions
+        raise
     except Exception as e:
         print(f"[ERROR] Speech-to-text error: {e}")
         raise HTTPException(status_code=500, detail=f"Speech recognition failed: {str(e)}")
@@ -143,6 +267,7 @@ async def query_ai(request: QueryAIRequest):
         # System instructions for the assistant
         system_instruction = (
             "You are a voice-based ticket assistant. Your goal is to collect information to generate a service ticket. "
+            "Check every response you get to see if it is a valid response to the question. If it is not, ask the user to clarify. "
             "Ask exactly and only the following four questions, one at a time, waiting for the user's response after each question:\n"
             "1. Where is the issue located?\n"
             "2. What is the issue?\n"

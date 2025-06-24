@@ -12,6 +12,8 @@ export default function MicrophoneView() {
     isPlaying,
     errorMsg,
     completed,
+    recordingTimeLeft,
+    audioLevel,
     startVoiceConversation,
     stopRecording,
     clearConversation,
@@ -182,12 +184,42 @@ export default function MicrophoneView() {
               <p className="text-blue-600 font-semibold">🔊 System is speaking...</p>
             )}
             {isRecording && (
-              <p className="text-red-600 font-semibold animate-pulse">🎤 Listening...</p>
+              <div>
+                <p className="text-red-600 font-semibold animate-pulse">
+                  🎤 Listening... ({recordingTimeLeft}s remaining)
+                </p>
+                {/* Audio level indicator */}
+                <div className="mt-2">
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-sm text-gray-600">Audio level:</span>
+                    <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-100 ${
+                          audioLevel > 30 ? 'bg-green-500' : 
+                          audioLevel > 10 ? 'bg-yellow-500' : 'bg-red-500'
+                        }`}
+                        style={{ width: `${Math.min(audioLevel * 2, 100)}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-gray-500">{audioLevel}</span>
+                  </div>
+                  {audioLevel < 5 && (
+                    <p className="text-orange-500 text-sm mt-1">
+                      Speak louder - very low audio detected
+                    </p>
+                  )}
+                </div>
+                {recordingTimeLeft <= 5 && (
+                  <p className="text-orange-500 text-sm mt-1 animate-pulse">
+                    Recording will stop soon!
+                  </p>
+                )}
+              </div>
             )}
             {!isRecording && !isPlaying && messages.length > 0 && !completed && (
               <p className="text-green-600 font-semibold">✓ Ready for next interaction</p>
             )}
-            {completed && (
+            {completed && !isRecording && !isPlaying && messages.length > 0 && (
               <p className="text-green-600 font-semibold">✓ Conversation completed</p>
             )}
           </div>
