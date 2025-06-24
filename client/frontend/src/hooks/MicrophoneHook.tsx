@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from "react";
 import { createMedia } from '../api/mediaService';
 import { useNavigate } from "react-router-dom";
+import VoiceService from '../api/voiceService';
 
 interface Message {
     type: 'user' | 'system';
@@ -49,9 +50,6 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
     const conversationHistoricRef = useRef<string>('');
 
     const navigate = useNavigate();
-
-    // Backend API base URL
-    const GENAI_API_URL = import.meta.env.VITE_GENAI_API_URL;
 
     // Completion phrase to detect
     const COMPLETION_PHRASE = "Thank you for the information, I am creating a ticket for you.";
@@ -260,8 +258,7 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
     };
 
     /**
-     * Speech-to-Text function adapted from Google Cloud Speech API sample
-     * Instead of using Google Cloud client directly, we use our backend API
+     * Speech-to-Text function using VoiceService
      * It also tracks the audio segment and detects completion phrase
      */
     const speechToText = async (audioBlob: Blob): Promise<string> => {
@@ -273,22 +270,8 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
                 type: 'user'
             });
 
-            // Create FormData similar to Google's multipart upload approach
-            const formData = new FormData();
-            formData.append('audio', audioBlob, 'recording.wav');
-
-            // Call our backend API which uses Google Cloud Speech client
-            const response = await fetch(`${GENAI_API_URL}/voice/speech-to-text`, {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error(`Speech-to-text failed: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            const transcript = data.transcript;
+            // Use VoiceService for speech-to-text conversion
+            const transcript = await VoiceService.speechToText(audioBlob);
 
             if (!transcript || transcript.trim() === '') {
                 throw new Error('No speech detected in audio');
@@ -317,21 +300,8 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
 
             setIsPlaying(true);
 
-            // Call our backend API which uses Google Cloud TTS client
-            const response = await fetch(`${GENAI_API_URL}/voice/text-to-speech`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ text }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Text-to-speech failed: ${response.statusText}`);
-            }
-
-            // Get audio blob from response
-            const audioBlob = await response.blob();
+            // Use VoiceService for text-to-speech conversion
+            const audioBlob = await VoiceService.textToSpeech(text);
             
             // Store system audio segment
             audioSegmentsRef.current.push({
@@ -346,7 +316,7 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
                 
             }
             
-            // Create audio URL and play directly (similar to Google's sample)
+            // Create audio URL and play directly
             const audioUrl = URL.createObjectURL(audioBlob);
             const audio = new Audio(audioUrl);
             audioRef.current = audio;
@@ -356,7 +326,7 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
                 setIsPlaying(false);
             });
 
-            // Clean up the URL after playback (similar to Google's sample)
+            // Clean up the URL after playback
             audio.addEventListener('ended', () => {
                 URL.revokeObjectURL(audioUrl);
                 setIsPlaying(false);
@@ -380,26 +350,11 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
     };
 
     /**
-     * Query AI function that sends user input to our Gemini-powered backend
+     * Query AI function using VoiceService
      */
     const queryAI = async (userText: string): Promise<string> => {
         try {
-            const response = await fetch(`${GENAI_API_URL}/voice/query-ai`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    prompt: userText,
-                    conversation_historic: conversationHistoricRef.current
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`AI query failed: ${response.statusText}`);
-            }
-
-            const data = await response.json();
+            const data = await VoiceService.queryAI(userText, conversationHistoricRef.current);
             conversationHistoricRef.current = data.updatedHistory;
             return data.response;
 
