@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import newDesign from "../assets/image_no_bg_left_screen.png"
 import LogoutModal from "../components/LogoutModal"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -17,6 +18,13 @@ export default function MicrophoneView() {
     handleSendMessage,
   } = useVoiceToVoice();
 
+  // Ref for the scrollable message container
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to bottom when new messages arrive
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
     <div className="flex h-screen gap-0">
@@ -43,36 +51,67 @@ export default function MicrophoneView() {
           <LogoutModal />
         </div>
 
-        <div className="flex flex-col items-center justify-center h-full max-w-2xl mx-auto">
+        <div className="flex flex-col items-center justify-start h-full w-full px-4 mx-auto max-w-2xl mt-24">
           <h1 className="text-3xl font-bold text-gray-700 mb-8">Voice Assistant</h1>
 
           {/* ------------------ Conversation Display ------------------ */}
-          <div className="w-full bg-white rounded-lg shadow-lg p-6 mb-8 max-h-96 overflow-y-auto">
+          <div className="w-full h-96 bg-gray-50 rounded-lg shadow-lg p-4 mb-8 overflow-y-auto">
             {messages.length === 0 ? (
-              <p className="text-gray-500 text-center">
-                Press the record button to start a voice conversation
-              </p>
+              <div className="flex items-center justify-center h-full">
+                <p className="text-gray-500 text-center">
+                  Press the record button to start a voice conversation
+                </p>
+              </div>
             ) : (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {messages.map((message, index) => (
                   <div
                     key={index}
                     className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
-                    <div
-                      className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                        message.type === 'user'
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-gray-200 text-gray-800'
-                      }`}
-                    >
-                      <p className="text-sm">{message.text}</p>
-                      <p className="text-xs opacity-75 mt-1">
-                        {message.timestamp.toLocaleTimeString()}
-                      </p>
-                    </div>
+                    {/* System/AI Message - Left Side */}
+                    {message.type === 'system' && (
+                      <div className="flex items-start space-x-2 max-w-[60%]">
+                        <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-white text-xs font-bold">AI</span>
+                        </div>
+                        <div className="bg-white border border-gray-200 rounded-2xl rounded-tl-md px-4 py-3 shadow-sm">
+                          <p className="text-gray-800 text-sm leading-relaxed break-words">
+                            {message.text}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            {message.timestamp.toLocaleTimeString([], { 
+                              hour: '2-digit', 
+                              minute: '2-digit' 
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* User Message - Right Side */}
+                    {message.type === 'user' && (
+                      <div className="flex items-start space-x-2 max-w-[60%]">
+                        <div className="bg-blue-500 rounded-2xl rounded-tr-md px-4 py-3 shadow-sm">
+                          <p className="text-white text-sm leading-relaxed break-words">
+                            {message.text}
+                          </p>
+                          <p className="text-xs text-blue-100 mt-1 text-right">
+                            {message.timestamp.toLocaleTimeString([], { 
+                              hour: '2-digit', 
+                              minute: '2-digit' 
+                            })}
+                          </p>
+                        </div>
+                        <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-white text-xs font-bold">You</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
+                {/* Invisible div to scroll to */}
+                <div ref={messagesEndRef} />
               </div>
             )}
           </div>
@@ -136,7 +175,6 @@ export default function MicrophoneView() {
           )}
 
           </div>
-
 
           {/* ------------------ Status Indicator ------------------ */}
           <div className="mt-6 text-center">
