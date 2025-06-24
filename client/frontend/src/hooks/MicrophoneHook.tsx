@@ -472,8 +472,6 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
                 }
             }
 
-            console.log(`Using MIME type: ${mimeType || 'browser default'}`);
-
             const mediaRecorder = new MediaRecorder(stream, {
                 mimeType: mimeType || undefined,
                 audioBitsPerSecond: 128000, // 128 kbps for good quality
@@ -484,12 +482,10 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
             mediaRecorder.ondataavailable = (event) => {
                 if (event.data.size > 0) {
                     audioChunksRef.current.push(event.data);
-                    console.log(`Audio chunk: ${event.data.size} bytes, Total chunks: ${audioChunksRef.current.length}`);
                 }
             };
 
             mediaRecorder.onstop = async () => {
-                console.log('MediaRecorder stopped');
                 setIsRecording(false);
                 setIsProcessing(true);
                 
@@ -511,7 +507,6 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
                         type: mimeType || 'audio/webm' 
                     });
                     
-                    console.log(`Final audio blob: ${audioBlob.size} bytes, type: ${audioBlob.type}`);
                     
                     if (audioBlob.size === 0) {
                         throw new Error('No audio data was recorded. Please check your microphone.');
@@ -539,7 +534,6 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
 
             // Start with timeslice for regular data collection
             mediaRecorder.start(500); // Collect data every 500ms
-            console.log('Recording started with timeslice: 500ms');
 
             // Start countdown
             countdownIntervalRef.current = setInterval(() => {
@@ -554,7 +548,6 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
 
             // Backup timeout
             recordingTimeoutRef.current = setTimeout(() => {
-                console.log('Recording timeout reached');
                 if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
                     stopRecording();
                 }
@@ -601,7 +594,6 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
      * Enhanced stop recording with proper cleanup
      */
     const stopRecording = (): void => {
-        console.log('stopRecording called');
         
         // Clear all timers
         if (countdownIntervalRef.current) {
@@ -623,7 +615,6 @@ export const useVoiceToVoice = (): UseVoiceToVoiceReturn => {
         if (audioStreamRef.current) {
             audioStreamRef.current.getTracks().forEach(track => {
                 track.stop();
-                console.log(`Stopped track: ${track.label}, kind: ${track.kind}`);
             });
             audioStreamRef.current = null;
         }
