@@ -1,8 +1,15 @@
--- Create the db schema
-CREATE SCHEMA IF NOT EXISTS db AUTHORIZATION "spOveD";
-
 -- Set the search path to the db schema
 SET search_path TO db;
+
+-- Create the db schema
+CREATE SCHEMA IF NOT EXISTS db AUTHORIZATION spoved;
+
+
+-- Grant all privileges
+GRANT ALL PRIVILEGES ON SCHEMA db TO spoved;
+ALTER DEFAULT PRIVILEGES IN SCHEMA db GRANT ALL ON TABLES TO spoved;
+ALTER DEFAULT PRIVILEGES IN SCHEMA db GRANT ALL ON SEQUENCES TO spoved;
+
 
 -- Create role enum
 CREATE TYPE db.role AS ENUM ('SUPERVISOR', 'WORKER');
@@ -17,7 +24,8 @@ CREATE TYPE db.media_type AS ENUM ('PHOTO', 'VIDEO', 'AUDIO');
 CREATE TABLE IF NOT EXISTS db.users (
   user_id    SERIAL    PRIMARY KEY,
   name       VARCHAR(50) NOT NULL,
-  role db.role   NOT NULL
+  role db.role   NOT NULL,
+  password_hash  VARCHAR(100) NOT NULL
 );
 
 -- Create media table
@@ -71,13 +79,12 @@ CREATE TABLE IF NOT EXISTS db.video_photo (
 );
 
 
-
 -- 1. Insert users without ticket references
-INSERT INTO db.users (name, role)
+INSERT INTO db.users (name, role, password_hash)
 VALUES
-  ('Alice', 'SUPERVISOR'),   -- user_id = 1
-  ('Bob', 'WORKER'),         -- user_id = 2
-  ('Charlie', 'WORKER');     -- user_id = 3
+  ('Alice', 'SUPERVISOR', 'hash1'),   -- user_id = 1
+  ('Bob', 'WORKER', 'hash2'),         -- user_id = 2
+  ('Charlie', 'WORKER', 'hash3');     -- user_id = 3
 
 -- 2. Insert tickets (must use existing user_ids for assigned_to, created_by)
 INSERT INTO db.tickets (assigned_to, created_by, title, description, status, due_date, location, media_type)

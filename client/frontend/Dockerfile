@@ -11,7 +11,15 @@ COPY src ./src
 COPY *.json *.ts *.js *.html ./
 
 ARG VITE_SERVER_API_URL
+ARG VITE_AUTH_API_URL
+
 ENV VITE_SERVER_API_URL=$VITE_SERVER_API_URL
+ENV VITE_AUTH_API_URL=$VITE_AUTH_API_URL
+
+ENV NODE_ENV=dev
+
+# Install all necessary dependencies
+RUN npm install
 
 # Install the dependencies of the project
 RUN npm install

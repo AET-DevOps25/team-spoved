@@ -22,14 +22,7 @@ overview, refer to the [system description](system_description.md).
 - Docker and Docker Compose
 - Git
 
-## Setup Instructions
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/AET-DevOps25/team-spoved
-cd team-spoved
-```
+## Local Setup Instructions - No Docker
 
 ### Client Setup
 
@@ -53,31 +46,22 @@ cd team-spoved
    ./gradlew build
    ```
 
-## Running the Application
-
-### Start the Client
-
+### DB setup
 ```bash
-cd client
-npm run dev
-```
-The client will be available at [http://localhost:5173](http://localhost:5173) or [http://localhost:3000](http://localhost:3000).
-
-### Start the Server
-
-```bash
-cd server
-./gradlew bootRun
+postgres createuser myuser --superuser
+postgres createdb mydatabase -O myuser
+PGPASSWORD=mypassword psql -h localhost -U myuser -d mydatabase -f init.sql
 ```
 
-### Start the GenAI Server (locally)
+## Local Setup Instructions - Docker
 
-```bash
-cd genai
-uvicorn src.server:app --host 0.0.0.0 --port 8000 --reload
-```
+Use the Docker-Compose file to spin up the
+- Client app
+- Backend
+- Postgres
+containers
 
-The server API will be available at [http://localhost:8080](http://localhost:8080).
+```docker compose build```
 
 ## Development Workflow
 
@@ -93,7 +77,12 @@ The server API will be available at [http://localhost:8080](http://localhost:808
 - Source code is in the `src/main/java` directory.
 - Tests are in the `src/test/java` directory.
 
-## Building for Production
+### Publishing the code
+All tests are ran automatically through the CI pipeline found under ```.github/workflow``` on the ```dev``` branch. If all tests pass,
+the build will be published as a package in Github. Then the CD pipeline found under the same directory will
+publish it to the AES Cluster.
+
+## Building for Production - No Docker
 
 ### Client Build
 
@@ -108,6 +97,22 @@ npm run build
 cd server
 ./gradlew clean build
 ```
+
+## Building for Production - Docker
+Just run
+```bash
+docker compose up
+```
+
+## Deploying in the AES Cluster (Rancher) - First time
+To deploy in the AES cluster, it is necessary to obtain the a kubeconfig file with the information on
+- Clusters
+- Users
+- Namespaces
+- Authentication
+
+Head to [AES Rancher](https://rancher.ase.cit.tum.de/) and log-in with your TUM-ID. Download the ```student.yaml``` file
+and store it as a config in ```~/.kube/```.
 
 
 ## Project Structure

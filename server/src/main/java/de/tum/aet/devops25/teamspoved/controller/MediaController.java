@@ -13,7 +13,7 @@ import de.tum.aet.devops25.teamspoved.model.MediaTypeEnum;
 
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000", "http://localhost:8000"})
 @RestController
 @RequestMapping("/api/v1/media")
 public class MediaController {

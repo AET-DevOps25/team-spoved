@@ -46,7 +46,7 @@ def create_ticket(ticket: dict):
     
     ticket_json = {
         "assignedTo": None,
-        "createdBy": 1,
+        "createdBy": 5,
         "title": model_ticket.title,
         "description": model_ticket.description,
         "status": "OPEN",

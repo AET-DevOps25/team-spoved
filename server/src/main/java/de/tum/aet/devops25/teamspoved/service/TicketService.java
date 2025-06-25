@@ -57,18 +57,13 @@ public class TicketService {
     @Transactional
     public Optional<TicketEntity> assignTicket(Integer ticketId, Integer userId) {
         Optional<TicketEntity> ticketOpt = ticketRepository.findById(ticketId);
-        ticketOpt.ifPresent(ticket -> {
-            ticket.setAssignedTo(userRepository.findById(userId).orElse(null));
-        });
+        if (ticketOpt.isPresent()) {
+            UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User with ID " + userId + " not found"));
+            ticketOpt.get().setAssignedTo(user);
+            ticketRepository.save(ticketOpt.get());
+        }
         return ticketOpt;
-    }
-
-    public Optional<UserEntity> getUserById(Integer userId) {
-        return userRepository.findById(userId);
-    }
-
-    public List<UserEntity> getFilteredUsers(Integer id, String role, String name) {
-        return userRepository.findFilteredUsers(id, role, name);
     }
 
     public List<TicketEntity> getFilteredTickets(Integer assignedToId, Integer createdById, Status status, java.time.LocalDate dueDate, String location, String mediaType) {

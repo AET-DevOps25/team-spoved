@@ -2,7 +2,7 @@ package de.tum.aet.devops25.teamspoved.controller;
 
 import de.tum.aet.devops25.teamspoved.model.Role;
 import de.tum.aet.devops25.teamspoved.model.UserEntity;
-import de.tum.aet.devops25.teamspoved.service.TicketService;
+import de.tum.aet.devops25.teamspoved.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
-    private final TicketService ticketService;
-    public UserController(TicketService ticketService) {
-        this.ticketService = ticketService;
+    private final UserService userService;
+    public UserController(UserService ticketService) {
+        this.userService = ticketService;
     }
 
     @GetMapping
@@ -22,13 +22,13 @@ public class UserController {
             @RequestParam(required = false) Role role,
             @RequestParam(required = false) String name
     ) {
-        List<UserEntity> users = ticketService.getFilteredUsers(id, role != null ? role.name() : null, name);
+        List<UserEntity> users = userService.getFilteredUsers(id, role != null ? role.name() : null, name);
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserEntity> getUserById(@PathVariable Integer userId) {
-        return ticketService.getUserById(userId)
+        return userService.getUserById(userId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
