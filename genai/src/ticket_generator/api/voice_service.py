@@ -13,6 +13,7 @@ from google.oauth2 import service_account
 import google.generativeai as genai
 from dotenv import load_dotenv
 from pydub import AudioSegment
+from ticket_generator.api.utils import get_auth_headers
 
 load_dotenv()
 

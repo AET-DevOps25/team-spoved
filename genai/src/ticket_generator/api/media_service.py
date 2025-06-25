@@ -2,6 +2,7 @@ import os
 import requests
 from fastapi import APIRouter, HTTPException
 from dotenv import load_dotenv
+from ticket_generator.api.utils import get_auth_headers
 
 load_dotenv()
 
@@ -9,21 +10,6 @@ router = APIRouter()
 
 API_URL = os.getenv("BACKEND_API_URL")
 
-def get_auth_headers():
-    """Get authentication headers for API requests"""
-    # For service-to-service communication, you can either:
-    # 1. Use a service account JWT token
-    # 2. Create a special API key
-    # 3. Temporarily exempt the GenAI service endpoints
-    
-    # Option 1: Use a hardcoded service token (temporary solution)
-    # You'll need to generate this from your auth service
-    service_token = os.getenv("SERVICE_AUTH_TOKEN")
-    if service_token:
-        return {"Authorization": f"Bearer {service_token}"}
-    
-    # Option 2: For now, return empty headers and handle the error
-    return {}
 
 def fetch_media():
     """Fetch all media with authentication"""
@@ -70,4 +56,34 @@ async def get_all_media():
 async def get_media_by_id(media_id: int):
     """Get media by ID"""
     return fetch_media_by_id(media_id)
+
+def update_analyzed(media_id: int, analyzed: bool):
+    response = requests.put(f"{API_URL}/media/{media_id}/analyzed", json=analyzed)
+    if response.status_code == 204 or not response.content or response.text.strip() == "":
+        return {"status": "success"}
+    try:
+        return response.json()
+    except Exception as e:
+        print(f"[ERROR] Could not parse JSON: {e}, content: {response.text!r}")
+        return {"error": "Invalid JSON response", "status_code": response.status_code, "content": response.text}
+
+def update_result(media_id: int, result: str):
+    response = requests.put(f"{API_URL}/media/{media_id}/result", json=result)
+    if response.status_code == 204 or not response.content or response.text.strip() == "":
+        return {"status": "success"}
+    try:
+        return response.json()
+    except Exception as e:
+        print(f"[ERROR] Could not parse JSON: {e}, content: {response.text!r}")
+        return {"error": "Invalid JSON response", "status_code": response.status_code, "content": response.text}
+
+def update_reason(media_id: int, reason: str):  
+    response = requests.put(f"{API_URL}/media/{media_id}/reason", json=reason)
+    if response.status_code == 204 or not response.content or response.text.strip() == "":
+        return {"status": "success"}
+    try:
+        return response.json()
+    except Exception as e:
+        print(f"[ERROR] Could not parse JSON: {e}, content: {response.text!r}")
+        return {"error": "Invalid JSON response", "status_code": response.status_code, "content": response.text}
 

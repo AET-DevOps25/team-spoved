@@ -1,3 +1,5 @@
+import { getAuthHeaders } from './utils';
+
 // Voice processing service that matches the backend API implementation
 class VoiceService {
   private static readonly BASE_URL = import.meta.env.VITE_GENAI_API_URL;
@@ -14,6 +16,7 @@ class VoiceService {
     const response = await fetch(`${this.BASE_URL}/voice/speech-to-text`, {
       method: 'POST',
       body: formData,
+      headers: getAuthHeaders(),
     });
     
     if (!response.ok) {
@@ -35,6 +38,7 @@ class VoiceService {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...getAuthHeaders(),
       },
       body: JSON.stringify({
         prompt,
@@ -59,6 +63,7 @@ class VoiceService {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...getAuthHeaders(),
       },
       body: JSON.stringify({ text }),
     });

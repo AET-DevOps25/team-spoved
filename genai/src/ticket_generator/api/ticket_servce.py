@@ -8,6 +8,7 @@ from ticket_generator.media.voice.model.gemini_audio import generate_ticket_from
 from ticket_generator.api.media_service import fetch_media_by_id
 from datetime import datetime, timedelta
 from ticket_generator.api.video_photo_service import update_result, update_reason, update_analyzed
+from ticket_generator.api.utils import get_auth_headers
 
 load_dotenv()
 
@@ -16,11 +17,11 @@ router = APIRouter()
 API_URL = os.getenv("BACKEND_API_URL")
 
 def fetch_tickets():
-    response = requests.get(f"{API_URL}/tickets")
+    response = requests.get(f"{API_URL}/tickets", headers=get_auth_headers())
     return response.json()
 
 def fetch_ticket_by_id(ticket_id: int):
-    response = requests.get(f"{API_URL}/tickets/{ticket_id}")
+    response = requests.get(f"{API_URL}/tickets/{ticket_id}", headers=get_auth_headers())
     return response.json()
 
 
@@ -60,7 +61,7 @@ def create_ticket(ticket: dict):
     update_reason(ticket['media_id'], model_ticket.reason)
     update_analyzed(ticket['media_id'], True)
 
-    response = requests.post(f"{API_URL}/tickets", json=ticket_json)
+    response = requests.post(f"{API_URL}/tickets", json=ticket_json, headers=get_auth_headers())
     return response.json()
 
 @router.get("/")
