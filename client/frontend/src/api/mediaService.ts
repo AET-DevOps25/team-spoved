@@ -43,7 +43,7 @@ export const triggerAutoTicketGeneration = async (
         media_id: mediaId,
         media_type: mediaType,
         uploaded_by: uploadedBy
-    });
+    }, { headers : getAuthHeaders() });
   return response.data;
 };
 

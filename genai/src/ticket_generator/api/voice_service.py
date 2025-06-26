@@ -4,7 +4,7 @@ import tempfile
 import subprocess
 import wave
 import struct
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File, HTTPException, Header
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from google.cloud import speech
@@ -13,7 +13,8 @@ from google.oauth2 import service_account
 import google.generativeai as genai
 from dotenv import load_dotenv
 from pydub import AudioSegment
-from ticket_generator.api.utils import get_auth_headers
+from ticket_generator.api.utils import get_auth_headers, extract_token_from_header
+from typing import Optional
 
 load_dotenv()
 
@@ -139,8 +140,11 @@ def analyze_audio_content(audio_data: bytes) -> dict:
         return {'error': str(e)}
 
 @router.post("/speech-to-text", response_model=SpeechToTextResponse)
-async def speech_to_text(audio: UploadFile = File(...)):
+async def speech_to_text(audio: UploadFile = File(...), authorization: Optional[str] = Header(None)):
     """Convert speech audio to text using Google Cloud Speech-to-Text with enhanced debugging"""
+    # Note: This endpoint doesn't need auth token for Google Cloud services,
+    # but we keep the parameter for consistency and potential future use
+    
     if not speech_client:
         raise HTTPException(status_code=500, detail="Speech-to-Text service not available")
     
@@ -262,9 +266,15 @@ async def speech_to_text(audio: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=f"Speech recognition failed: {str(e)}")
 
 @router.post("/query-ai", response_model=QueryAIResponse)
-async def query_ai(request: QueryAIRequest):
+async def query_ai(request: QueryAIRequest, authorization: Optional[str] = Header(None)):
     """Query Gemini AI for a response based on user input and conversation history"""
+    # Note: This endpoint doesn't need auth token for Gemini services,
+    # but we keep the parameter for consistency and potential future use
+    
     try:
+        print(f"[INFO] Request: {request}")
+        
+
         # System instructions for the assistant
         system_instruction = (
             "You are a voice-based ticket assistant. Your goal is to collect information to generate a service ticket. "
@@ -331,8 +341,11 @@ async def query_ai(request: QueryAIRequest):
         raise HTTPException(status_code=500, detail=f"AI query failed: {str(e)}")
 
 @router.post("/text-to-speech")
-async def text_to_speech(request: TextToSpeechRequest):
+async def text_to_speech(request: TextToSpeechRequest, authorization: Optional[str] = Header(None)):
     """Convert text to speech using Google Cloud Text-to-Speech"""
+    # Note: This endpoint doesn't need auth token for Google Cloud services,
+    # but we keep the parameter for consistency and potential future use
+    
     if not tts_client:
         raise HTTPException(status_code=500, detail="Text-to-Speech service not available")
     

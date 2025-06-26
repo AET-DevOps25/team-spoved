@@ -1,6 +1,6 @@
 import os
 import requests
-from fastapi import APIRouter
+from fastapi import APIRouter, Header
 from dotenv import load_dotenv
 from ticket_generator.media.photo.model.gemini_photo import generate_ticket as generate_photo_ticket
 from ticket_generator.media.video.model.gemini_video import generate_ticket_from_video
@@ -8,7 +8,8 @@ from ticket_generator.media.voice.model.gemini_audio import generate_ticket_from
 from ticket_generator.api.media_service import fetch_media_by_id
 from datetime import datetime, timedelta
 from ticket_generator.api.video_photo_service import update_result, update_reason, update_analyzed
-from ticket_generator.api.utils import get_auth_headers
+from ticket_generator.api.utils import get_auth_headers, extract_token_from_header
+from typing import Optional
 
 load_dotenv()
 
@@ -16,18 +17,17 @@ router = APIRouter()
 
 API_URL = os.getenv("BACKEND_API_URL")
 
-def fetch_tickets():
-    response = requests.get(f"{API_URL}/tickets", headers=get_auth_headers())
+def fetch_tickets(auth_token: str = None):
+    response = requests.get(f"{API_URL}/tickets", headers=get_auth_headers(auth_token))
     return response.json()
 
-def fetch_ticket_by_id(ticket_id: int):
-    response = requests.get(f"{API_URL}/tickets/{ticket_id}", headers=get_auth_headers())
+def fetch_ticket_by_id(ticket_id: int, auth_token: str = None):
+    response = requests.get(f"{API_URL}/tickets/{ticket_id}", headers=get_auth_headers(auth_token))
     return response.json()
 
-
-def create_ticket(ticket: dict):
+def create_ticket(ticket: dict, auth_token: str = None):
     # Fetch media metadata to determine the blob type
-    media = fetch_media_by_id(ticket['media_id'])
+    media = fetch_media_by_id(ticket['media_id'], auth_token)
     
     # Route to appropriate processor based on blob type
     media_type = media['mediaType']
@@ -57,24 +57,27 @@ def create_ticket(ticket: dict):
         "mediaId": int_media_id,
     }
 
-    update_result(ticket['media_id'], model_ticket.result)
-    update_reason(ticket['media_id'], model_ticket.reason)
-    update_analyzed(ticket['media_id'], True)
+    update_result(ticket['media_id'], model_ticket.result, auth_token)
+    update_reason(ticket['media_id'], model_ticket.reason, auth_token)
+    update_analyzed(ticket['media_id'], True, auth_token)
 
-    response = requests.post(f"{API_URL}/tickets", json=ticket_json, headers=get_auth_headers())
+    response = requests.post(f"{API_URL}/tickets", json=ticket_json, headers=get_auth_headers(auth_token))
     return response.json()
 
 @router.get("/")
-async def get_all_tickets():
+async def get_all_tickets(authorization: Optional[str] = Header(None)):
     """Get all tickets"""
-    return fetch_tickets()
+    token = extract_token_from_header(authorization) if authorization else None
+    return fetch_tickets(token)
 
 @router.get("/{ticket_id}")
-async def get_ticket_by_id(ticket_id: int):
+async def get_ticket_by_id(ticket_id: int, authorization: Optional[str] = Header(None)):
     """Get ticket by ID"""
-    return fetch_ticket_by_id(ticket_id)
+    token = extract_token_from_header(authorization) if authorization else None
+    return fetch_ticket_by_id(ticket_id, token)
 
 @router.post("/")
-async def create_new_ticket(ticket: dict):
+async def create_new_ticket(ticket: dict, authorization: Optional[str] = Header(None)):
     """Create a new ticket"""
-    return create_ticket(ticket)
+    token = extract_token_from_header(authorization) if authorization else None
+    return create_ticket(ticket, token)
