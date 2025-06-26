@@ -12,11 +12,8 @@ def get_auth_headers(token: str = None):
         else:
             return {"Authorization": f"Bearer {token}"}
     else:
-        # Fallback to environment variable for backward compatibility
-        env_token = os.getenv("SERVICE_AUTH_TOKEN")
-        if not env_token:
-            raise RuntimeError("No authentication token provided and SERVICE_AUTH_TOKEN environment variable is not set")
-        return {"Authorization": f"Bearer {env_token}"}
+       
+        raise RuntimeError("No authentication token provided")
 
 def extract_token_from_header(authorization_header: str) -> str:
     """

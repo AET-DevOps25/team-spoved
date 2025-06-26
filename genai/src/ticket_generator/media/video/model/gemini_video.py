@@ -103,8 +103,8 @@ def parse_ticket_output(text: str, media_id: int, content: bytes, media_type: st
         analyzed=True
     )
 
-def generate_ticket_from_video(media_id: int) -> Ticket:
-    media = fetch_media_by_id(media_id)
+def generate_ticket_from_video(media_id: int, auth_token: str = None) -> Ticket:
+    media = fetch_media_by_id(media_id, auth_token)
     content_base64, blob_type = media["content"], media["blobType"]
     
     # Decode base64 string to bytes

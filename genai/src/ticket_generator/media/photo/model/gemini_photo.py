@@ -27,8 +27,8 @@ class Ticket(BaseModel):
 
 Ticket.model_rebuild()
 
-def extract_photo_content(media_id: int):
-    media = fetch_media_by_id(media_id)
+def extract_photo_content(media_id: int, auth_token: str = None):
+    media = fetch_media_by_id(media_id, auth_token)
     return media["content"], media["blobType"]
 
 def build_prompt():
@@ -69,8 +69,8 @@ def parse_ticket_output(text: str, media_id: int, content: bytes) -> Ticket:
     )
 
 
-def generate_ticket(media_id: int):
-    content, blob_type = extract_photo_content(media_id)
+def generate_ticket(media_id: int, auth_token: str = None):
+    content, blob_type = extract_photo_content(media_id, auth_token)
     if blob_type == 'image/jpeg':
         model = genai.GenerativeModel('gemini-2.0-flash-exp')
     elif blob_type == 'image/png':

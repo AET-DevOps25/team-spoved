@@ -20,7 +20,7 @@ class AutoTicketResponse(BaseModel):
     message: str
 
 @router.post("/auto-create-ticket", response_model=AutoTicketResponse)
-async def auto_create_ticket(request: AutoTicketRequest):
+async def auto_create_ticket(request: AutoTicketRequest, auth_token: str = None):
     """
     Automatically create a ticket from media using Gemini AI analysis.
     This is the main endpoint for the automated ticket creation feature.
@@ -34,7 +34,7 @@ async def auto_create_ticket(request: AutoTicketRequest):
             "assigned_to": request.assigned_to
         }
         
-        ticket_response = create_ticket(ticket_data)
+        ticket_response = create_ticket(ticket_data, auth_token)
         
         return AutoTicketResponse(
             success=True,

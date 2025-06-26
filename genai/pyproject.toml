@@ -11,7 +11,7 @@ dependencies = [
     "uvicorn",
     "google-generativeai",
     "pydantic",
-    "python-multipart"
+    "python-multipart",
     "jwt"
 ]
 

@@ -33,11 +33,11 @@ def create_ticket(ticket: dict, auth_token: str = None):
     media_type = media['mediaType']
     
     if media_type == 'PHOTO':
-        model_ticket = generate_photo_ticket(ticket['media_id'])
+        model_ticket = generate_photo_ticket(ticket['media_id'], auth_token)
     elif media_type == 'VIDEO':
-        model_ticket = generate_ticket_from_video(ticket['media_id'])
+        model_ticket = generate_ticket_from_video(ticket['media_id'], auth_token)
     elif media_type == 'AUDIO':
-        model_ticket = generate_ticket_from_audio(ticket['media_id'])
+        model_ticket = generate_ticket_from_audio(ticket['media_id'], auth_token)
     else:
         raise ValueError(f'Unsupported media type: {media_type}')
     
@@ -47,7 +47,7 @@ def create_ticket(ticket: dict, auth_token: str = None):
     
     ticket_json = {
         "assignedTo": None,
-        "createdBy": 5,
+        "createdBy": 1,
         "title": model_ticket.title,
         "description": model_ticket.description,
         "status": "OPEN",

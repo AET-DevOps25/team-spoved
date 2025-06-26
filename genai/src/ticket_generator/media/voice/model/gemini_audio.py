@@ -161,11 +161,11 @@ def parse_ticket_output(text: str, media_id: int, content: bytes, media_type: st
         analyzed=True
     )
 
-def generate_ticket_from_audio(media_id: int) -> Ticket:
+def generate_ticket_from_audio(media_id: int, auth_token: str = None) -> Ticket:
     """Generate a ticket from audio recording by transcribing and analyzing with Gemini"""
     try:
-        # Fetch media from database
-        media = fetch_media_by_id(media_id)
+        # Fetch media from database with auth token
+        media = fetch_media_by_id(media_id, auth_token)
         content_base64, blob_type = media["content"], media["blobType"]
         
         # Decode base64 string to bytes
