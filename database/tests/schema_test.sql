@@ -4,7 +4,7 @@ SELECT plan(7);
 
 -- 1. Can insert valid users
 SELECT ok(
-  (INSERT INTO db.users (name, supervisor) VALUES ('X', 'WORKER') RETURNING TRUE),
+  (INSERT INTO db.users (name, role) VALUES ('X', 'WORKER') RETURNING TRUE),
   'Insert WORKER user succeeds'
 );
 
@@ -18,7 +18,7 @@ SELECT throws_ok(
 
 -- 3. RESTRICT on delete
 -- Create fixture
-INSERT INTO db.users (name, supervisor) VALUES ('Y','WORKER') RETURNING user_id INTO STRICT _uid;
+INSERT INTO db.users (name, role) VALUES ('Y','WORKER') RETURNING user_id INTO STRICT _uid;
 INSERT INTO db.tickets (assigned_to, created_by, due_date, location, media_type)
   VALUES (_uid,_uid,'2025-07-02','X','AUDIO') RETURNING ticket_id INTO STRICT _tid;
 
