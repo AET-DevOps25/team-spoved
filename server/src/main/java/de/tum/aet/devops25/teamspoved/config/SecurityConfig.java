@@ -30,6 +30,7 @@ public class SecurityConfig {
                 })  
             .cors(cors -> cors.configure(http))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/actuator/prometheus", "/actuator/health").permitAll()
                 .anyRequest().authenticated() 
             )
             .sessionManagement(session -> session
