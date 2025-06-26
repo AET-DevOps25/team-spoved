@@ -69,6 +69,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
       - SPRING_DATASOURCE_USERNAME=spOveD
       - SPRING_DATASOURCE_PASSWORD=secret
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus
 
   prometheus:
     image: prom/prometheus:v2.52.0

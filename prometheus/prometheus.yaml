@@ -12,7 +12,7 @@ scrape_configs:
     static_configs:
       - targets: ['server:8080']
 
-  # - job_name: 'auth'
-  #   metrics_path: '/api/actuator/prometheus'
-  #   static_configs:
-  #     - targets: ['auth:8030']
+  - job_name: 'auth'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['auth:8030']
