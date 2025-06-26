@@ -382,3 +382,6 @@ sketch
 .svelte-kit
 .gradle
 bin
+
+terraform/.terraform*
+terraform/terraform*

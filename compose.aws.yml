@@ -4,8 +4,6 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile
-      cache_from:
-        - ghcr.io/aet-devops25/ticketing-service/server:latest
     ports:
       - "8080:8080"
     environment:
@@ -26,15 +24,10 @@ services:
     build:
       context: ./client/frontend
       dockerfile: Dockerfile
-      args:
-        VITE_SERVER_API_URL: ${VITE_SERVER_API_URL:-http://localhost:8080/api/v1}
-        VITE_AUTH_API_URL: ${VITE_AUTH_API_URL:-http://localhost:8030}
     ports:
       - "3000:3000"
     environment:
-      - VITE_SERVER_API_URL=${VITE_SERVER_API_URL:-http://localhost:8080/api/v1}
-      - VITE_AUTH_API_URL=${VITE_AUTH_API_URL:-http://localhost:8030}
-
+      - PUBLIC_API_URL=${PUBLIC_API_URL:-http://localhost:8080}
     depends_on:
       - server
     restart: unless-stopped
@@ -53,19 +46,6 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
-
-  auth:
-    image: auth-service
-    build:
-      context: ./auth
-      dockerfile: Dockerfile
-    ports:
-      - "8030:8030"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
-      - SPRING_DATASOURCE_USERNAME=spOveD
-      - SPRING_DATASOURCE_PASSWORD=secret
 
 volumes:
   pgdata:
