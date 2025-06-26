@@ -12,8 +12,9 @@ dependencies = [
     "google-generativeai",
     "pydantic",
     "python-multipart"
+    "jwt"
 ]
 
 [tool.setuptools]
-packages = ["ticket-generator"]
+packages = ["ticket_generator"]
 package-dir = { "" = "src" }

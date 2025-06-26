@@ -16,7 +16,7 @@ export default function WorkerTicketView() {
     const [isLoading, setIsLoading] = useState(false);
 
     const [media, setMedia] = useState<MediaDto | null>(null);
-    const [mediaLoading, setMediaLoading] = useState(false);
+    const [_ , setMediaLoading] = useState(false);
 
     const userId = localStorage.getItem('userId') || '';
 

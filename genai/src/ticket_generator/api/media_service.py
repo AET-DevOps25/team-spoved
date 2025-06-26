@@ -31,11 +31,6 @@ def fetch_media_by_id(media_id: int):
     try:
         response = requests.get(f"{API_URL}/media/{media_id}", headers=get_auth_headers())
         
-        print(f"[DEBUG] Media request: GET {API_URL}/media/{media_id}")
-        print(f"[DEBUG] Response status: {response.status_code}")
-        print(f"[DEBUG] Response headers: {dict(response.headers)}")
-        print(f"[DEBUG] Response content: {response.content[:200]}...")  # First 200 chars
-        
         response.raise_for_status()
         return response.json()
     except requests.exceptions.HTTPError as e:

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { createMedia, triggerAutoTicketGeneration } from '../api/mediaService';
+import { createMedia } from '../api/mediaService';
 
 interface UsePhotoCaptureReturn {
   videoRef: React.RefObject<HTMLVideoElement>;

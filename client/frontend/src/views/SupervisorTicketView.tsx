@@ -39,7 +39,7 @@ function SupervisorTicketsView() {
 
   // Media variables
   const [media, setMedia] = useState<MediaDto | null>(null);
-  const [mediaLoading, setMediaLoading] = useState(false);
+  const [_ , setMediaLoading] = useState(false);
 
   /**
    * Fetches the tickets and the users from the server when the component mounts.
