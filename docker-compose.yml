@@ -4,13 +4,12 @@ services:
     command:
       - --configFile=/etc/traefik/traefik.yml
     ports:
-      - "8080:8080"            # ← all web traffic (SPA, API, dashboard)
+      - "8090:8080"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik/traefik.yml:/etc/traefik/traefik.yml
     labels:
       - "traefik.enable=true"
-      # expose Traefik’s internal dashboard at /dashboard
       - "traefik.http.routers.traefik.rule=PathPrefix(`/dashboard`)"
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.routers.traefik.priority=200"
@@ -31,14 +30,8 @@ services:
       - MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS=always
     labels:
       - "traefik.enable=true"
-
-      # name the load-balanced service and tell it to listen on 8080
       - "traefik.http.services.server-svc.loadbalancer.server.port=8080"
-
-      # strip /api prefix before forwarding
       - "traefik.http.middlewares.strip-api.stripprefix.prefixes=/api"
-
-      # router for /api → use strip-api → server-svc
       - "traefik.http.routers.api.rule=PathPrefix(`/api`)"
       - "traefik.http.routers.api.entrypoints=web"
       - "traefik.http.routers.api.middlewares=strip-api"
@@ -59,19 +52,13 @@ services:
       context: ./client/frontend
       dockerfile: Dockerfile
       args:
-        VITE_SERVER_API_URL: ${VITE_SERVER_API_URL:-http://localhost:8080/api/v1}
+        VITE_SERVER_API_URL: ${VITE_SERVER_API_URL:-http://localhost:8090/api/v1}
         VITE_AUTH_API_URL: ${VITE_AUTH_API_URL:-http://localhost:8030}
-    ports:
-      - "3000:3000"
     environment:
-      - VITE_SERVER_API_URL=${VITE_SERVER_API_URL:-http://localhost:8080/api/v1}
+      - VITE_SERVER_API_URL=${VITE_SERVER_API_URL:-http://localhost:8090/api/v1}
       - VITE_AUTH_API_URL=${VITE_AUTH_API_URL:-http://localhost:8030}
-
-      # now defaults to the Traefik‐fronted API route
-      - PUBLIC_API_URL=${PUBLIC_API_URL:-http://localhost:8080/api}
     labels:
       - "traefik.enable=true"
-      # catch-all for everything except /api so the SPA doesn’t hijack API calls
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`) && !PathPrefix(`/api`)"
       - "traefik.http.routers.frontend.entrypoints=web"
       - "traefik.http.routers.frontend.service=frontend-svc"
