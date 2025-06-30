@@ -1,9 +1,6 @@
 // This view is the top-level view that renders
 // the application from the supervisor's POV.
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSignOut } from "@fortawesome/free-solid-svg-icons";
 import type { CreateTicketRequest, TicketDto } from "../types/TicketDto";
 import { getTickets, createTicket, assignWorker } from "../api/ticketService";
 
@@ -15,6 +12,7 @@ import newDesign from "../assets/image_no_bg_left_screen.png";
 import AssignModal from "../components/AssignModal";
 import { getFilteredUsers } from "../api/userService";
 import type { UserDto } from "../types/UserDto";
+import LogoutModal from "../components/LogoutModal";
 
 function SupervisorTicketsView() {
   // State variables
@@ -37,9 +35,6 @@ function SupervisorTicketsView() {
   // Users variables
   const [users, setUsers] = useState<UserDto[]>([]);
 
-  // Navigation
-  const navigate = useNavigate();
-
   /**
    * Fetches the tickets and the users from the server when the component mounts.
    */
@@ -54,11 +49,11 @@ function SupervisorTicketsView() {
    */
   const fetchUsersToBeAssigned = async () => {
     try {
-			const data = await getFilteredUsers('WORKER');
-			setUsers(data);
-		} catch (error) {
-			console.error('Error fetching users:', error);
-		}
+      const data = await getFilteredUsers('WORKER');
+      setUsers(data);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
   };
 
   /**
@@ -109,51 +104,36 @@ function SupervisorTicketsView() {
   };
 
   /**
-   * Handles the logout process.
-   * Cleans the local storage and navigates to the login page.
-   * @returns void
-   */
-  const handleLogout = () => {
-    // Clean the local storage
-    localStorage.removeItem("role");
-    localStorage.removeItem("name");
-    localStorage.removeItem("userId");
-
-    // Navigate to the login page
-    navigate("/");
-  };
-
-  /**
    * Handles the assignment of a maintenance worker to a ticket.
    * @param workerId - The ID of the maintenance worker to assign.
    * @returns void
    */
   const handleAssignWorker = async (workerId: number) => {
-		if (!selectedTicket) return;
+    if (!selectedTicket) return;
 
-		try {
+    try {
       // Assign the worker to the ticket
-			await assignWorker(selectedTicket.ticketId, workerId);
+      await assignWorker(selectedTicket.ticketId, workerId);
 
       // Show a toast message to the user
-			setToastMessage("Maintenance worker assigned successfully!");
-			setToastVisible(true);
+      setToastMessage("Maintenance worker assigned successfully!");
+      setToastVisible(true);
 
       // Hide the toast message after 3 seconds
-			setTimeout(() => setToastVisible(false), 3000);
+      setTimeout(() => setToastVisible(false), 3000);
 
       // Fetch the tickets again to display the newly assigned ticket
-			fetchTickets();
+      fetchTickets();
 
       // Clear the selected ticket
-			setSelectedTicket(null);
-		} catch (error) {
-			console.error(
-				'Error assigning maintenance worker:',
-				error
-			);
-		}
-	};
+      setSelectedTicket(null);
+    } catch (error) {
+      console.error(
+        'Error assigning maintenance worker:',
+        error
+      );
+    }
+  };
 
   return (
     <div className="flex h-screen gap-0">
@@ -175,15 +155,12 @@ function SupervisorTicketsView() {
 
       {/* ------------------ Right Content Panel ------------------ */}
       <div className="w-1/2 flex flex-col justify-start px-8 py-6 overflow-y-auto relative  border-r-0">
-        {/* ------------------ Logout Button ------------------ */}
+
+        {/* ------------------ Logout Modal ------------------ */}
         <div className="absolute top-6 left-6 z-50">
-          <button
-            onClick={handleLogout}
-            className="px-6 py-4 text-sm font-medium text-[#1A97FE] border border-[#1A97FE] rounded-full hover:bg-[#1A97FE] hover:text-white transition"
-          >
-            <FontAwesomeIcon icon={faSignOut} />
-          </button>
+          <LogoutModal />
         </div>
+
 
         {/* ------------------ Create Ticket Button ------------------ */}
         <button

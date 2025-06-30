@@ -1,7 +1,9 @@
+import type { UserDto } from "./UserDto";
+
 export type MediaType =
-    | 'photo'
-    | 'video'
-    | 'audio';
+    | 'PHOTO'
+    | 'VIDEO'
+    | 'AUDIO';
 
 export type Status =
     | 'OPEN'
@@ -10,14 +12,25 @@ export type Status =
 
 export interface TicketDto {
     ticketId: number;
-    assignedTo: number | null;
-    createdBy: number;
+    assignedTo: UserDto | null;
+    createdBy: UserDto;
     title: string;
     description: string;
     status: Status;
     dueDate: string;
     location: string;
     mediaType: MediaType;
+    mediaId: number | null;
 }
 
-export type CreateTicketRequest = Omit<TicketDto, 'ticketId' | 'status' >
+
+export interface CreateTicketRequest {
+    assignedTo: number | null;
+    createdBy: number;
+    title: string;
+    description: string;
+    dueDate: string;
+    location: string;
+    mediaType: MediaType;
+    mediaId: number | null;
+}

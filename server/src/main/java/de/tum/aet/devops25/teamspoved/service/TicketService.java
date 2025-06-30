@@ -24,27 +24,6 @@ public class TicketService {
         this.userRepository = userRepository;
     }
 
-    public List<TicketEntity> getAllTickets() {
-        return ticketRepository.findAll();
-    }
-
-    public Optional<TicketEntity> getTicketById(Integer ticketId) {
-        return ticketRepository.findById(ticketId);
-    }
-
-    public List<TicketEntity> getTicketsByStatus(Status status) {
-        return ticketRepository.findAll().stream()
-                .filter(ticket -> ticket.getStatus() == status)
-                .toList();
-    }
-
-    public List<TicketEntity> getTicketsByUser(Integer userId) {
-        return ticketRepository.findAll().stream()
-                .filter(ticket -> ticket.getCreatedBy().getUserId().equals(userId) ||
-                        (ticket.getAssignedTo() != null && ticket.getAssignedTo().getUserId().equals(userId)))
-                .toList();
-    }
-
     @Transactional
     public TicketEntity createTicket(CreateTicketRequest request) {
         UserEntity createdBy = userRepository.findById(request.createdBy()).orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -77,35 +56,20 @@ public class TicketService {
     @Transactional
     public Optional<TicketEntity> assignTicket(Integer ticketId, Integer userId) {
         Optional<TicketEntity> ticketOpt = ticketRepository.findById(ticketId);
-        ticketOpt.ifPresent(ticket -> {
-            ticket.setAssignedTo(userRepository.findById(userId).orElse(null));
-        });
+        if (ticketOpt.isPresent()) {
+            UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User with ID " + userId + " not found"));
+            ticketOpt.get().setAssignedTo(user);
+            ticketRepository.save(ticketOpt.get());
+        }
         return ticketOpt;
     }
 
-    public List<UserEntity> getAllUsers() {
-        return userRepository.findAll();
+    public List<TicketEntity> getFilteredTickets(Integer assignedToId, Integer createdById, Status status, java.time.LocalDate dueDate, String location, String mediaType) {
+        return ticketRepository.findFilteredTickets(assignedToId, createdById, status, dueDate, location, mediaType);
     }
 
-    public Optional<UserEntity> getUserById(Integer userId) {
-        return userRepository.findById(userId);
-    }
-
-    // Filter users by role and name
-    public List<UserEntity> getFilteredUsers(String roleStr, String name) {
-        Role role = null;
-        if (roleStr != null) {
-            try {
-                role = Role.valueOf(roleStr.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Invalid role type: " + roleStr);
-            }
-        }
-        
-        // Convert name to lowercase for case-insensitive search
-        String searchName = name != null ? name.toLowerCase() : null;
-        
-        // Pass the role string directly to the repository
-        return userRepository.findFilteredUsers(roleStr, searchName);
+    public Optional<TicketEntity> getTicketById(Integer ticketId) {
+        return ticketRepository.findById(ticketId);
     }
 }

@@ -1,6 +1,7 @@
 package de.tum.aet.devops25.teamspoved;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.tum.aet.devops25.teamspoved.controller.TicketController;
 import de.tum.aet.devops25.teamspoved.dto.CreateTicketRequest;
 import de.tum.aet.devops25.teamspoved.model.*;
 import de.tum.aet.devops25.teamspoved.service.TicketService;
@@ -8,15 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -28,32 +24,16 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@Testcontainers
+@WebMvcTest(controllers = {TicketController.class})
+@AutoConfigureMockMvc(addFilters = false)
 public class TicketControllerTest {
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16")
-            .withDatabaseName("spoved")
-            .withUsername("spOveD")
-            .withPassword("yourpassword");
-            
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-        registry.add("spring.datasource.driver-class-name", postgres::getDriverClassName);
-        registry.add("spring.jpa.hibernate.ddl-auto", () -> "none");
-    }
-
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockitoBean
+    @MockBean
     private TicketService ticketService;
 
     private UserEntity testUser;
@@ -65,11 +45,11 @@ public class TicketControllerTest {
         testUser = new UserEntity();
         testUser.setUserId(1);
         testUser.setName("John Smith");
-        testUser.setSupervisor(Role.WORKER);
+        testUser.setRole(Role.WORKER);
         testAssignee = new UserEntity();
         testAssignee.setUserId(2);
         testAssignee.setName("Jane Doe");
-        testAssignee.setSupervisor(Role.SUPERVISOR);
+        testAssignee.setRole(Role.SUPERVISOR);
         testTicket = new TicketEntity();
         testTicket.setTicketId(100);
         testTicket.setCreatedBy(testUser);
@@ -84,7 +64,7 @@ public class TicketControllerTest {
 
     @Test
     public void testGetAllTickets() throws Exception {
-        when(ticketService.getAllTickets()).thenReturn(List.of(testTicket));
+        when(ticketService.getFilteredTickets(any(), any(), any(), any(), any(), any())).thenReturn(List.of(testTicket));
         mockMvc.perform(get("/api/v1/tickets"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -147,28 +127,19 @@ public class TicketControllerTest {
     }
 
     @Test
-    public void testGetAllUsers() throws Exception {
-        when(ticketService.getAllUsers()).thenReturn(List.of(testUser));
-        mockMvc.perform(get("/api/v1/users"))
+    public void testGetAllTickets_withFilters() throws Exception {
+        when(ticketService.getFilteredTickets(any(), any(), any(), any(), any(), any())).thenReturn(List.of(testTicket));
+        mockMvc.perform(get("/api/v1/tickets")
+                .param("assignedToId", String.valueOf(testAssignee.getUserId()))
+                .param("createdById", String.valueOf(testUser.getUserId()))
+                .param("status", Status.IN_PROGRESS.toString())
+                .param("dueDate", LocalDate.now().plusDays(2).toString())
+                .param("location", "Hallway 1")
+                .param("mediaType", MediaTypeEnum.AUDIO.toString())
+        )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].userId", is(testUser.getUserId())))
-                .andExpect(jsonPath("$[0].name", is(testUser.getName())));
-    }
-
-    @Test
-    public void testGetUserById() throws Exception {
-        when(ticketService.getUserById(testUser.getUserId())).thenReturn(Optional.of(testUser));
-        mockMvc.perform(get("/api/v1/users/{userId}", testUser.getUserId()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId", is(testUser.getUserId())))
-                .andExpect(jsonPath("$.name", is(testUser.getName())));
-    }
-
-    @Test
-    public void testGetUserById_NotFound() throws Exception {
-        when(ticketService.getUserById(99999)).thenReturn(Optional.empty());
-        mockMvc.perform(get("/api/v1/users/{userId}", 99999))
-                .andExpect(status().isNotFound());
+                .andExpect(jsonPath("$[0].ticketId", is(testTicket.getTicketId())))
+                .andExpect(jsonPath("$[0].description", is(testTicket.getDescription())));
     }
 }

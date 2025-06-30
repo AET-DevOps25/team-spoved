@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: "spoved"
+data:
+  api_url: https://spoved.devops25_team_spoved.student.k8s.aet.cit.tum.de/api
