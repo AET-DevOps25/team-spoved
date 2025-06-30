@@ -1,0 +1,69 @@
+- name: Deploy Docker via SSH
+  hosts: all
+  connection: ssh
+  remote_user: ubuntu
+  become: yes
+  become_method: sudo
+  gather_facts: yes
+  vars:
+    ansible_user: ubuntu
+
+  tasks:
+    - name: Install APT prerequisites
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+        state: present
+        update_cache: yes
+
+    - name: Create Docker keyrings directory
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Determine Docker repo arch
+      set_fact:
+        docker_repo_arch: >-
+          {{ 'amd64' if ansible_architecture == 'x86_64'
+             else 'arm64' if ansible_architecture == 'aarch64'
+             else ansible_architecture }}
+
+    - name: Download Docker GPG key
+      get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: '0644'
+
+    - name: Add Docker APT repository
+      apt_repository:
+        repo: >-
+          deb [arch={{ docker_repo_arch }} signed-by=/etc/apt/keyrings/docker.asc]
+          https://download.docker.com/linux/ubuntu
+          {{ ansible_lsb.codename }} stable
+        filename: docker
+        state: present
+
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Docker packages
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+
+    - name: Add ubuntu user to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
