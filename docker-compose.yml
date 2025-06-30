@@ -53,10 +53,10 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_SERVER_API_URL: ${VITE_SERVER_API_URL:-http://localhost:8090/api/v1}
-        VITE_AUTH_API_URL: ${VITE_AUTH_API_URL:-http://localhost:8030}
+        VITE_AUTH_API_URL: ${VITE_AUTH_API_URL:-http://localhost:8090/auth}
     environment:
       - VITE_SERVER_API_URL=${VITE_SERVER_API_URL:-http://localhost:8090/api/v1}
-      - VITE_AUTH_API_URL=${VITE_AUTH_API_URL:-http://localhost:8030}
+      - VITE_AUTH_API_URL=${VITE_AUTH_API_URL:-http://localhost:8090/auth}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`) && !PathPrefix(`/api`)"
@@ -86,13 +86,19 @@ services:
     build:
       context: ./auth
       dockerfile: Dockerfile
-    ports:
-      - "8030:8030"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
       - SPRING_DATASOURCE_USERNAME=spOveD
       - SPRING_DATASOURCE_PASSWORD=secret
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.auth-svc.loadbalancer.server.port=8030"
+      - "traefik.http.routers.auth.rule=PathPrefix(`/auth`)"
+      - "traefik.http.routers.auth.entrypoints=web"
+      - "traefik.http.routers.auth.service=auth-svc"
+      - "traefik.http.routers.auth.middlewares=strip-auth"
+      - "traefik.http.middlewares.strip-auth.stripprefix.prefixes=/auth"
 
 volumes:
   pgdata:
