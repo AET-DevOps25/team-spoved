@@ -97,14 +97,16 @@ public class TicketControllerTest {
                 "New ticket description",
                 LocalDate.now().plusDays(1),
                 "Lobby",
-                MediaTypeEnum.AUDIO
+                MediaTypeEnum.AUDIO,
+                null
         );
         when(ticketService.createTicket(any(CreateTicketRequest.class))).thenReturn(testTicket);
         mockMvc.perform(post("/api/v1/tickets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.ticketId", is(testTicket.getTicketId())));
+                .andExpect(jsonPath("$.ticketId", is(testTicket.getTicketId())))
+                .andExpect(jsonPath("$.mediaId", is(nullValue())));
     }
 
     @Test

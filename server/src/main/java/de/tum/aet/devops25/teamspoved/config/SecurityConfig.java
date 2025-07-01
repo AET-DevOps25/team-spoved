@@ -30,6 +30,10 @@ public class SecurityConfig {
                 })  
             .cors(cors -> cors.configure(http))
             .authorizeHttpRequests(auth -> auth
+                // Allow internal service access for GenAI automation
+                .requestMatchers("/api/v1/media/**").permitAll()
+                .requestMatchers("/actuator/health").permitAll()
+                // Require authentication for everything else
                 .anyRequest().authenticated() 
             )
             .sessionManagement(session -> session

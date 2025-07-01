@@ -383,5 +383,7 @@ sketch
 .gradle
 bin
 
+
+*/src/ticket_generator/credentials/credentials.json
 terraform/.terraform*
 terraform/terraform*

@@ -5,40 +5,81 @@ metadata:
   namespace: "spoved"
 data:
   init.sql: |-
-    CREATE SCHEMA IF NOT EXISTS db AUTHORIZATION "spOveD";
     SET search_path TO db;
 
+    -- Create the db schema
+    CREATE SCHEMA IF NOT EXISTS db AUTHORIZATION spoved;
+
+
+    -- Grant all privileges
+    GRANT ALL PRIVILEGES ON SCHEMA db TO spoved;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA db GRANT ALL ON TABLES TO spoved;
+    ALTER DEFAULT PRIVILEGES IN SCHEMA db GRANT ALL ON SEQUENCES TO spoved;
+
+
+    -- Create role enum
     CREATE TYPE db.role AS ENUM ('SUPERVISOR', 'WORKER');
-    CREATE TYPE db.status AS ENUM ('FINISHED', 'IN PROGRESS');
+
+    -- Create status enum
+    CREATE TYPE db.status AS ENUM ('FINISHED', 'IN_PROGRESS', 'OPEN');
+
+    -- Create media_type enum
     CREATE TYPE db.media_type AS ENUM ('PHOTO', 'VIDEO', 'AUDIO');
 
+    -- Create users table
     CREATE TABLE IF NOT EXISTS db.users (
       user_id    SERIAL    PRIMARY KEY,
       name       VARCHAR(50) NOT NULL,
-      supervisor db.role   NOT NULL
+      role db.role   NOT NULL,
+      password_hash  VARCHAR(100) NOT NULL
     );
 
+    -- Create media table
+    CREATE TABLE IF NOT EXISTS db.media (
+      media_id    SERIAL          PRIMARY KEY,
+      media_type  db.media_type   NOT NULL,
+      content     BYTEA           NOT NULL,
+      blob_type   VARCHAR(100)    NOT NULL
+    );
+
+
+    -- Create tickets table
     CREATE TABLE IF NOT EXISTS db.tickets (
       ticket_id   SERIAL          PRIMARY KEY,
-      assigned_to INTEGER         NOT NULL
-                       REFERENCES db.users(user_id)
-                       ON DELETE RESTRICT,
+      assigned_to INTEGER         
+                      REFERENCES db.users(user_id)
+                      ON DELETE RESTRICT,
       created_by  INTEGER         NOT NULL
-                       REFERENCES db.users(user_id)
-                       ON DELETE RESTRICT,
-      title       VARCHAR(100)    NOT NULL DEFAULT 'New Ticket',
-      description VARCHAR(500)    NOT NULL DEFAULT 'Description of the ticket',
-      status      db.status       NOT NULL DEFAULT 'IN PROGRESS',
-      due_date    DATE            NOT NULL,
-      location    VARCHAR(50)     NOT NULL,
-      media_type  db.media_type   NOT NULL
+                      REFERENCES db.users(user_id)
+                      ON DELETE RESTRICT,
+      title       VARCHAR(999)    NOT NULL DEFAULT 'New Ticket',
+      description VARCHAR(999)    NOT NULL DEFAULT 'Description of the ticket',
+      status      db.status       NOT NULL DEFAULT 'OPEN',
+      due_date    DATE            NOT NULL CHECK (due_date >= CURRENT_DATE), -- Check if the introduced date is in the future
+      location    VARCHAR(999)     NOT NULL,
+      media_type  db.media_type   NOT NULL DEFAULT 'PHOTO', -- Default value if not specified
+      media_id    INTEGER         REFERENCES db.media(media_id)
+                      ON DELETE RESTRICT
     );
 
-    ALTER TABLE db.users
-      ADD COLUMN ticket_id INTEGER;
+    -- Change media_type to VARCHAR
+    ALTER TABLE db.tickets
+    ALTER COLUMN media_type TYPE VARCHAR;
 
-    ALTER TABLE db.users
-      ADD CONSTRAINT fk_users_ticket
-        FOREIGN KEY (ticket_id)
-        REFERENCES db.tickets(ticket_id)
-        ON DELETE SET NULL;
+    -- Change status to VARCHAR
+    ALTER TABLE db.tickets
+    ALTER COLUMN status TYPE VARCHAR;
+
+    -- Change media_type to VARCHAR
+    ALTER TABLE db.media
+    ALTER COLUMN media_type TYPE VARCHAR;
+
+    CREATE TABLE IF NOT EXISTS db.video_photo (
+      media_id  INTEGER       PRIMARY KEY
+                      REFERENCES db.media(media_id)
+                      ON DELETE RESTRICT,
+
+      analyzed  BOOLEAN       DEFAULT false,
+      result    VARCHAR(999)  DEFAULT 'No result available',
+      reason    VARCHAR(999)  DEFAULT 'No reasoning available'
+    );

@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import type { TicketDto } from "../types/TicketDto";
 import { getTickets } from "../api/ticketService";
 import WorkerTicketDetailsModal from "../components/WorkerTicketDetailsModal";
+import type { MediaDto } from "../types/MediaDto";
+import { getMediaById } from "../api/mediaService";
 
 export default function WorkerTicketView() {
 
@@ -12,6 +14,9 @@ export default function WorkerTicketView() {
     const [viewTicket, setViewTicket] = useState<TicketDto | null>(null);
 
     const [isLoading, setIsLoading] = useState(false);
+
+    const [media, setMedia] = useState<MediaDto | null>(null);
+    const [_ , setMediaLoading] = useState(false);
 
     const userId = localStorage.getItem('userId') || '';
 
@@ -39,6 +44,38 @@ export default function WorkerTicketView() {
         }
         fetchTickets();
     }, [userId]);
+
+
+  /**
+   * Handles the viewing of a ticket.
+   * @param ticket - The ticket to be viewed.
+   * @returns void
+   */
+  const handleViewTicket = async(ticket: TicketDto) => {
+    setViewTicket(ticket);
+    setMedia(null);
+
+    if (ticket.mediaId) {
+      setMediaLoading(true);
+      try {
+        const data =  await getMediaById(ticket.mediaId);
+        setMedia(data);
+      } catch (error) {
+        console.error("Error fetching media:", error);
+      } finally {
+        setMediaLoading(false);
+      }
+    }
+  }
+
+  /**
+   * Handles the closing of a ticket.
+   * @returns void
+   */
+  const handleCloseTicket = () => {
+    setViewTicket(null);
+    setMedia(null);
+  }
 
 
     return (
@@ -82,7 +119,7 @@ export default function WorkerTicketView() {
                             <WorkerTicketCard
                                 key={ticket.ticketId}
                                 ticket={ticket}
-                                onView={() => setViewTicket(ticket)}
+                                onView={handleViewTicket}
                             />
                         ))}
                     </div>
@@ -95,8 +132,9 @@ export default function WorkerTicketView() {
                 {/* ------------------ Worker Ticket Details Modal ------------------ */}
                 {viewTicket && (
                     <WorkerTicketDetailsModal
-                        ticket={viewTicket}
-                        onClose={() => setViewTicket(null)}
+                        ticket={viewTicket} 
+                        media={media}
+                        onClose={handleCloseTicket}
                     />
                     )}
                 </div>

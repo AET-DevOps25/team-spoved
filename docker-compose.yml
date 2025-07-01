@@ -24,7 +24,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
-      - SPRING_DATASOURCE_USERNAME=spOveD
+      - SPRING_DATASOURCE_USERNAME=spoved
       - SPRING_DATASOURCE_PASSWORD=secret
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info
       - MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS=always
@@ -54,9 +54,11 @@ services:
       args:
         VITE_SERVER_API_URL: ${VITE_SERVER_API_URL:-http://localhost:8090/api/v1}
         VITE_AUTH_API_URL: ${VITE_AUTH_API_URL:-http://localhost:8090/auth}
+        VITE_GENAI_API_URL: ${VITE_GENAI_API_URL:-http://localhost:8000}
     environment:
       - VITE_SERVER_API_URL=${VITE_SERVER_API_URL:-http://localhost:8090/api/v1}
       - VITE_AUTH_API_URL=${VITE_AUTH_API_URL:-http://localhost:8090/auth}
+      - VITE_GENAI_API_URL=${VITE_GENAI_API_URL:-http://localhost:8000}
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.frontend.rule=PathPrefix(`/`) && !PathPrefix(`/api`)"
@@ -74,7 +76,7 @@ services:
       context: ./database
       dockerfile: Dockerfile
     environment:
-      - POSTGRES_USER=spOveD
+      - POSTGRES_USER=spoved
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=db
     volumes:
@@ -89,7 +91,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
-      - SPRING_DATASOURCE_USERNAME=spOveD
+      - SPRING_DATASOURCE_USERNAME=spoved
       - SPRING_DATASOURCE_PASSWORD=secret
     labels:
       - "traefik.enable=true"
@@ -99,6 +101,21 @@ services:
       - "traefik.http.routers.auth.service=auth-svc"
       - "traefik.http.routers.auth.middlewares=strip-auth"
       - "traefik.http.middlewares.strip-auth.stripprefix.prefixes=/auth"
+
+  genai:
+    image: genai-service
+    build:
+      context: ./genai
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - BACKEND_API_URL=http://server:8080/api/v1
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      - server
+    restart: unless-stopped
 
 volumes:
   pgdata:
