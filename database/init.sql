@@ -91,3 +91,4 @@ INSERT INTO db.tickets (assigned_to, created_by, title, description, status, due
 VALUES
   (2, 1, 'Fix Login Bug', 'User unable to log in via web app', 'IN_PROGRESS', '2025-10-10', 'Berlin Office', 'PHOTO'), -- ticket_id = 1
   (3, 1, 'Database Migration', 'Move DB to cloud infrastructure', 'IN_PROGRESS', '2025-10-15', 'Remote', 'VIDEO');   -- ticket_id = 2
+

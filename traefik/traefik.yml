@@ -1,0 +1,10 @@
+entrypoints:
+  web:
+    address: ":8080"
+
+providers:
+  docker:
+    exposedByDefault: false
+  
+api:
+  dashboard: true
