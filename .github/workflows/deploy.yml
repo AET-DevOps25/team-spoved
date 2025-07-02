@@ -1,0 +1,59 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [ main, dev, feature/*]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+    outputs:
+      instance_ids: ${{steps.tf.outputs.ids}}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Configure AWS via OIDC
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::890061444768:role/GitHubOIDCRole
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.10.0
+
+      - name: Terraform Init & Apply
+        id: tf 
+        run: |
+          terraform init
+          terraform apply -auto-approve
+          echo "::set-output name=ids::$(terraform output -json instance_ids)"
+    
+  ansible:
+    name: Ansible
+    needs: terraform
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Ansible & AWS plugin 
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible
+          ansible-galaxy collection install amazon.aws
+
+      - name: Run Docker delpoy playbook
+        run: |
+          ansible-playbook \
+            ansible/docker-deploy.yml \
+            -i localhost \
+            -c aws_ssm \
+            --extra-vars "instance_ids=${{needs.terraform.outputs.instance_ids}}"

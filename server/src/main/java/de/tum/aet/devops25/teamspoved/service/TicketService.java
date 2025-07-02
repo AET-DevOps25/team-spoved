@@ -40,6 +40,7 @@ public class TicketService {
         ticket.setDueDate(request.dueDate());
         ticket.setLocation(request.location());
         ticket.setMediaType(request.mediaType());
+        ticket.setMediaId(request.mediaId());
         return ticketRepository.save(ticket);
     }
 

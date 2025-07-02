@@ -13,6 +13,8 @@ import AssignModal from "../components/AssignModal";
 import { getFilteredUsers } from "../api/userService";
 import type { UserDto } from "../types/UserDto";
 import LogoutModal from "../components/LogoutModal";
+import { getMediaById } from "../api/mediaService";
+import type { MediaDto } from "../types/MediaDto";
 
 function SupervisorTicketsView() {
   // State variables
@@ -34,6 +36,10 @@ function SupervisorTicketsView() {
 
   // Users variables
   const [users, setUsers] = useState<UserDto[]>([]);
+
+  // Media variables
+  const [media, setMedia] = useState<MediaDto | null>(null);
+  const [_ , setMediaLoading] = useState(false);
 
   /**
    * Fetches the tickets and the users from the server when the component mounts.
@@ -135,6 +141,37 @@ function SupervisorTicketsView() {
     }
   };
 
+  /**
+   * Handles the viewing of a ticket.
+   * @param ticket - The ticket to be viewed.
+   * @returns void
+   */
+  const handleViewTicket = async(ticket: TicketDto) => {
+    setViewTicket(ticket);
+    setMedia(null);
+
+    if (ticket.mediaId) {
+      setMediaLoading(true);
+      try {
+        const data =  await getMediaById(ticket.mediaId);
+        setMedia(data);
+      } catch (error) {
+        console.error("Error fetching media:", error);
+      } finally {
+        setMediaLoading(false);
+      }
+    }
+  }
+
+  /**
+   * Handles the closing of a ticket.
+   * @returns void
+   */
+  const handleCloseTicket = () => {
+    setViewTicket(null);
+    setMedia(null);
+  }
+
   return (
     <div className="flex h-screen gap-0">
       {/* ------------------ Left Image Panel ------------------ */}
@@ -182,7 +219,7 @@ function SupervisorTicketsView() {
                 key={ticket.ticketId}
                 ticket={ticket}
                 users={users}
-                onView={setViewTicket}
+                onView={handleViewTicket}
                 onAssign={setSelectedTicket}
               />
             ))}
@@ -205,7 +242,8 @@ function SupervisorTicketsView() {
         {viewTicket && (
           <SupervisorTicketDetailsModal
             ticket={viewTicket}
-            onClose={() => setViewTicket(null)}
+            media={media}
+            onClose={handleCloseTicket}
           />
         )}
 
