@@ -46,7 +46,7 @@ services:
       - VITE_GENAI_API_URL=${VITE_GENAI_API_URL:-http://localhost:8000}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.client.rule=PathPrefix(`/`) && !PathPrefix(`/api`)"
+      - "traefik.http.routers.client.rule=PathPrefix(`/`) && !PathPrefix(`/api`) && !PathPrefix(`/auth`)"
       - "traefik.http.routers.client.entrypoints=web"
       - "traefik.http.routers.client.service=client-svc"
       - "traefik.http.routers.client.priority=100"
@@ -95,8 +95,8 @@ services:
       - "8000:8000"
     environment:
       - BACKEND_API_URL=http://localhost:8090/api/v1
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - JWT_SECRET=${JWT_SECRET}
+      - GEMINI_API_KEY=AIzaSyBi-8IhJ_q276ijnqXk9SlqYXSfxo3qyuA
+      - JWT_SECRET=supersecret123
     depends_on:
       - server
     restart: unless-stopped
