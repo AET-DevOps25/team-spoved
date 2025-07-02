@@ -5,7 +5,7 @@ on:
 
     # Pass KUBECONFIG as a secret
     secrets:
-      KUBECONFIG:
+      K8_USER_TOKEN:
         required: true
 
 jobs:
@@ -22,18 +22,36 @@ jobs:
       with:
         version: latest
 
+    - name: Set up kubeconfig from template
+      run: |
+          mkdir -p ~/.kube
+
+          cat <<EOF > ~/.kube/config
+          apiVersion: v1
+          kind: Config
+          clusters:
+          - name: student
+            cluster:
+              server: https://rancher.ase.cit.tum.de/k8s/clusters/c-m-nhcfjg9h
+              insecure-skip-tls-verify: true
+          users:
+          - name: student
+            user:
+              token: ${{ secrets.K8_USER_TOKEN }}
+          contexts:
+          - name: student
+            context:
+              user: student
+              cluster: student
+          current-context: student
+          EOF
+
     - name: Install Helm
       uses: azure/setup-helm@v4.3.0
       with:
         version: latest
 
-    # Load config to .kube
-    - name: Load Kubeconfig
-      run: |
-        mkdir -p ~/.kube
-        printf "%s" "${{ secrets.KUBECONFIG }}" > ~/.kube/config
-
     # Run helm upgrade to upgrade deployment
     - name: Upgrade Deployment with Helm
       run: |
-        helm upgrade --install meetatmensa ./helm/spoved-app -n spoved
+        helm upgrade --install spoved ./helm/spoved-app -n devops25-team-spoved
