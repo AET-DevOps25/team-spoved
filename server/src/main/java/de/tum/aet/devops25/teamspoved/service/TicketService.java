@@ -7,12 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.tum.aet.devops25.teamspoved.dto.CreateTicketRequest;
+import de.tum.aet.devops25.teamspoved.dto.UpdateTicketRequest;
 import de.tum.aet.devops25.teamspoved.model.Role;
 import de.tum.aet.devops25.teamspoved.model.Status;
 import de.tum.aet.devops25.teamspoved.model.TicketEntity;
 import de.tum.aet.devops25.teamspoved.model.UserEntity;
 import de.tum.aet.devops25.teamspoved.repository.TicketRepository;
 import de.tum.aet.devops25.teamspoved.repository.UserRepository;
+
 
 @Service
 public class TicketService {
@@ -49,6 +51,21 @@ public class TicketService {
         Optional<TicketEntity> ticketOpt = ticketRepository.findById(ticketId);
         ticketOpt.ifPresent(ticket -> {
             ticket.setStatus(newStatus);
+            ticketRepository.save(ticket);
+        });
+        return ticketOpt;
+    }
+
+    @Transactional
+    public Optional<TicketEntity> updateTicket(Integer ticketId, UpdateTicketRequest request) {
+        Optional<TicketEntity> ticketOpt = ticketRepository.findById(ticketId);
+        ticketOpt.ifPresent(ticket -> {
+            if (request.title() != null) ticket.setTitle(request.title());
+            if (request.description() != null) ticket.setDescription(request.description());
+            if (request.dueDate() != null) ticket.setDueDate(request.dueDate());
+            if (request.location() != null) ticket.setLocation(request.location());
+            if (request.mediaType() != null) ticket.setMediaType(request.mediaType());
+            if (request.mediaId() != null) ticket.setMediaId(request.mediaId());
             ticketRepository.save(ticket);
         });
         return ticketOpt;

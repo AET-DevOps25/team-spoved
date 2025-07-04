@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { TicketDto, CreateTicketRequest } from '../types/TicketDto';
+import type { TicketDto, CreateTicketRequest, UpdateTicketRequest } from '../types/TicketDto';
 import { getAuthHeaders } from './utils';
 
 const BASE_URL = import.meta.env.VITE_SERVER_API_URL + '/tickets';
@@ -45,4 +45,8 @@ export const assignWorker = async (ticketId: number, userId: number) => {
 
 export const updateTicketStatus = async (ticketId: number, status: string) => {
   return axios.put(`${BASE_URL}/${ticketId}/status?status=${status}`, {}, { headers: getAuthHeaders() });
+};
+
+export const updateTicket = async (ticketId: number, ticket: UpdateTicketRequest) => {
+  return axios.put(`${BASE_URL}/${ticketId}/update`, ticket, { headers: getAuthHeaders() });
 };

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.tum.aet.devops25.teamspoved.dto.CreateTicketRequest;
+import de.tum.aet.devops25.teamspoved.dto.UpdateTicketRequest;
 import de.tum.aet.devops25.teamspoved.model.Status;
 import de.tum.aet.devops25.teamspoved.model.TicketEntity;
 import de.tum.aet.devops25.teamspoved.service.TicketService;
@@ -88,5 +89,14 @@ public class TicketController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+    }
+
+    @PutMapping("/tickets/{ticketId}/update")
+    public ResponseEntity<TicketEntity> updateTicket(
+            @PathVariable Integer ticketId,
+            @Valid @RequestBody UpdateTicketRequest request) {
+        return ticketService.updateTicket(ticketId, request)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

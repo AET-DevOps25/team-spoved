@@ -15,7 +15,8 @@ const SupervisorFilterBar: React.FC<Props> = ({
 	const supervisorStatusTabs = [
 		{ label: 'Open', value: 'open' },
 		{ label: 'In Progress', value: 'in_progress' },
-		{ label: 'Closed', value: 'closed' },
+		{ label: 'Finished', value: 'finished' },
+		{ label: 'Overdue', value: 'overdue' },
 	];
 
 

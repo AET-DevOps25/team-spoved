@@ -178,19 +178,21 @@ function SupervisorTicketsView() {
   }
 
   const taskCounts = {
-		open: tickets.filter((t) => t.status === 'OPEN').length,
+		open: tickets.filter((t) => t.status === 'OPEN' && t.dueDate && new Date(t.dueDate) >= new Date()).length,
 		in_progress: tickets.filter(
 			(t) =>
-				t.status === 'IN_PROGRESS'
+				t.status === 'IN_PROGRESS' && t.dueDate && new Date(t.dueDate) >= new Date()
 		).length,
 		finished: tickets.filter((t) => t.status === 'FINISHED').length,
+		overdue: tickets.filter((t) => (t.status === 'OPEN' || t.status === 'IN_PROGRESS' ) && t.dueDate && new Date(t.dueDate) < new Date()).length,
 	};
 
   useEffect(() => {
     const filtered = tickets.filter((ticket) => {
-      if (statusFilter === 'open') return ticket.status === 'OPEN';
-      if (statusFilter === 'in_progress') return ticket.status === 'IN_PROGRESS';
+      if (statusFilter === 'open') return ticket.status === 'OPEN' && ticket.dueDate && new Date(ticket.dueDate) >= new Date();
+      if (statusFilter === 'in_progress') return ticket.status === 'IN_PROGRESS' && ticket.dueDate && new Date(ticket.dueDate) >= new Date();
       if (statusFilter === 'finished') return ticket.status === 'FINISHED';
+      if (statusFilter === 'overdue') return (ticket.status === 'OPEN' || ticket.status === 'IN_PROGRESS') && ticket.dueDate && new Date(ticket.dueDate) < new Date();
     });
     setFilteredTickets(filtered);
   }, [statusFilter, tickets]);
@@ -233,7 +235,7 @@ function SupervisorTicketsView() {
         {/* ------------------ Create Ticket Button ------------------ */}
         <button
           onClick={() => setOpenCreateModal(true)}
-          className="w-full mb-6 rounded-md bg-[#1A97FE] px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#1A97FE] mt-2"
+          className="w-full mb-6 rounded-md bg-[#1A97FE] px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 mt-2"
         >
           + Create New Ticket
         </button>
