@@ -7,11 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000"})
+@CrossOrigin(origins = { "http://localhost:5173", "http://localhost:3000", "http://localhost:8090" })
 @RestController
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService userService;
+
     public UserController(UserService ticketService) {
         this.userService = ticketService;
     }
@@ -20,8 +21,7 @@ public class UserController {
     public ResponseEntity<List<UserEntity>> getUsers(
             @RequestParam(required = false) Integer id,
             @RequestParam(required = false) Role role,
-            @RequestParam(required = false) String name
-    ) {
+            @RequestParam(required = false) String name) {
         List<UserEntity> users = userService.getFilteredUsers(id, role != null ? role.name() : null, name);
         return ResponseEntity.ok(users);
     }

@@ -5,14 +5,10 @@ services:
       - --configFile=/etc/traefik/traefik.yml
     ports:
       - "8090:8080"
+      - "8081:8081"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./traefik/traefik.yml:/etc/traefik/traefik.yml
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=PathPrefix(`/dashboard`)"
-      - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.traefik.priority=200"
 
   server:
     image: ghcr.io/aet-devops25/ticketing-service/server:latest
@@ -26,24 +22,13 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
       - SPRING_DATASOURCE_USERNAME=spoved
       - SPRING_DATASOURCE_PASSWORD=secret
-      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info
-      - MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS=always
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.server-svc.loadbalancer.server.port=8080"
-      - "traefik.http.middlewares.strip-api.stripprefix.prefixes=/api"
       - "traefik.http.routers.api.rule=PathPrefix(`/api`)"
       - "traefik.http.routers.api.entrypoints=web"
-      - "traefik.http.routers.api.middlewares=strip-api"
       - "traefik.http.routers.api.service=server-svc"
       - "traefik.http.routers.api.priority=100"
-
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
     restart: unless-stopped
 
   client:
@@ -53,19 +38,19 @@ services:
       dockerfile: Dockerfile
       args:
         VITE_SERVER_API_URL: ${VITE_SERVER_API_URL:-http://localhost:8090/api/v1}
-        VITE_AUTH_API_URL: ${VITE_AUTH_API_URL:-http://localhost:8090/auth}
+        VITE_AUTH_API_URL: ${VITE_AUTH_API_URL:-http://localhost:8090}
         VITE_GENAI_API_URL: ${VITE_GENAI_API_URL:-http://localhost:8000}
     environment:
       - VITE_SERVER_API_URL=${VITE_SERVER_API_URL:-http://localhost:8090/api/v1}
-      - VITE_AUTH_API_URL=${VITE_AUTH_API_URL:-http://localhost:8090/auth}
+      - VITE_AUTH_API_URL=${VITE_AUTH_API_URL:-http://localhost:8090}
       - VITE_GENAI_API_URL=${VITE_GENAI_API_URL:-http://localhost:8000}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=PathPrefix(`/`) && !PathPrefix(`/api`)"
-      - "traefik.http.routers.frontend.entrypoints=web"
-      - "traefik.http.routers.frontend.service=frontend-svc"
-      - "traefik.http.services.frontend-svc.loadbalancer.server.port=3000"
-      - "traefik.http.routers.frontend.priority=1"
+      - "traefik.http.routers.client.rule=PathPrefix(`/`) && !PathPrefix(`/api`) && !PathPrefix(`/auth`)"
+      - "traefik.http.routers.client.entrypoints=web"
+      - "traefik.http.routers.client.service=client-svc"
+      - "traefik.http.routers.client.priority=100"
+      - "traefik.http.services.client-svc.loadbalancer.server.port=3000"
     depends_on:
       - server
     restart: unless-stopped
@@ -99,8 +84,7 @@ services:
       - "traefik.http.routers.auth.rule=PathPrefix(`/auth`)"
       - "traefik.http.routers.auth.entrypoints=web"
       - "traefik.http.routers.auth.service=auth-svc"
-      - "traefik.http.routers.auth.middlewares=strip-auth"
-      - "traefik.http.middlewares.strip-auth.stripprefix.prefixes=/auth"
+      - "traefik.http.routers.auth.priority=100"
 
   genai:
     image: genai-service
@@ -110,7 +94,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - BACKEND_API_URL=http://server:8080/api/v1
+      - BACKEND_API_URL=http://localhost:8090/api/v1
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - JWT_SECRET=${JWT_SECRET}
     depends_on:
