@@ -7,6 +7,7 @@ import { getTickets, createTicket, assignWorker } from "../api/ticketService";
 import SupervisorTicketCard from "../components/SupervisorTicketCard";
 import CreateTicketModal from "../components/CreateTicketModal";
 import SupervisorTicketDetailsModal from "../components/SupervisorTicketDetailsModal";
+import SupervisorFilterBar from "../components/SupervisorFilterBar";
 
 import newDesign from "../assets/image_no_bg_left_screen.png";
 import AssignModal from "../components/AssignModal";
@@ -40,6 +41,10 @@ function SupervisorTicketsView() {
   // Media variables
   const [media, setMedia] = useState<MediaDto | null>(null);
   const [_ , setMediaLoading] = useState(false);
+
+  const [statusFilter, setStatusFilter] = useState('open');
+
+  const [filteredTickets, setFilteredTickets] = useState<TicketDto[]>([]);
 
   /**
    * Fetches the tickets and the users from the server when the component mounts.
@@ -172,6 +177,24 @@ function SupervisorTicketsView() {
     setMedia(null);
   }
 
+  const taskCounts = {
+		open: tickets.filter((t) => t.status === 'OPEN').length,
+		in_progress: tickets.filter(
+			(t) =>
+				t.status === 'IN_PROGRESS'
+		).length,
+		finished: tickets.filter((t) => t.status === 'FINISHED').length,
+	};
+
+  useEffect(() => {
+    const filtered = tickets.filter((ticket) => {
+      if (statusFilter === 'open') return ticket.status === 'OPEN';
+      if (statusFilter === 'in_progress') return ticket.status === 'IN_PROGRESS';
+      if (statusFilter === 'finished') return ticket.status === 'FINISHED';
+    });
+    setFilteredTickets(filtered);
+  }, [statusFilter, tickets]);
+
   return (
     <div className="flex h-screen gap-0">
       {/* ------------------ Left Image Panel ------------------ */}
@@ -198,11 +221,19 @@ function SupervisorTicketsView() {
           <LogoutModal />
         </div>
 
+        {/* ------------------ Filter Bar ------------------ */}
+        <div className="mb-6 mt-24">
+        <SupervisorFilterBar
+					status={statusFilter}
+					setStatus={setStatusFilter}
+					taskCounts={taskCounts}
+				/>
+        </div>
 
         {/* ------------------ Create Ticket Button ------------------ */}
         <button
           onClick={() => setOpenCreateModal(true)}
-          className="w-full mb-6 rounded-md bg-[#1A97FE] px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#1A97FE] mt-24"
+          className="w-full mb-6 rounded-md bg-[#1A97FE] px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#1A97FE] mt-2"
         >
           + Create New Ticket
         </button>
@@ -214,7 +245,7 @@ function SupervisorTicketsView() {
           </div>
         ) : tickets.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
-            {tickets.map((ticket) => (
+            {filteredTickets.map((ticket) => (
               <SupervisorTicketCard
                 key={ticket.ticketId}
                 ticket={ticket}

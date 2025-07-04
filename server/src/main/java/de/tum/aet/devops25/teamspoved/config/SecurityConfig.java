@@ -25,9 +25,7 @@ public class SecurityConfig {
         // RBAC for the API points 
         // FIXME No CSRF is unsafe
         http
-            .csrf(csrf -> {
-                    csrf.ignoringRequestMatchers("/api/v1/*");
-                })  
+            .csrf(csrf -> {csrf.ignoringRequestMatchers("/api/v1/**");})  
             .cors(cors -> cors.configure(http))
             .authorizeHttpRequests(auth -> auth
                 // Allow internal service access for GenAI automation

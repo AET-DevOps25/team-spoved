@@ -42,3 +42,7 @@ export const getFilteredTickets = async (filters: {
 export const assignWorker = async (ticketId: number, userId: number) => {
   return axios.put(`${BASE_URL}/${ticketId}/assign?userId=${userId}`, {}, { headers: getAuthHeaders() });
 };
+
+export const updateTicketStatus = async (ticketId: number, status: string) => {
+  return axios.put(`${BASE_URL}/${ticketId}/status?status=${status}`, {}, { headers: getAuthHeaders() });
+};
