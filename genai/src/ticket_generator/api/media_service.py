@@ -9,7 +9,7 @@ load_dotenv()
 
 router = APIRouter()
 
-API_URL = os.getenv("BACKEND_API_URL")
+API_URL = os.getenv("MEDIA_API_URL")
 
 
 def fetch_media(auth_token: str = None):

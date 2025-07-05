@@ -4,7 +4,7 @@ import type { Jwt } from '../types/Jwt';
 import { getAuthHeaders } from './utils';
 
 // User endpoints
-const BASE_URL = import.meta.env.VITE_SERVER_API_URL + '/users';
+const BASE_URL = import.meta.env.VITE_USER_API_URL + '/users';
 const AUTH_BASE_URL = import.meta.env.VITE_AUTH_API_URL + '/auth';
 
 export const getUsers = async (): Promise<UserDto[]> => {

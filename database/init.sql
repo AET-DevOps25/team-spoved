@@ -82,9 +82,7 @@ CREATE TABLE IF NOT EXISTS db.video_photo (
 -- 1. Insert users without ticket references
 INSERT INTO db.users (name, role, password_hash)
 VALUES
-  ('Alice', 'SUPERVISOR', 'hash1'),   -- user_id = 1
-  ('Bob', 'WORKER', 'hash2'),         -- user_id = 2
-  ('Charlie', 'WORKER', 'hash3');     -- user_id = 3
+  ('Alice', 'SUPERVISOR', 'hash1');   -- user_id = 1
 
 -- 2. Insert tickets (must use existing user_ids for assigned_to, created_by)
 INSERT INTO db.tickets (assigned_to, created_by, title, description, status, due_date, location, media_type)

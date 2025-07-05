@@ -22,7 +22,7 @@ const AssignModal: React.FC<AssignModalProps> = ({
 	const [showDropdown, setShowDropdown] = useState(false);
 
 	// Assigned user
-	const assignedUser = users.find((u) => u.userId === ticket.assignedTo?.userId);
+	const assignedUser = users.find((u) => u.userId === ticket.assignedTo);
 
 	// Debounce search term
 	useEffect(() => {
@@ -35,7 +35,7 @@ const AssignModal: React.FC<AssignModalProps> = ({
 	// Alphabetically sorted and filtered list of other users
 	const filteredUsers = useMemo(() => {
 		const list = users
-			.filter((u) => u.userId !== ticket.assignedTo?.userId)
+			.filter((u) => u.userId !== ticket.assignedTo)
 			.sort((a, b) => {
 				const nameA = `${a.name}`.toLowerCase();
 				const nameB = `${b.name}`.toLowerCase();
