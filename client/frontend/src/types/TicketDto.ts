@@ -34,3 +34,12 @@ export interface CreateTicketRequest {
     mediaType: MediaType;
     mediaId: number | null;
 }
+
+export interface UpdateTicketRequest {
+    title: string;
+    description: string;
+    dueDate: string;
+    location: string;
+    mediaType: MediaType;
+    mediaId: number | null;
+}

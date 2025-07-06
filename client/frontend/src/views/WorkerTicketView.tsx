@@ -7,6 +7,7 @@ import { getTickets } from "../api/ticketService";
 import WorkerTicketDetailsModal from "../components/WorkerTicketDetailsModal";
 import type { MediaDto } from "../types/MediaDto";
 import { getMediaById } from "../api/mediaService";
+import WorkerFilterBar from "../components/WorkerFilterBar";
 
 export default function WorkerTicketView() {
 
@@ -16,9 +17,13 @@ export default function WorkerTicketView() {
     const [isLoading, setIsLoading] = useState(false);
 
     const [media, setMedia] = useState<MediaDto | null>(null);
-    const [_ , setMediaLoading] = useState(false);
+    const [_, setMediaLoading] = useState(false);
 
     const userId = localStorage.getItem('userId') || '';
+
+    const [statusFilter, setStatusFilter] = useState('open');
+
+    const [filteredTickets, setFilteredTickets] = useState<TicketDto[]>([]);
 
     /**
      * Fetches the tickets from the server.
@@ -46,37 +51,56 @@ export default function WorkerTicketView() {
     }, [userId]);
 
 
-  /**
-   * Handles the viewing of a ticket.
-   * @param ticket - The ticket to be viewed.
-   * @returns void
-   */
-  const handleViewTicket = async(ticket: TicketDto) => {
-    setViewTicket(ticket);
-    setMedia(null);
+    /**
+     * Handles the viewing of a ticket.
+     * @param ticket - The ticket to be viewed.
+     * @returns void
+     */
+    const handleViewTicket = async (ticket: TicketDto) => {
+        setViewTicket(ticket);
+        setMedia(null);
 
-    if (ticket.mediaId) {
-      setMediaLoading(true);
-      try {
-        const data =  await getMediaById(ticket.mediaId);
-        setMedia(data);
-      } catch (error) {
-        console.error("Error fetching media:", error);
-      } finally {
-        setMediaLoading(false);
-      }
+        if (ticket.mediaId) {
+            setMediaLoading(true);
+            try {
+                const data = await getMediaById(ticket.mediaId);
+                setMedia(data);
+            } catch (error) {
+                console.error("Error fetching media:", error);
+            } finally {
+                setMediaLoading(false);
+            }
+        }
     }
-  }
 
-  /**
-   * Handles the closing of a ticket.
-   * @returns void
-   */
-  const handleCloseTicket = () => {
-    setViewTicket(null);
-    setMedia(null);
-  }
+    /**
+     * Handles the closing of a ticket.
+     * @returns void
+     */
+    const handleCloseTicket = () => {
+        setViewTicket(null);
+        setMedia(null);
+    }
 
+    const taskCounts = {
+		open: tickets.filter((t) => t.status === 'OPEN' && t.dueDate && new Date(t.dueDate) >= new Date()).length,
+		in_progress: tickets.filter(
+			(t) =>
+				t.status === 'IN_PROGRESS' && t.dueDate && new Date(t.dueDate) >= new Date()
+		).length,
+		finished: tickets.filter((t) => t.status === 'FINISHED').length,
+		overdue: tickets.filter((t) => (t.status === 'OPEN' || t.status === 'IN_PROGRESS' ) && t.dueDate && new Date(t.dueDate) < new Date()).length,
+	};
+
+    useEffect(() => {
+        const filtered = tickets.filter((ticket) => {
+          if (statusFilter === 'open') return ticket.status === 'OPEN' && ticket.dueDate && new Date(ticket.dueDate) >= new Date();
+          if (statusFilter === 'in_progress') return ticket.status === 'IN_PROGRESS' && ticket.dueDate && new Date(ticket.dueDate) >= new Date();
+          if (statusFilter === 'finished') return ticket.status === 'FINISHED';
+          if (statusFilter === 'overdue') return (ticket.status === 'OPEN' || ticket.status === 'IN_PROGRESS') && ticket.dueDate && new Date(ticket.dueDate) < new Date();
+        });
+        setFilteredTickets(filtered);
+      }, [statusFilter, tickets]);
 
     return (
         <div className="flex h-screen gap-0">
@@ -104,7 +128,13 @@ export default function WorkerTicketView() {
                     <LogoutModal />
                 </div>
 
-                <div className="w-full mb-6 rounded-md bg-transparent px-3.5 py-2.5 text-sm font-semibold text-white mt-24">
+                {/* ------------------ Filter Bar ------------------ */}
+                <div className="mb-6 mt-24">
+                    <WorkerFilterBar
+                        status={statusFilter}
+                        setStatus={setStatusFilter}
+                        taskCounts={taskCounts}
+                    />
                 </div>
 
 
@@ -114,8 +144,8 @@ export default function WorkerTicketView() {
                         <div className="h-8 w-8 border-4 border-[#1A97FE] border-t-transparent rounded-full animate-spin"></div>
                     </div>
                 ) : tickets.length > 0 ? (
-                    <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
-                        {tickets.map((ticket) => (
+                    <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 ">
+                        {filteredTickets.map((ticket) => (
                             <WorkerTicketCard
                                 key={ticket.ticketId}
                                 ticket={ticket}
@@ -132,12 +162,12 @@ export default function WorkerTicketView() {
                 {/* ------------------ Worker Ticket Details Modal ------------------ */}
                 {viewTicket && (
                     <WorkerTicketDetailsModal
-                        ticket={viewTicket} 
+                        ticket={viewTicket}
                         media={media}
                         onClose={handleCloseTicket}
                     />
-                    )}
-                </div>
+                )}
+            </div>
         </div>
     )
 }

@@ -1,10 +1,10 @@
 // components/WorkerTicketDetailsModal.tsx
 // React
-import React from "react";
+import React, { useState } from "react";
 // Dtos
 import type { TicketDto } from "../types/TicketDto";
 import type { MediaDto } from "../types/MediaDto";
-
+import { updateTicketStatus } from "../api/ticketService";
 /**
  * WorkerTicketDetailsModal component displays the details of a single ticket
  * @param ticket - The ticket to display
@@ -26,6 +26,17 @@ interface WorkerTicketDetailsModalProps {
  * @returns The WorkerTicketDetailsModal component
  */
 const WorkerTicketDetailsModal: React.FC<WorkerTicketDetailsModalProps> = ({ ticket, media, onClose }) => {
+  const [ticketStatus, setTicketStatus] = useState(ticket.status);
+
+  const handleStartTicket = () => {
+    updateTicketStatus(ticket.ticketId, 'IN_PROGRESS');
+    setTicketStatus('IN_PROGRESS');
+  };
+
+  const handleFinishTicket = () => {
+    updateTicketStatus(ticket.ticketId, 'FINISHED');
+    setTicketStatus('FINISHED');
+  };
 
 
   // ------------------------ JSX: Ticket Details Modal Layout ------------------------
@@ -101,6 +112,22 @@ const WorkerTicketDetailsModal: React.FC<WorkerTicketDetailsModalProps> = ({ tic
               )}
             </div>
           )}
+        </div>
+        <div className="flex justify-end mt-2 gap-2">
+          <button
+            onClick={handleStartTicket}
+            disabled={ticketStatus === 'IN_PROGRESS' || ticketStatus === 'FINISHED'}
+            className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Start Ticket
+          </button>
+          <button
+            onClick={handleFinishTicket}
+            disabled={ticketStatus === 'FINISHED' }
+            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Finish Ticket
+          </button>
         </div>
       </div>
     </div>
