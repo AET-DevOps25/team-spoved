@@ -40,7 +40,7 @@ function SupervisorTicketsView() {
 
   // Media variables
   const [media, setMedia] = useState<MediaDto | null>(null);
-  const [_ , setMediaLoading] = useState(false);
+  const [, setMediaLoading] = useState(false);
 
   const [statusFilter, setStatusFilter] = useState('open');
 

@@ -25,7 +25,7 @@ const params = new URLSearchParams();
     const response = await axios.get(`${BASE_URL}?${params.toString()}`, {headers: getAuthHeaders()});
     
     const data = Array.isArray(response.data) ? response.data : [];
-    return data.map((user: any) => ({
+    return data.map((user: UserDto) => ({
         userId: user.userId,
         name: user.name,
         role: user.role,

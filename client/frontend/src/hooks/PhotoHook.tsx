@@ -37,6 +37,7 @@ export const usePhotoCapture = (onUploadComplete: () => void): UsePhotoCaptureRe
       if (videoRef.current) videoRef.current.srcObject = newStream;
     } catch (err) {
       setErrorMsg('Failed to access camera');
+      console.error(err);
     }
   };
 
