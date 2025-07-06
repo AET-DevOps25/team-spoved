@@ -27,6 +27,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=spoved
       - SPRING_DATASOURCE_PASSWORD=secret
       - USER_SERVICE_URL=http://user:8082/api/v1
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info
 
     labels:
       - "traefik.enable=true"
@@ -56,6 +57,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
       - SPRING_DATASOURCE_USERNAME=spoved
       - SPRING_DATASOURCE_PASSWORD=secret
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.user-svc.loadbalancer.server.port=8082"
@@ -83,6 +85,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
       - SPRING_DATASOURCE_USERNAME=spoved
       - SPRING_DATASOURCE_PASSWORD=secret
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.media-svc.loadbalancer.server.port=8083"
