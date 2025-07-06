@@ -2,7 +2,7 @@ services:
 
   traefik:
     image: traefik:v3.0
-    container_name: traefik
+    container_name: spoved-traefik
     command:
       - --configFile=/etc/traefik/traefik.yml
     ports:
@@ -22,16 +22,15 @@ services:
       cache_from:
         - ghcr.io/aet-devops25/ticketing-service/ticket:latest
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
-      - SPRING_DATASOURCE_USERNAME=spoved
-      - SPRING_DATASOURCE_PASSWORD=secret
-      - USER_SERVICE_URL=http://user:8082/api/v1
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:${POSTGRES_PORT}/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - USER_SERVICE_URL=http://user:${USER_PORT}/api/v1
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info
-
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.ticket-svc.loadbalancer.server.port=8081"
+      - "traefik.http.services.ticket-svc.loadbalancer.server.port=${TICKET_PORT}"
       - "traefik.http.routers.ticket.rule=PathPrefix(`/api/v1/tickets`)"
       - "traefik.http.routers.ticket.entrypoints=web"
       - "traefik.http.routers.ticket.service=ticket-svc"
@@ -40,7 +39,7 @@ services:
       - database
       - user
     ports:
-      - 8081:8081
+      - "${TICKET_PORT}:${TICKET_PORT}"
     networks:
       - spoved-network
     restart: unless-stopped
@@ -53,14 +52,14 @@ services:
       cache_from:
         - ghcr.io/aet-devops25/user-service/user:latest
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
-      - SPRING_DATASOURCE_USERNAME=spoved
-      - SPRING_DATASOURCE_PASSWORD=secret
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:${POSTGRES_PORT}/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.user-svc.loadbalancer.server.port=8082"
+      - "traefik.http.services.user-svc.loadbalancer.server.port=${USER_PORT}"
       - "traefik.http.routers.user.rule=PathPrefix(`/api/v1/users`)"
       - "traefik.http.routers.user.entrypoints=web"
       - "traefik.http.routers.user.service=user-svc"
@@ -68,7 +67,7 @@ services:
     depends_on:
       - database
     ports:
-      - 8082:8082
+      - "${USER_PORT}:${USER_PORT}"
     networks:
       - spoved-network
     restart: unless-stopped
@@ -81,14 +80,14 @@ services:
       cache_from:
         - ghcr.io/aet-devops25/media-service/media:latest
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
-      - SPRING_DATASOURCE_USERNAME=spoved
-      - SPRING_DATASOURCE_PASSWORD=secret
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:${POSTGRES_PORT}/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.media-svc.loadbalancer.server.port=8083"
+      - "traefik.http.services.media-svc.loadbalancer.server.port=${MEDIA_PORT}"
       - "traefik.http.routers.media.rule=PathPrefix(`/api/v1/media`)"
       - "traefik.http.routers.media.entrypoints=web"
       - "traefik.http.routers.media.service=media-svc"
@@ -96,7 +95,7 @@ services:
     depends_on:
       - database
     ports:
-      - 8083:8083
+      - "${MEDIA_PORT}:${MEDIA_PORT}"
     networks:
       - spoved-network
     restart: unless-stopped
@@ -107,28 +106,26 @@ services:
       context: ./client/frontend
       dockerfile: Dockerfile
       args:
-        VITE_TICKET_API_URL: http://localhost:8080/api/v1
-        VITE_USER_API_URL: http://localhost:8080/api/v1
-        VITE_MEDIA_API_URL: http://localhost:8080/api/v1
-        VITE_AUTH_API_URL: http://localhost:8080
-        VITE_GENAI_API_URL: http://localhost:8000
-
+        VITE_TICKET_API_URL: http://${TRAEFIK_HOST}:${TRAEFIK_PORT}/api/v1
+        VITE_USER_API_URL: http://${TRAEFIK_HOST}:${TRAEFIK_PORT}/api/v1
+        VITE_MEDIA_API_URL: http://${TRAEFIK_HOST}:${TRAEFIK_PORT}/api/v1
+        VITE_AUTH_API_URL: http://${TRAEFIK_HOST}:${TRAEFIK_PORT}
+        VITE_GENAI_API_URL: http://${TRAEFIK_HOST}:${GENAI_PORT}
     environment:
-      - VITE_TICKET_API_URL=http://localhost:8080/api/v1
-      - VITE_USER_API_URL=http://localhost:8080/api/v1
-      - VITE_MEDIA_API_URL=http://localhost:8080/api/v1
-      - VITE_AUTH_API_URL=http://localhost:8080
-      - VITE_GENAI_API_URL=http://localhost:8000
-
+      - VITE_TICKET_API_URL=http://${TRAEFIK_HOST}:${TRAEFIK_PORT}/api/v1
+      - VITE_USER_API_URL=http://${TRAEFIK_HOST}:${TRAEFIK_PORT}/api/v1
+      - VITE_MEDIA_API_URL=http://${TRAEFIK_HOST}:${TRAEFIK_PORT}/api/v1
+      - VITE_AUTH_API_URL=http://${TRAEFIK_HOST}:${TRAEFIK_PORT}
+      - VITE_GENAI_API_URL=http://${TRAEFIK_HOST}:${GENAI_PORT}
     expose:
-      - 3000
+      - "${CLIENT_PORT}"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.client.rule=PathPrefix(`/`) && !PathPrefix(`/api`) && !PathPrefix(`/auth`)"
       - "traefik.http.routers.client.entrypoints=web"
       - "traefik.http.routers.client.service=client-svc"
       - "traefik.http.routers.client.priority=100"
-      - "traefik.http.services.client-svc.loadbalancer.server.port=3000"
+      - "traefik.http.services.client-svc.loadbalancer.server.port=${CLIENT_PORT}"
     depends_on:
       - traefik
       - ticket
@@ -145,11 +142,11 @@ services:
       context: ./database
       dockerfile: Dockerfile
     environment:
-      - POSTGRES_USER=spoved
-      - POSTGRES_PASSWORD=secret
-      - POSTGRES_DB=db
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     expose:
-      - 5432
+      - "${POSTGRES_PORT}"
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
@@ -162,13 +159,13 @@ services:
       context: ./auth
       dockerfile: Dockerfile
     environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
-      - SPRING_DATASOURCE_USERNAME=spoved
-      - SPRING_DATASOURCE_PASSWORD=secret
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:${POSTGRES_PORT}/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.auth-svc.loadbalancer.server.port=8030"
+      - "traefik.http.services.auth-svc.loadbalancer.server.port=${AUTH_PORT}"
       - "traefik.http.routers.auth.rule=PathPrefix(`/auth`)"
       - "traefik.http.routers.auth.entrypoints=web"
       - "traefik.http.routers.auth.service=auth-svc"
@@ -176,7 +173,7 @@ services:
     depends_on:
       - database
     ports:
-      - 8030:8030
+      - "${AUTH_PORT}:${AUTH_PORT}"
     networks:
       - spoved-network
     restart: unless-stopped
@@ -187,17 +184,16 @@ services:
       context: ./genai
       dockerfile: Dockerfile
       args:
-        TICKET_API_URL: http://ticket:8081/api/v1
-        USER_API_URL: http://user:8082/api/v1
-        MEDIA_API_URL: http://media:8083/api/v1
-        AUTH_API_URL: http://auth:8030
+        TICKET_API_URL: http://ticket:${TICKET_PORT}/api/v1
+        USER_API_URL: http://user:${USER_PORT}/api/v1
+        MEDIA_API_URL: http://media:${MEDIA_PORT}/api/v1
+        AUTH_API_URL: http://auth:${AUTH_PORT}
         GEMINI_API_KEY: ${GEMINI_API_KEY}
-    
     environment:
-      - TICKET_API_URL=http://ticket:8081/api/v1
-      - USER_API_URL=http://user:8082/api/v1
-      - MEDIA_API_URL=http://media:8083/api/v1
-      - AUTH_API_URL=http://auth:8030
+      - TICKET_API_URL=http://ticket:${TICKET_PORT}/api/v1
+      - USER_API_URL=http://user:${USER_PORT}/api/v1
+      - MEDIA_API_URL=http://media:${MEDIA_PORT}/api/v1
+      - AUTH_API_URL=http://auth:${AUTH_PORT}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
     depends_on:
       - traefik
@@ -205,7 +201,7 @@ services:
       - user
       - media
     ports:
-      - 8000:8000
+      - "${GENAI_PORT}:${GENAI_PORT}"
     networks:
       - spoved-network
     restart: unless-stopped
