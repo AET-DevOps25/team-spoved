@@ -34,4 +34,11 @@ spec:
                 name: server-service
                 port:
                   number: {{ .Values.server.service.port }}
+          - path: /prometheus
+            pathType: Prefix
+            backend:
+              service:
+                name: prometheus-service
+                port:
+                  number: 9090
 {{- end }}

@@ -25,14 +25,15 @@ public class SecurityConfig {
         // RBAC for the API points 
         // FIXME No CSRF is unsafe
         http
-            .csrf(csrf -> {csrf.ignoringRequestMatchers("/api/v1/**");})  
+            .csrf(csrf -> {csrf.ignoringRequestMatchers("/api/v1/**");})
             .cors(cors -> cors.configure(http))
             .authorizeHttpRequests(auth -> auth
                 // Allow internal service access for GenAI automation
                 .requestMatchers("/api/v1/media/**").permitAll()
                 .requestMatchers("/actuator/health").permitAll()
                 // Require authentication for everything else
-                .anyRequest().authenticated() 
+                .requestMatchers("/actuator/prometheus", "/actuator/health").permitAll()
+                .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

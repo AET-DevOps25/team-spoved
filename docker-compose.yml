@@ -22,6 +22,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
       - SPRING_DATASOURCE_USERNAME=spoved
       - SPRING_DATASOURCE_PASSWORD=secret
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus
+
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.server-svc.loadbalancer.server.port=8080"
@@ -64,6 +66,8 @@ services:
       - POSTGRES_USER=spoved
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=db
+    ports:
+      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
@@ -78,6 +82,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
       - SPRING_DATASOURCE_USERNAME=spoved
       - SPRING_DATASOURCE_PASSWORD=secret
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.auth-svc.loadbalancer.server.port=8030"
@@ -85,6 +90,42 @@ services:
       - "traefik.http.routers.auth.entrypoints=web"
       - "traefik.http.routers.auth.service=auth-svc"
       - "traefik.http.routers.auth.priority=100"
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    user: root
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_FEATURE_TOGGLES_ENABLE=logsInExplore
+      - GF_LOG_CONSOLECOLORS=true
+    entrypoint: ["sh", "-c", "/etc/grafana/provisioning/init_grafana.sh"]
+    depends_on:
+      - prometheus
+    restart: unless-stopped
 
   genai:
     image: genai-service
@@ -103,3 +144,5 @@ services:
 
 volumes:
   pgdata:
+  prometheus_data:
+  grafana-storage:
