@@ -7,9 +7,9 @@ log:
 
 entryPoints:
   web:
-    address: ":8080"
+    address: ":8080" # app
   traefik:
-    address: ":8081"
+    address: ":8089" # dashboard
 
 providers:
   docker:
