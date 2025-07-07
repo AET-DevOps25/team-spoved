@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { loginUser } from "../api/userService";
+import { getFilteredUsers, loginUser } from "../api/userService";
 import { jwtDecode } from "jwt-decode";
 import type { JwtPayload } from "jwt-decode";
 
@@ -31,6 +31,13 @@ const LoginView = () => {
       
       sessionStorage.setItem("jwt", data.token);
       sessionStorage.setItem("name", username);
+
+      const user = await getFilteredUsers(decoded.role, username);
+      const userId = user.find((u) => u.name === username)?.userId || 0;
+
+    localStorage.setItem("userId", userId.toString());
+    localStorage.setItem("role", decoded.role);
+    localStorage.setItem("name", username);
 
       const role = decoded.role.toLowerCase();
 

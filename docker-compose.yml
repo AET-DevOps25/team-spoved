@@ -1,6 +1,15 @@
-version: '3.8'
-
 services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      - --configFile=/etc/traefik/traefik.yml
+    ports:
+      - "8090:8080"
+      - "8081:8081"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml
+
   server:
     image: ghcr.io/aet-devops25/ticketing-service/server:latest
     build:
@@ -8,20 +17,19 @@ services:
       dockerfile: Dockerfile
       cache_from:
         - ghcr.io/aet-devops25/ticketing-service/server:latest
-    ports:
-      - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
-      - SPRING_DATASOURCE_USERNAME=spOveD
+      - SPRING_DATASOURCE_USERNAME=spoved
       - SPRING_DATASOURCE_PASSWORD=secret
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.server-svc.loadbalancer.server.port=8080"
+      - "traefik.http.routers.api.rule=PathPrefix(`/api`)"
+      - "traefik.http.routers.api.entrypoints=web"
+      - "traefik.http.routers.api.service=server-svc"
+      - "traefik.http.routers.api.priority=100"
     restart: unless-stopped
 
   client:
@@ -30,14 +38,20 @@ services:
       context: ./client/frontend
       dockerfile: Dockerfile
       args:
-        VITE_SERVER_API_URL: ${VITE_SERVER_API_URL:-http://localhost:8080/api/v1}
-        VITE_AUTH_API_URL: ${VITE_AUTH_API_URL:-http://localhost:8030}
-    ports:
-      - "3000:3000"
+        VITE_SERVER_API_URL: ${VITE_SERVER_API_URL:-http://localhost:8090/api/v1}
+        VITE_AUTH_API_URL: ${VITE_AUTH_API_URL:-http://localhost:8090}
+        VITE_GENAI_API_URL: ${VITE_GENAI_API_URL:-http://localhost:8000}
     environment:
-      - VITE_SERVER_API_URL=${VITE_SERVER_API_URL:-http://localhost:8080/api/v1}
-      - VITE_AUTH_API_URL=${VITE_AUTH_API_URL:-http://localhost:8030}
-
+      - VITE_SERVER_API_URL=${VITE_SERVER_API_URL:-http://localhost:8090/api/v1}
+      - VITE_AUTH_API_URL=${VITE_AUTH_API_URL:-http://localhost:8090}
+      - VITE_GENAI_API_URL=${VITE_GENAI_API_URL:-http://localhost:8000}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.client.rule=PathPrefix(`/`) && !PathPrefix(`/api`) && !PathPrefix(`/auth`)"
+      - "traefik.http.routers.client.entrypoints=web"
+      - "traefik.http.routers.client.service=client-svc"
+      - "traefik.http.routers.client.priority=100"
+      - "traefik.http.services.client-svc.loadbalancer.server.port=3000"
     depends_on:
       - server
     restart: unless-stopped
@@ -48,11 +62,9 @@ services:
       context: ./database
       dockerfile: Dockerfile
     environment:
-      - POSTGRES_USER=spOveD
+      - POSTGRES_USER=spoved
       - POSTGRES_PASSWORD=secret
       - POSTGRES_DB=db
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
@@ -62,14 +74,19 @@ services:
     build:
       context: ./auth
       dockerfile: Dockerfile
-    ports:
-      - "8030:8030"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
-      - SPRING_DATASOURCE_USERNAME=spOveD
+      - SPRING_DATASOURCE_USERNAME=spoved
       - SPRING_DATASOURCE_PASSWORD=secret
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.auth-svc.loadbalancer.server.port=8030"
+      - "traefik.http.routers.auth.rule=PathPrefix(`/auth`)"
+      - "traefik.http.routers.auth.entrypoints=web"
+      - "traefik.http.routers.auth.service=auth-svc"
+      - "traefik.http.routers.auth.priority=100"
 
   prometheus:
     image: prom/prometheus:v2.52.0
@@ -85,7 +102,20 @@ services:
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
       - '--web.enable-lifecycle'
-    restart: unless-stopped
+
+  genai:
+    image: genai-service
+    build:
+      context: ./genai
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - BACKEND_API_URL=http://localhost:8090/api/v1
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      - server
 
 volumes:
   pgdata:

@@ -12,16 +12,18 @@ COPY *.json *.ts *.js *.html ./
 
 ARG VITE_SERVER_API_URL
 ARG VITE_AUTH_API_URL
+ARG VITE_GENAI_API_URL
 
 ENV VITE_SERVER_API_URL=$VITE_SERVER_API_URL
 ENV VITE_AUTH_API_URL=$VITE_AUTH_API_URL
+ENV VITE_GENAI_API_URL=$VITE_GENAI_API_URL
 
 ENV NODE_ENV=dev
 
-# Install all necessary dependencies
-RUN npm install
+# Clear npm cache and install dependencies
+RUN npm cache clean --force
 
-# Install the dependencies of the project
+# Install dependencies
 RUN npm install
 
 # Build the project

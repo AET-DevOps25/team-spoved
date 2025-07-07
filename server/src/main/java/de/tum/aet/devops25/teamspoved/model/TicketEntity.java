@@ -19,10 +19,10 @@ public class TicketEntity {
     @JoinColumn(name = "created_by", nullable = false)
     private UserEntity createdBy;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 999)
     private String title = "New Ticket";
 
-    @Column(nullable = false, length = 500)
+    @Column(nullable = false, length = 999)
     private String description = "Description of the ticket";
 
     @Enumerated(EnumType.STRING)
@@ -32,12 +32,20 @@ public class TicketEntity {
     @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 999)
     private String location;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "media_type", nullable = false, columnDefinition = "db.media_type")
     private MediaTypeEnum mediaType;
+
+    @Column(name="media_id", nullable = true)
+    private Integer mediaId;
+
+    // TODO Think whether this appear in the final version of the Ticket entity
+    // @Enumerated(EnumType.STRING)
+    // @Column(nullable = false, columnDefinition = "db.role")
+    // private Role supervisor;
 
     // Getters and setters
     public Integer getTicketId() { return ticketId; }
@@ -58,6 +66,8 @@ public class TicketEntity {
     public void setLocation(String location) { this.location = location; }
     public MediaTypeEnum getMediaType() { return mediaType; }
     public void setMediaType(MediaTypeEnum mediaType) { this.mediaType = mediaType; }
+    public Integer getMediaId() { return mediaId; }
+    public void setMediaId(Integer mediaId) { this.mediaId = mediaId; }
 
     @Override
     public String toString() {
