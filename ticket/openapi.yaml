@@ -7,4 +7,164 @@ info:
     Provides endpoints for ticket lifecycle management, including filtering and status updates.
     Integrates with user and media services for full ticket context.
     Metrics and health endpoints are exposed for monitoring.
-paths: {}
+paths:
+  /tickets:
+    get:
+      summary: Get filtered tickets
+      description: Retrieve tickets filtered by assignedToId, createdById, status, dueDate, location, or mediaType.
+      parameters:
+        - in: query
+          name: assignedToId
+          schema:
+            type: integer
+        - in: query
+          name: createdById
+          schema:
+            type: integer
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [OPEN, IN_PROGRESS, FINISHED]
+        - in: query
+          name: dueDate
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: location
+          schema:
+            type: string
+        - in: query
+          name: mediaType
+          schema:
+            type: string
+            enum: [PHOTO, VIDEO, AUDIO]
+      responses:
+        '200':
+          description: List of tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Ticket'
+    post:
+      summary: Create a new ticket
+      description: Create a new service ticket.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTicketRequest'
+      responses:
+        '200':
+          description: Ticket created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '400':
+          description: Invalid input
+  /tickets/{ticketId}:
+    get:
+      summary: Get ticket by ID
+      description: Retrieve a ticket by its unique ID.
+      parameters:
+        - in: path
+          name: ticketId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Ticket found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '404':
+          description: Ticket not found
+    put:
+      summary: Update ticket status
+      description: Update the status of a ticket.
+      parameters:
+        - in: path
+          name: ticketId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [OPEN, IN_PROGRESS, FINISHED]
+      responses:
+        '200':
+          description: Ticket updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '400':
+          description: Invalid input
+        '404':
+          description: Ticket not found
+components:
+  schemas:
+    Ticket:
+      type: object
+      properties:
+        ticketId:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [OPEN, IN_PROGRESS, FINISHED]
+        dueDate:
+          type: string
+          format: date
+        location:
+          type: string
+        mediaType:
+          type: string
+          enum: [PHOTO, VIDEO, AUDIO]
+        createdBy:
+          type: integer
+        assignedTo:
+          type: integer
+        mediaId:
+          type: integer
+    CreateTicketRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [OPEN, IN_PROGRESS, FINISHED]
+        dueDate:
+          type: string
+          format: date
+        location:
+          type: string
+        mediaType:
+          type: string
+          enum: [PHOTO, VIDEO, AUDIO]
+        createdBy:
+          type: integer
+        assignedTo:
+          type: integer
+        mediaId:
+          type: integer
