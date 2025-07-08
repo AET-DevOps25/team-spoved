@@ -9,7 +9,7 @@ load_dotenv()
 
 router = APIRouter()
 
-API_URL = os.getenv("BACKEND_API_URL")
+API_URL = os.getenv("MEDIA_API_URL")
 
 def safe_json_response(response):
     if response.status_code == 204 or not response.content or response.text.strip() == "":

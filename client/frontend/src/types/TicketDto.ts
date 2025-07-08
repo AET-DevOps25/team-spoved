@@ -1,5 +1,3 @@
-import type { UserDto } from "./UserDto";
-
 export type MediaType =
     | 'PHOTO'
     | 'VIDEO'
@@ -12,8 +10,8 @@ export type Status =
 
 export interface TicketDto {
     ticketId: number;
-    assignedTo: UserDto | null;
-    createdBy: UserDto;
+    assignedTo: number | null;
+    createdBy: number;
     title: string;
     description: string;
     status: Status;

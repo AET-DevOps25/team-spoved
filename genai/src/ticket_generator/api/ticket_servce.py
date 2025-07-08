@@ -15,7 +15,7 @@ load_dotenv()
 
 router = APIRouter()
 
-API_URL = os.getenv("BACKEND_API_URL")
+API_URL = os.getenv("TICKET_API_URL")
 
 def fetch_tickets(auth_token: str = None):
     response = requests.get(f"{API_URL}/tickets", headers=get_auth_headers(auth_token))
@@ -62,6 +62,15 @@ def create_ticket(ticket: dict, auth_token: str = None):
     update_analyzed(ticket['media_id'], True, auth_token)
 
     response = requests.post(f"{API_URL}/tickets", json=ticket_json, headers=get_auth_headers(auth_token))
+
+    print(f"[INFO] Ticket creation response: {response}")
+
+    # Check if the request was successful
+    if response.status_code != 200:
+        print(f"[ERROR] Ticket creation failed with status {response.status_code}")
+        print(f"[ERROR] Response text: {response.text}")
+        response.raise_for_status()  # This will raise an HTTPError
+
     return response.json()
 
 @router.get("/")

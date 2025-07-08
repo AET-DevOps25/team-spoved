@@ -39,7 +39,9 @@ export default function WorkerTicketView() {
             setIsLoading(true);
             try {
                 const tickets = await getTickets();
-                const filteredTickets = tickets.filter((ticket) => ticket.assignedTo?.userId === parseInt(userId));
+                console.log("tickets", tickets);
+                const filteredTickets = tickets.filter((ticket) => ticket.assignedTo === parseInt(userId));
+                console.log("filteredTickets", filteredTickets);
                 setTickets(filteredTickets ?? []);
             } catch (error) {
                 console.error('Error fetching tickets:', error);

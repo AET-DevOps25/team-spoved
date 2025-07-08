@@ -14,6 +14,21 @@ RUN apt-get update && apt-get install -y \
 # Copy the application code
 COPY . .
 
+ARG TICKET_API_URL
+ARG USER_API_URL
+ARG MEDIA_API_URL
+ARG AUTH_API_URL
+ARG GEMINI_API_KEY
+
+
+ENV TICKET_API_URL=$TICKET_API_URL
+ENV USER_API_URL=$USER_API_URL
+ENV MEDIA_API_URL=$MEDIA_API_URL
+ENV AUTH_API_URL=$AUTH_API_URL
+ENV GEMINI_API_KEY=$GEMINI_API_KEY
+
+ENV NODE_ENV=dev
+
 # Stage 2: Install dependencies
 # Copy requirements and install dependencies
 COPY pyproject.toml setup.py setup.cfg ./
