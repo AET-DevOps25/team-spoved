@@ -27,11 +27,4 @@ spec:
                 name: client-service
                 port:
                   number: {{ .Values.client.service.port }}
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: server-service
-                port:
-                  number: {{ .Values.server.service.port }}
 {{- end }}

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spoved-ticket
+  namespace: {{ .Values.namespace.name | default "spoved" }}
+spec:
+  replicas: {{ .Values.ticket.replicaCount }}
+  selector:
+    matchLabels:
+      app: spoved-ticket-selector
+  template:
+    metadata:
+      labels:
+        app: spoved-ticket-selector
+    spec:
+      containers:
+        - name: ticket
+          image: "{{ .Values.ticket.image.repository }}:{{ .Values.ticket.image.tag }}"
+          imagePullPolicy: {{ .Values.ticket.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.ticket.service.targetPort }}

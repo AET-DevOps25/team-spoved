@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spoved-media
+  namespace: {{ .Values.namespace.name | default "spoved" }}
+spec:
+  replicas: {{ .Values.media.replicaCount }}
+  selector:
+    matchLabels:
+      app: spoved-media-selector
+  template:
+    metadata:
+      labels:
+        app: spoved-media-selector
+    spec:
+      containers:
+        - name: media
+          image: "{{ .Values.media.image.repository }}:{{ .Values.media.image.tag }}"
+          imagePullPolicy: {{ .Values.media.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.media.service.targetPort }}

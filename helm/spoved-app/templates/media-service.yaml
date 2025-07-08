@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: media-service
+  namespace: {{ .Values.namespace.name | default "spoved" }}
+spec:
+  selector:
+    app: spoved-media-selector
+  ports:
+    - port: {{ .Values.media.service.port }}
+      targetPort: {{ .Values.media.service.targetPort }}
+      protocol: TCP
+  type: {{ .Values.media.service.type }}
