@@ -19,3 +19,5 @@ spec:
           imagePullPolicy: {{ .Values.auth.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.auth.service.targetPort }}
+          env:
+            # ...existing env vars...

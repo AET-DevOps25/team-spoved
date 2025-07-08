@@ -17,5 +17,9 @@ spec:
         - name: media
           image: "{{ .Values.media.image.repository }}:{{ .Values.media.image.tag }}"
           imagePullPolicy: {{ .Values.media.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.media.resources | nindent 12 }}
           ports:
             - containerPort: {{ .Values.media.service.targetPort }}
+          env:
+            # ...existing env vars...

@@ -17,5 +17,9 @@ spec:
         - name: user
           image: "{{ .Values.user.image.repository }}:{{ .Values.user.image.tag }}"
           imagePullPolicy: {{ .Values.user.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.user.resources | nindent 12 }}
           ports:
             - containerPort: {{ .Values.user.service.targetPort }}
+          env:
+            # ...existing env vars...
