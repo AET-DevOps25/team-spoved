@@ -19,3 +19,9 @@ spec:
           imagePullPolicy: {{ .Values.ticket.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.ticket.service.targetPort }}
+          env:
+            - name: USER_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: USER_API_URL

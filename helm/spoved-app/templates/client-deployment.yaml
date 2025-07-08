@@ -27,9 +27,28 @@ spec:
           ports:
             - containerPort: {{ .Values.client.service.targetPort }}
           env:
-            - name: VITE_SERVER_API_URL
+            - name: VITE_TICKET_API_URL
               valueFrom:
                 configMapKeyRef:
                   name: app-config
-                  key: api_url
-                  
+                  key: TICKET_API_URL
+            - name: VITE_USER_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: USER_API_URL
+            - name: VITE_MEDIA_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: MEDIA_API_URL
+            - name: AUTH_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: AUTH_API_URL
+            - name: VITE_GENAI_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: GENAI_API_URL

@@ -19,3 +19,29 @@ spec:
           imagePullPolicy: {{ .Values.genai.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.genai.service.targetPort }}
+          env:
+            - name: TICKET_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: TICKET_API_URL
+            - name: USER_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: USER_API_URL
+            - name: MEDIA_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: MEDIA_API_URL
+            - name: AUTH_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: AUTH_API_URL
+            - name: GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gemini-api-key
+                  key: GEMINI_API_KEY
