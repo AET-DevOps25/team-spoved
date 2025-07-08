@@ -7,4 +7,64 @@ info:
     Provides endpoints for user login, registration, and token management.
     Secured with JWT-based authentication.
     Metrics and health endpoints are exposed for monitoring.
-paths: {}
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      description: Registers a new user with a username, password, and role.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: User already exists or invalid input
+  /auth/login:
+    post:
+      summary: User login
+      description: Authenticates a user and returns a JWT token if successful.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful, returns JWT token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: Unauthorized (invalid credentials)
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [SUPERVISOR, WORKER]
+    LoginRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        password:
+          type: string
