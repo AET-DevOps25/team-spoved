@@ -1,0 +1,10 @@
+openapi: 3.0.3
+info:
+  title: User Service API
+  version: 1.0.0
+  description: |
+    Manages user data and roles for the Spoved platform.
+    Provides endpoints to retrieve user information and filter users by various criteria.
+    Supports role-based access and integrates with authentication and ticketing services.
+    Metrics and health endpoints are exposed for monitoring.
+paths: {}

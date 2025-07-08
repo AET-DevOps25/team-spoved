@@ -1,0 +1,10 @@
+openapi: 3.0.3
+info:
+  title: GenAI Service API
+  version: 1.0.0
+  description: |
+    Provides AI-powered endpoints for speech-to-text, text-to-speech, and conversational ticket generation.
+    Integrates with Google Cloud and Gemini AI for advanced language and audio processing.
+    Endpoints include speech recognition, AI-driven conversation, and audio synthesis.
+    Metrics and health endpoints are exposed for monitoring.
+paths: {}

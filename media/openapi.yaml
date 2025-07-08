@@ -1,0 +1,10 @@
+openapi: 3.0.3
+info:
+  title: Media Service API
+  version: 1.0.0
+  description: |
+    Manages media files (photos, videos, audio) associated with tickets.
+    Provides endpoints to upload, retrieve, and update analysis results and reasons for media items.
+    Supports marking media as analyzed and storing AI-generated results.
+    Metrics and health endpoints are exposed for monitoring.
+paths: {}

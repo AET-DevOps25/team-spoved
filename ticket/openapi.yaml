@@ -1,0 +1,10 @@
+openapi: 3.0.3
+info:
+  title: Ticket Service API
+  version: 1.0.0
+  description: |
+    Handles creation, assignment, updating, and retrieval of service tickets.
+    Provides endpoints for ticket lifecycle management, including filtering and status updates.
+    Integrates with user and media services for full ticket context.
+    Metrics and health endpoints are exposed for monitoring.
+paths: {}

@@ -1,0 +1,10 @@
+openapi: 3.0.3
+info:
+  title: Auth Service API
+  version: 1.0.0
+  description: |
+    Handles user registration, authentication, and JWT issuance for the Spoved platform.
+    Provides endpoints for user login, registration, and token management.
+    Secured with JWT-based authentication.
+    Metrics and health endpoints are exposed for monitoring.
+paths: {}
