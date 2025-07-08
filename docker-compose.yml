@@ -74,6 +74,8 @@ services:
     build:
       context: ./auth
       dockerfile: Dockerfile
+    ports:
+      - '8030:8030'
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/db
