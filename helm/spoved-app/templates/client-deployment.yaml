@@ -42,7 +42,7 @@ spec:
                 configMapKeyRef:
                   name: app-config
                   key: MEDIA_API_URL
-            - name: AUTH_API_URL
+            - name: VITE_AUTH_API_URL
               valueFrom:
                 configMapKeyRef:
                   name: app-config
