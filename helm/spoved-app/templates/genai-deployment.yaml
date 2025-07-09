@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: genai
+  namespace: {{ .Values.namespace.name | default "spoved" }}
+spec:
+  replicas: {{ .Values.genai.replicaCount }}
+  selector:
+    matchLabels:
+      app: spoved-genai-selector
+  template:
+    metadata:
+      labels:
+        app: spoved-genai-selector
+    spec:
+      containers:
+        - name: genai
+          image: "{{ .Values.genai.image.repository }}:{{ .Values.genai.image.tag }}"
+          imagePullPolicy: {{ .Values.genai.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.genai.service.targetPort }}
+          envFrom:
+          - configMapRef:
+              name: app-config
+
