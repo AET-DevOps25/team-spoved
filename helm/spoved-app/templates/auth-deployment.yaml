@@ -20,4 +20,8 @@ spec:
           ports:
             - containerPort: {{ .Values.auth.service.targetPort }}
           env:
-            # ...existing env vars...
+            {{- range .Values.auth.env }}
+            - name: {{ .name }}
+              value: "{{ .value }}"
+            {{- end }}
+
