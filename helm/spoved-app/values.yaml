@@ -179,7 +179,7 @@ database:
       cpu: "100m"
       memory: "256Mi"
   credentials:
-    username: spOveD
+    username: spoved
     password: secret
 
 ingress:
