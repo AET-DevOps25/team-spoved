@@ -21,5 +21,3 @@ spec:
             {{- toYaml .Values.media.resources | nindent 12 }}
           ports:
             - containerPort: {{ .Values.media.service.targetPort }}
-          env:
-            # ...existing env vars...

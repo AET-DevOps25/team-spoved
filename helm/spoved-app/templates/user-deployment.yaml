@@ -21,5 +21,3 @@ spec:
             {{- toYaml .Values.user.resources | nindent 12 }}
           ports:
             - containerPort: {{ .Values.user.service.targetPort }}
-          env:
-            # ...existing env vars...
