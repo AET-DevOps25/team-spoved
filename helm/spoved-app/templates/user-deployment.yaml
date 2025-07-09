@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user
+  namespace: {{ .Values.namespace.name | default "spoved" }}
+spec:
+  replicas: {{ .Values.user.replicaCount }}
+  selector:
+    matchLabels:
+      app: spoved-user-selector
+  template:
+    metadata:
+      labels:
+        app: spoved-user-selector
+    spec:
+      containers:
+        - name: user
+          image: "{{ .Values.user.image.repository }}:{{ .Values.user.image.tag }}"
+          imagePullPolicy: {{ .Values.user.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.user.resources | nindent 12 }}
+          ports:
+            - containerPort: {{ .Values.user.service.targetPort }}
+          env:
+            {{- range .Values.user.env }}
+            - name: {{ .name }}
+              value: "{{ .value }}"
+            {{- end }}
