@@ -29,6 +29,10 @@ ENV GEMINI_API_KEY=$GEMINI_API_KEY
 
 ENV NODE_ENV=dev
 
+
+RUN pip install -e ".[test]"
+RUN pytest tests/ -v
+
 # Stage 2: Install dependencies
 # Copy requirements and install dependencies
 COPY pyproject.toml setup.py setup.cfg ./
