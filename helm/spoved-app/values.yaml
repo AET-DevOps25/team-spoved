@@ -1,6 +1,8 @@
 namespace:
   create: false
 
+geminiApiKey: ""
+
 server:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/server

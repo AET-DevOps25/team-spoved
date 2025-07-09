@@ -7,6 +7,8 @@ on:
     secrets:
       K8_USER_TOKEN:
         required: true
+      GEMINI_API_KEY:
+        required: true
 
 jobs:
 
@@ -54,4 +56,6 @@ jobs:
     # Run helm upgrade to upgrade deployment
     - name: Upgrade Deployment with Helm
       run: |
-        helm upgrade --install spoved ./helm/spoved-app -n devops25-team-spoved
+        helm upgrade --install spoved ./helm/spoved-app \
+         -n devops25-team-spoved \
+         --set geminiApiKey=${{ secrets.GEMINI_API_KEY }}
