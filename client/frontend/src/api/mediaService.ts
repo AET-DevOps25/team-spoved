@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { MediaDto } from '../types/MediaDto';
 import { getAuthHeaders } from './utils';
 
-const BASE_URL = import.meta.env.VITE_SERVER_API_URL + '/media';
+const BASE_URL = import.meta.env.VITE_MEDIA_API_URL + '/media';
 const GENAI_URL = import.meta.env.VITE_GENAI_API_URL;
 
 export const createMedia = async (formData: FormData) => {

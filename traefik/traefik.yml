@@ -1,10 +1,16 @@
-entrypoints:
+api:
+  dashboard: true
+  insecure: true
+
+log:
+  level: DEBUG
+
+entryPoints:
   web:
-    address: ":8080"
+    address: ":8080" # app
+  traefik:
+    address: ":8089" # dashboard
 
 providers:
   docker:
     exposedByDefault: false
-  
-api:
-  dashboard: true
