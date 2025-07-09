@@ -1,0 +1,27 @@
+# Ignore node modules
+node_modules/
+npm-debug.log
+
+# Ignore build directories
+dist/
+build/
+
+# Ignore Git directory
+.git/
+.gitignore
+
+# Ignore IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+
+# Ignore test files 
+*.test.js
+*.spec.js
+coverage/
+
+# Ignore Docker files (to prevent copy loop)
+Dockerfile
+.dockerignore

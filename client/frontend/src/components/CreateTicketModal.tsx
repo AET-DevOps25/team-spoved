@@ -1,7 +1,5 @@
 import { useState, type ChangeEvent } from 'react';
 import type { MediaType } from '../types/TicketDto';
-// import type { UserDto } from '../types/UserDto';
-//import { getFilteredUsers } from '../api/userService';
 
 interface CreateTicketModalProps {
 	onCreate: (ticket: {
@@ -12,6 +10,7 @@ interface CreateTicketModalProps {
 		dueDate: string;
 		location: string;
 		mediaType: MediaType;
+		mediaId: number | null;
 	}) => void;
 	onClose: () => void;
 }
@@ -21,15 +20,12 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 	const [description, setDescription] = useState('');
 	const [dueDate, setDueDate] = useState('');
 	const [location, setLocation] = useState('');
-	const [mediaType, setMediaType] = useState<MediaType>('photo');
+	const [mediaType, setMediaType] = useState<MediaType>('PHOTO');
 	const userId = localStorage.getItem('userId') || '';
 	const [selectedMediaType, setSelectedMediaType] = useState<string>('');
-	//const [users, setUsers] = useState<UserDto[]>([]);
-	// const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
 
 	const handleSubmit = () => {
-		console.log("User ID: " + userId);
 		onCreate({
 			assignedTo: null,
 			createdBy: parseInt(userId),
@@ -38,25 +34,20 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 			dueDate,
 			location,
 			mediaType,
+			mediaId: null,
 		});
-		console.log(userId);
-		console.log(title);
-		console.log(description);
-		console.log(dueDate);
-		console.log(location);
-		console.log(mediaType);
 		onClose();
 	};
 
 	return (
 		<>
-			{/* Background Overlay */}
+			{/* ------------------ Background Overlay ------------------ */}
 			<div
 				className="fixed inset-0 bg-gray-500/75 transition-opacity"
 				aria-hidden="true"
 			></div>
 
-			{/* Modal Container */}
+			{/* ------------------ Modal Container ------------------ */}
 			<div className="fixed inset-0 z-10 w-full overflow-y-auto mt-20">
 				<div className="flex min-h-full items-end justify-center p-4 sm:items-center sm:p-6">
 					<div className="relative w-full max-w-sm sm:max-w-lg transform overflow-hidden rounded-lg bg-white shadow-xl transition-all">
@@ -66,7 +57,7 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 							</h3>
 
 							<div className="space-y-4">
-								{/* Title */}
+								{/* ------------------ Title ------------------ */}
 								<div>
 									<label className="block text-sm font-medium text-gray-700">
 										Title
@@ -81,7 +72,7 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 									/>
 								</div>
 
-								{/* Description */}
+								{/* ------------------ Description ------------------ */}
 								<div>
 									<label className="block text-sm font-medium text-gray-700">
 										Description
@@ -96,7 +87,7 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 									/>
 								</div>
 
-								{/* Due Date */}
+								{/* ------------------ Due Date ------------------ */}
 								<div>
 									<label className="block text-sm font-medium text-gray-700">
 										Due Date
@@ -111,7 +102,7 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 									/>
 								</div>
 
-								{/* Location */}
+								{/* ------------------ Location ------------------ */}
 								<div>
 									<label className="block text-sm font-medium text-gray-700">
 										Location
@@ -126,15 +117,14 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 									/>
 								</div>
 
-								{/* Media Type Selector */}
+								{/* ------------------ Media Type Selector ------------------ */}
 								<div className="mb-6">
 									<label className="block text-sm font-medium text-gray-700 mb-1">
 										Media Type
 									</label>
 									<select
-										className={`w-full rounded-md border border-gray-300 py-2 px-3 text-md ${
-											selectedMediaType ? 'text-black' : 'text-gray-400'
-										} focus:outline-none focus:ring-2 focus:ring-[#1A97FE] focus:border-[#1A97FE]`}
+										className={`w-full rounded-md border border-gray-300 py-2 px-3 text-md ${selectedMediaType ? 'text-black' : 'text-gray-400'
+											} focus:outline-none focus:ring-2 focus:ring-[#1A97FE] focus:border-[#1A97FE]`}
 										value={selectedMediaType}
 										onChange={(e: ChangeEvent<HTMLSelectElement>) => {
 											setSelectedMediaType(e.target.value);
@@ -148,11 +138,11 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 										<option value="VIDEO">Video</option>
 										<option value="AUDIO">Audio</option>
 									</select>
-				</div>
-                            </div> 
+								</div>
+							</div>
 
 
-							{/* Footer Buttons */}
+							{/* ------------------ Footer Buttons ------------------ */}
 							<div className="mt-6 flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
 								<button
 									onClick={onClose}

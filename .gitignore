@@ -290,6 +290,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
+.env.*
 .env
 .venv
 env/
@@ -382,3 +383,8 @@ sketch
 .svelte-kit
 .gradle
 bin
+
+
+*/src/ticket_generator/credentials/credentials.json
+terraform/.terraform*
+terraform/terraform*

@@ -57,10 +57,10 @@ const WorkerView = () => {
           <div className="flex flex-col items-center gap-6 w-full max-w-xl bg-white rounded-2xl p-8 shadow-xl mx-auto">
               <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-700 text-center mb-4 mt-4">Worker Personnel Dashboard</h1>
 
-              {/* ------------------ Cleaner Tickets button ------------------ */}
+              {/* ------------------ Worker Tickets button ------------------ */}
               <div className="w-full flex justify-center items-center">
                 <div className="grid grid-cols-2 gap-x-24 gap-y-4">
-                  {/* Cleaner Tickets */}
+                  {/* ------------------ Worker Tickets Button ------------------ */}
                   <button
                     onClick={handleWorkerTickets}
                     className="w-24 h-24 bg-blue-900 text-white rounded-full hover:bg-blue-600 flex items-center justify-center text-xl shadow-md mb-4"
@@ -68,7 +68,7 @@ const WorkerView = () => {
                     <FontAwesomeIcon icon={faList} />
                   </button>
 
-                  {/* Microphone */}
+                  {/* ------------------ Microphone Button ------------------ */}
                   <button
                     onClick={handleMicrophone}
                     className="w-24 h-24 bg-indigo-500 text-white rounded-full hover:bg-indigo-600 flex items-center justify-center text-xl shadow-md mb-4"
@@ -76,7 +76,7 @@ const WorkerView = () => {
                     <FontAwesomeIcon icon={faMicrophone} />
                   </button>
 
-                  {/* Video Recording */}
+                  {/* ------------------ Video Recording Button ------------------ */}
                   <button
                     onClick={handleRecording}
                     className="w-24 h-24 bg-blue-500 text-white rounded-full hover:bg-blue-600 flex items-center justify-center text-xl shadow-md mb-4"
@@ -84,7 +84,7 @@ const WorkerView = () => {
                     <FontAwesomeIcon icon={faVideo} />
                   </button>
 
-                  {/* Camera */}
+                  {/* ------------------ Camera Button ------------------ */}
                   <button
                     onClick={handleCamera}
                     className="w-24 h-24 bg-blue-500 text-white rounded-full hover:bg-blue-600 flex items-center justify-center text-xl shadow-md mb-4"
