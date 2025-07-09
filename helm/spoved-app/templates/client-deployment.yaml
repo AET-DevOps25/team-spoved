@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spoved-client
-  namespace: "spoved"
+  name: client
+  namespace: {{ .Values.namespace.name | default "spoved" }}
 spec:
   replicas: {{ .Values.client.replicaCount }}
   selector:

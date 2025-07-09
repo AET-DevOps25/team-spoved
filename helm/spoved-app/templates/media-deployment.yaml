@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spoved-media
+  name: media
   namespace: {{ .Values.namespace.name | default "spoved" }}
 spec:
   replicas: {{ .Values.media.replicaCount }}
   selector:
     matchLabels:
-      app: spoved-media-selector
+      app: media-selector
   template:
     metadata:
       labels:
-        app: spoved-media-selector
+        app: media-selector
     spec:
       containers:
         - name: media

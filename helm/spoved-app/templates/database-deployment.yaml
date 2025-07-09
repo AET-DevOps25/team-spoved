@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spoved-database
-  namespace: "spoved"
+  name: database
+  namespace: {{ .Values.namespace.name | default "spoved" }}
 spec:
   replicas: 1
   selector:

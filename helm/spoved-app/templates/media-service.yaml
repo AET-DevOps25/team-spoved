@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Values.namespace.name | default "spoved" }}
 spec:
   selector:
-    app: spoved-media-selector
+    app: media-selector
   ports:
     - port: {{ .Values.media.service.port }}
       targetPort: {{ .Values.media.service.targetPort }}

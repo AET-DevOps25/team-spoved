@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spoved-auth
+  name: auth
   namespace: {{ .Values.namespace.name | default "spoved" }}
 spec:
   replicas: {{ .Values.auth.replicaCount }}
   selector:
     matchLabels:
-      app: spoved-auth-selector
+      app: auth-selector
   template:
     metadata:
       labels:
-        app: spoved-auth-selector
+        app: auth-selector
     spec:
       containers:
         - name: auth

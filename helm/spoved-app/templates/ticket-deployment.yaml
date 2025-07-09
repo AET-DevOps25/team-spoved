@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spoved-ticket
+  name: ticket
   namespace: {{ .Values.namespace.name | default "spoved" }}
 spec:
   replicas: {{ .Values.ticket.replicaCount }}
   selector:
     matchLabels:
-      app: spoved-ticket-selector
+      app: ticket-selector
   template:
     metadata:
       labels:
-        app: spoved-ticket-selector
+        app: ticket-selector
     spec:
       containers:
         - name: ticket

@@ -3,7 +3,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: "team-spoved-ingress"
-  namespace: "spoved"
+  namespace: {{ .Values.namespace.name | default "spoved" }}
   {{- $annotations := .Values.ingress.annotations | default dict }}
   {{- if $annotations }}
   annotations:

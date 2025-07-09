@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spoved-genai
+  name: genai
   namespace: {{ .Values.namespace.name | default "spoved" }}
 spec:
   replicas: {{ .Values.genai.replicaCount }}
