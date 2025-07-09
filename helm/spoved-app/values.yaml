@@ -3,7 +3,7 @@ namespace:
 
 ticket:
   image:
-    repository: ghcr.io/aet-devops25/ticketing-service/ticket
+    repository: ghcr.io/aet-devops25/team-spoved/ticket
     tag: latest
     pullPolicy: Always
   service:
@@ -35,7 +35,7 @@ ticket:
           key: password
 user:
   image:
-    repository: ghcr.io/aet-devops25/user-service/user
+    repository: ghcr.io/aet-devops25/team-spoved/user
     tag: latest
     pullPolicy: Always
   service:
@@ -68,7 +68,7 @@ user:
 
 media:
   image:
-    repository: ghcr.io/aet-devops25/media-service/media
+    repository: ghcr.io/aet-devops25/team-spoved/media
     tag: latest
     pullPolicy: Always
   service:
@@ -101,7 +101,7 @@ media:
 
 genai:
   image:
-    repository: ghcr.io/aet-devops25/genai-service/genai
+    repository: ghcr.io/aet-devops25/team-spoved/genai
     tag: latest
     pullPolicy: Always
   service:
@@ -119,7 +119,7 @@ genai:
 
 auth:
   image:
-    repository: ghcr.io/aet-devops25/auth-service/auth
+    repository: ghcr.io/aet-devops25/team-spoved/auth
     tag: latest
     pullPolicy: Always
   service:
