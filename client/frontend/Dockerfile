@@ -31,6 +31,9 @@ RUN npm cache clean --force
 # Install dependencies
 RUN npm install
 
+# Run tests
+RUN npm test
+
 # Build the project
 RUN npm run build
 

@@ -101,14 +101,9 @@ jobs:
         working-directory: ./client/frontend
         run: npm ci
 
-      - name: Run ESLint on changed files
-        working-directory: ./client/frontend
-        run: npm run lint
-
       - name: Run tests
         working-directory: ./client/frontend
-        # FIXME Since no testing framework was used, it's currently repeating the linting
-        run: npm run lint
+        run: npm test
 
   test-genai:
     name: Run Python Tests
