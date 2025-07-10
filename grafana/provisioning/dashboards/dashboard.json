@@ -33,7 +33,7 @@
       "id": 1,
       "type": "timeseries",
       "title": "Virtual Memory Usage",
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": { "type": "prometheus", "uid": "prom" },
       "gridPos": { "h": 15, "w": 24, "x": 0, "y": 1 },
       "fieldConfig": {
         "defaults": {
@@ -119,7 +119,7 @@
       "id": 2,
       "type": "stat",
       "title": "Startup Time",
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": { "type": "prometheus", "uid": "prom" },
       "gridPos": { "h": 8, "w": 24, "x": 0, "y": 9 },
       "targets": [
         {
@@ -190,7 +190,7 @@
       "id": 3,
       "type": "timeseries",
       "title": "The Longest HTTP Request Duration",
-      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "datasource": { "type": "prometheus", "uid": "prom" },
       "gridPos": { "h": 15, "w": 24, "x": 0, "y": 33 },
       "fieldConfig": {
         "defaults": {
