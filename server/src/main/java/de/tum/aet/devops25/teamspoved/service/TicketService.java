@@ -110,6 +110,7 @@ public class TicketService {
                 ticket.setDueDate(request.dueDate());
                 ticket.setLocation(request.location());
                 ticket.setMediaType(request.mediaType());
+                ticket.setMediaId(request.mediaId());
                 TicketEntity saved = ticketRepository.save(ticket);
                 ticketsCreatedCounter.increment();
                 return saved;

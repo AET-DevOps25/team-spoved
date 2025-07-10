@@ -7,7 +7,7 @@ log:
 
 entryPoints:
   web:
-    address: ":8080"
+    address: ":8090"
   traefik:
     address: ":8081"
 

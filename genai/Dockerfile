@@ -14,6 +14,12 @@ RUN apt-get update && apt-get install -y \
 # Copy the application code
 COPY . .
 
+ARG GEMINI_API_KEY
+ARG BACKEND_API_URL
+
+ENV GEMINI_API_KEY=$GEMINI_API_KEY
+ENV BACKEND_API_URL=$BACKEND_API_URL
+
 # Stage 2: Install dependencies
 # Copy requirements and install dependencies
 COPY pyproject.toml setup.py setup.cfg ./
