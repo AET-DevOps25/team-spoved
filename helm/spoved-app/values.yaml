@@ -3,6 +3,8 @@ namespace:
   create: false
 
 geminiApiKey: ""
+db-user: spoved
+db-secret: secret
 
 ticket:
   image:
@@ -27,15 +29,9 @@ ticket:
     - name: SPRING_DATASOURCE_URL
       value: "jdbc:postgresql://database-service:5432/db"
     - name: SPRING_DATASOURCE_USERNAME
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: username
+      value: "{{ .Values.db-user }}"
     - name: SPRING_DATASOURCE_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: password
+      value: "{{.Values.db-password}}"
 user:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/user
@@ -59,15 +55,9 @@ user:
     - name: SPRING_DATASOURCE_URL
       value: "jdbc:postgresql://database-service:5432/db"
     - name: SPRING_DATASOURCE_USERNAME
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: username
+      value: "{{ .Values.db-user }}"
     - name: SPRING_DATASOURCE_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: password
+      value: "{{.Values.db-password}}"
 
 media:
   image:
@@ -92,15 +82,9 @@ media:
     - name: SPRING_DATASOURCE_URL
       value: "jdbc:postgresql://database-service:5432/db"
     - name: SPRING_DATASOURCE_USERNAME
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: username
+      value: "{{ .Values.db-user }}"
     - name: SPRING_DATASOURCE_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: password
+      value: "{{.Values.db-password}}"
 
 genai:
   image:
@@ -143,15 +127,10 @@ auth:
     - name: SPRING_DATASOURCE_URL
       value: "jdbc:postgresql://database-service:5432/db"
     - name: SPRING_DATASOURCE_USERNAME
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: username
+      value: "{{ .Values.db-user }}"
     - name: SPRING_DATASOURCE_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: password
+      value: "{{.Values.db-password}}"
+
 client:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/client
