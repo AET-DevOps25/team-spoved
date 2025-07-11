@@ -59,10 +59,34 @@ Object.defineProperty(globalThis, 'import', {
         VITE_TICKET_API_URL: 'http://localhost:8081/api/v1',
         VITE_USER_API_URL: 'http://localhost:8082/api/v1',
         VITE_AUTH_API_URL: 'http://localhost:8030',
-        VITE_MEDIA_API_URL: 'http://localhost:8083',
+        VITE_MEDIA_API_URL: 'http://localhost:8083/api/v1',
       },
     },
   },
   writable: true,
   configurable: true,
 });
+
+// src/test/setup.ts
+const env = {
+  VITE_TICKET_API_URL: 'http://localhost:8081/api/v1',
+  VITE_USER_API_URL:   'http://localhost:8082/api/v1',
+  VITE_MEDIA_API_URL:  'http://localhost:8083/api/v1',
+  VITE_AUTH_API_URL:   'http://localhost:8030',
+  VITE_GENAI_API_URL:  'http://localhost:8000',
+};
+
+// make them available to every module that Jest loads
+Object.assign(process.env, env);                // ← works in Node/Jest
+(globalThis as any).importMetaEnv = env;                 // optional helper
+
+// later, if you still want to access import.meta.env in code
+(globalThis as any).__defineGetter__('import', () => ({
+  meta: { env }
+}));
+
+// JSDOM does not implement scrollIntoView – stub it so React effects don’t crash
+if (!('scrollIntoView' in HTMLElement.prototype)) {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  (HTMLElement.prototype as any).scrollIntoView = vi.fn();
+}

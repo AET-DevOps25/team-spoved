@@ -129,6 +129,7 @@ export default function MicrophoneView() {
           <div className="flex gap-4 items-center">
             {/* ------------------ Record Button ------------------ */}
             <button
+              aria-label="Start voice conversation"
               onClick={startVoiceConversation}
               disabled={isRecording || isPlaying}
               className={`w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl shadow-lg transition-all ${
@@ -143,6 +144,7 @@ export default function MicrophoneView() {
             {/* ------------------ Stop Button ------------------ */}
             {(isRecording || isPlaying) && (
               <button
+                aria-label="Stop Recording"
                 onClick={stopRecording}
                 className="w-20 h-20 bg-red-500 text-white rounded-full hover:bg-red-600 flex items-center justify-center text-2xl shadow-lg transition-all hover:scale-105"
               >
@@ -153,6 +155,7 @@ export default function MicrophoneView() {
             {/* ------------------ Clear Button ------------------ */}
             {messages.length > 0 && (
               <button
+                aria-label="Clear conversation"
                 onClick={clearConversation}
                 disabled={isRecording || isPlaying}
                 className={`w-20 h-20 rounded-full flex items-center justify-center text-white text-2xl shadow-lg transition-all ${
@@ -168,6 +171,7 @@ export default function MicrophoneView() {
             {/* ------------------ Send Button ------------------ */}
           {completed && (
             <button
+              aria-label="Send conversation"
               onClick={handleSendMessage}
               disabled={!completed}
               className="w-20 h-20 bg-green-500 text-white rounded-full flex items-center justify-center hover:bg-green-600 transition-colors"

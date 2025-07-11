@@ -21,7 +21,7 @@ export default function RegisterView() {
       const credentials = { name, password, role };
       await registerUser(credentials);
       setSuccess('Registration successful!');
-      setTimeout(() => navigate('/'), 3000); // Debounce navigation
+      setTimeout(() => navigate('/'), 1000); // Debounce navigation
     } catch {
       setError('Registration failed');
     }
