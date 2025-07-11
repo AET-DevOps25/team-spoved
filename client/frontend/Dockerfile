@@ -32,8 +32,6 @@ RUN npm cache clean --force
 # Install dependencies
 RUN npm install
 
-RUN echo "$ENV_VAR"
-
 # Run tests
 RUN npm test
 

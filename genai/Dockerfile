@@ -29,6 +29,12 @@ ENV GEMINI_API_KEY=$GEMINI_API_KEY
 
 ENV NODE_ENV=dev
 
+# Install the package and dependencies
+RUN pip install --no-cache-dir -e .
+
+# Stage 1 (before running tests)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
 RUN pip install -e ".[test]"
 RUN pytest tests/ -v

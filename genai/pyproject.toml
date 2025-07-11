@@ -10,6 +10,8 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "google-generativeai",
+    "google-cloud-speech",        
+    "google-cloud-texttospeech",
     "pydantic",
     "python-multipart",
     "jwt",
