@@ -15,7 +15,7 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 fi
 
 echo "🛑 Stopping and removing containers from this project..."
-docker-compose down -v
+docker compose down -v
 
 echo "🗑️  Removing all Docker containers..."
 docker container prune -f

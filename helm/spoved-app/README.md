@@ -6,7 +6,7 @@ This Helm chart deploys the Spoved App application consisting of a server and cl
 
 - Kubernetes 1.16+
 - Helm 3.0+
-- Ingress Controller (like nginx-ingress)
+- Ingress Controller (like nginx-ingress or traefik)
 
 ## Installing the Chart
 
