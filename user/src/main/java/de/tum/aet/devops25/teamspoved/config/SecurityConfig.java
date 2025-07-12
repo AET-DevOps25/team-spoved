@@ -28,15 +28,7 @@ public class SecurityConfig {
             .csrf(csrf -> {csrf.ignoringRequestMatchers("/api/v1/**");})  
             .cors(cors -> cors.configure(http))
             .authorizeHttpRequests(auth -> auth
-<<<<<<< HEAD:server/src/main/java/de/tum/aet/devops25/teamspoved/config/SecurityConfig.java
                 .requestMatchers("/actuator/prometheus", "/actuator/health", "/api/v1/media/**").permitAll()
-=======
-                // Allow internal service access for GenAI automation
-                .requestMatchers("/api/v1/media/**").permitAll()
-                .requestMatchers("/api/v1/tickets/**").permitAll()
-                .requestMatchers("/api/v1/users/**").permitAll()
-                .requestMatchers("/actuator/health").permitAll()
->>>>>>> dev:user/src/main/java/de/tum/aet/devops25/teamspoved/config/SecurityConfig.java
                 // Require authentication for everything else
                 .anyRequest().authenticated() 
             )
