@@ -1,0 +1,61 @@
+name: Deploy to Kubernetes Cluster
+
+on:
+  workflow_call:
+
+    # Pass KUBECONFIG as a secret
+    secrets:
+      K8_USER_TOKEN:
+        required: true
+      GEMINI_API_KEY:
+        required: true
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install Kubectl
+      uses: azure/setup-kubectl@v4
+      with:
+        version: latest
+
+    - name: Set up kubeconfig from template
+      run: |
+          mkdir -p ~/.kube
+
+          cat <<EOF > ~/.kube/config
+          apiVersion: v1
+          kind: Config
+          clusters:
+          - name: student
+            cluster:
+              server: https://rancher.ase.cit.tum.de/k8s/clusters/c-m-nhcfjg9h
+              insecure-skip-tls-verify: true
+          users:
+          - name: student
+            user:
+              token: ${{ secrets.K8_USER_TOKEN }}
+          contexts:
+          - name: student
+            context:
+              user: student
+              cluster: student
+          current-context: student
+          EOF
+
+    - name: Install Helm
+      uses: azure/setup-helm@v4.3.0
+      with:
+        version: latest
+
+    # Run helm upgrade to upgrade deployment
+    - name: Upgrade Deployment with Helm
+      run: |
+        helm upgrade --install spoved ./helm/spoved-app \
+         -n devops25-team-spoved \
+         --set geminiApiKey=${{ secrets.GEMINI_API_KEY }}
