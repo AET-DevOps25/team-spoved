@@ -11,12 +11,24 @@ jobs:
     strategy:
       matrix:
         include:
-          - service: server
-            context: ./server
-            dockerfile: ./server/Dockerfile
+          - service: ticket
+            context: ./ticket
+            dockerfile: ./ticket/Dockerfile
+          - service: user
+            context: ./user
+            dockerfile: ./user/Dockerfile
+          - service: media
+            context: ./media
+            dockerfile: ./media/Dockerfile
+          - service: auth
+            context: ./auth
+            dockerfile: ./auth/Dockerfile
           - service: client
             context: ./client/frontend
             dockerfile: ./client/frontend/Dockerfile
+          - service: genai
+            context: ./genai
+            dockerfile: ./genai/Dockerfile
 
     steps:
       - name: Checkout

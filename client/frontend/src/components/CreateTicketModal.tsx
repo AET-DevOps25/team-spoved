@@ -123,9 +123,8 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 										Media Type
 									</label>
 									<select
-										className={`w-full rounded-md border border-gray-300 py-2 px-3 text-md ${
-											selectedMediaType ? 'text-black' : 'text-gray-400'
-										} focus:outline-none focus:ring-2 focus:ring-[#1A97FE] focus:border-[#1A97FE]`}
+										className={`w-full rounded-md border border-gray-300 py-2 px-3 text-md ${selectedMediaType ? 'text-black' : 'text-gray-400'
+											} focus:outline-none focus:ring-2 focus:ring-[#1A97FE] focus:border-[#1A97FE]`}
 										value={selectedMediaType}
 										onChange={(e: ChangeEvent<HTMLSelectElement>) => {
 											setSelectedMediaType(e.target.value);
@@ -139,8 +138,8 @@ const CreateTicketModal = ({ onCreate, onClose }: CreateTicketModalProps) => {
 										<option value="VIDEO">Video</option>
 										<option value="AUDIO">Audio</option>
 									</select>
-				</div>
-                            </div> 
+								</div>
+							</div>
 
 
 							{/* ------------------ Footer Buttons ------------------ */}

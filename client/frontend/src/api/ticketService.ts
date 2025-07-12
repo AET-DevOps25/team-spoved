@@ -1,8 +1,8 @@
 import axios from 'axios';
-import type { TicketDto, CreateTicketRequest } from '../types/TicketDto';
+import type { TicketDto, CreateTicketRequest, UpdateTicketRequest } from '../types/TicketDto';
 import { getAuthHeaders } from './utils';
 
-const BASE_URL = import.meta.env.VITE_SERVER_API_URL + '/tickets';
+const BASE_URL = import.meta.env.VITE_TICKET_API_URL + '/tickets';
 
 export const createTicket = async (ticket: CreateTicketRequest): Promise<TicketDto> => {
   const response = await axios.post(BASE_URL, ticket, { headers: getAuthHeaders() });
@@ -21,16 +21,16 @@ export const getTickets = async (): Promise<TicketDto[]> => {
 
 // Add support for filtered ticket queries
 export const getFilteredTickets = async (filters: {
-  assignedToId?: number;
-  createdById?: number;
+  assignedTo?: number;
+  createdBy?: number;
   status?: string;
   dueDate?: string;
   location?: string;
   mediaType?: string;
 } = {}): Promise<TicketDto[]> => {
   const params = new URLSearchParams();
-  if (filters.assignedToId !== undefined) params.append('assignedToId', filters.assignedToId.toString());
-  if (filters.createdById !== undefined) params.append('createdById', filters.createdById.toString());
+  if (filters.assignedTo !== undefined) params.append('assignedTo', filters.assignedTo.toString());
+  if (filters.createdBy !== undefined) params.append('createdBy', filters.createdBy.toString());
   if (filters.status) params.append('status', filters.status);
   if (filters.dueDate) params.append('dueDate', filters.dueDate);
   if (filters.location) params.append('location', filters.location);
@@ -41,4 +41,12 @@ export const getFilteredTickets = async (filters: {
 
 export const assignWorker = async (ticketId: number, userId: number) => {
   return axios.put(`${BASE_URL}/${ticketId}/assign?userId=${userId}`, {}, { headers: getAuthHeaders() });
+};
+
+export const updateTicketStatus = async (ticketId: number, status: string) => {
+  return axios.put(`${BASE_URL}/${ticketId}/status?status=${status}`, {}, { headers: getAuthHeaders() });
+};
+
+export const updateTicket = async (ticketId: number, ticket: UpdateTicketRequest) => {
+  return axios.put(`${BASE_URL}/${ticketId}/update`, ticket, { headers: getAuthHeaders() });
 };

@@ -7,10 +7,10 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
 
-  - job_name: 'server'
+  - job_name: 'ticket'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['server:8080']
+      - targets: ['ticket:8080']
 
   - job_name: 'auth'
     metrics_path: '/actuator/prometheus'

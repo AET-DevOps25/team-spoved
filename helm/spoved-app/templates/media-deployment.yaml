@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: media
+  namespace: {{ .Values.namespace.name | default "spoved" }}
+spec:
+  replicas: {{ .Values.media.replicaCount }}
+  selector:
+    matchLabels:
+      app: media-selector
+  template:
+    metadata:
+      labels:
+        app: media-selector
+    spec:
+      containers:
+        - name: media
+          image: "{{ .Values.media.image.repository }}:{{ .Values.media.image.tag }}"
+          imagePullPolicy: {{ .Values.media.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.media.resources | nindent 12 }}
+          ports:
+            - containerPort: {{ .Values.media.service.targetPort }}
+          env:
+            {{- range .Values.media.env }}
+            - name: {{ .name }}
+              value: "{{ .value }}"
+            {{- end }}
