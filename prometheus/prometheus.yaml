@@ -10,7 +10,7 @@ scrape_configs:
   - job_name: 'ticket'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['ticket:8080']
+      - targets: ['ticket:8081']
 
   - job_name: 'auth'
     metrics_path: '/actuator/prometheus'

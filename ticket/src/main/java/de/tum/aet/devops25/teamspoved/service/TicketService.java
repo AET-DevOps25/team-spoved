@@ -22,7 +22,7 @@ import io.micrometer.core.instrument.Timer;
 public class TicketService {
     private final TicketRepository ticketRepository;
     private final RestTemplate restTemplate;
-    
+
     @Value("${services.user.url}")
     private String userServiceUrl;
 
@@ -43,9 +43,9 @@ public class TicketService {
     private final Counter ticketsCreatedError;
     private final Timer ticketsCreatedTimer;
 
-    public TicketService(TicketRepository ticketRepository, UserRepository userRepository, MeterRegistry registry) {
+    public TicketService(TicketRepository ticketRepository, RestTemplate restTemplate, MeterRegistry registry) {
         this.ticketRepository = ticketRepository;
-        this.userRepository = userRepository;
+        this.restTemplate = restTemplate;
 
         /* Ticket Reading */
 
@@ -96,18 +96,29 @@ public class TicketService {
                        
     }
 
+    private boolean userExists(Integer userId) {
+        try {
+            // Just check if user exists without storing the full object
+            restTemplate.getForObject(userServiceUrl + "/users/" + userId, Object.class);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     @Transactional
     public TicketEntity createTicket(CreateTicketRequest request) {
         return ticketsCreatedTimer.record(() -> {
             try {
-                UserEntity createdBy = userRepository.findById(request.createdBy()).orElseThrow(() -> new IllegalArgumentException("User not found"));
-                UserEntity assignedTo = null;
-                if (request.assignedTo() != null) {
-                    assignedTo = userRepository.findById(request.assignedTo()).orElse(null);
+                
+                if (!userExists(request.createdBy())) {
+                    System.out.println("User not found");
+                    throw new IllegalArgumentException("User not found");
                 }
+
                 TicketEntity ticket = new TicketEntity();
-                ticket.setCreatedBy(createdBy);
-                ticket.setAssignedTo(assignedTo);
+                ticket.setCreatedBy(request.createdBy());
+                ticket.setAssignedTo(request.assignedTo());
                 ticket.setTitle(request.title());
                 ticket.setDescription(request.description());
                 ticket.setStatus(Status.OPEN);
@@ -145,15 +156,33 @@ public class TicketService {
         });
     }
 
+
+    @Transactional
+    public Optional<TicketEntity> updateTicket(Integer ticketId, UpdateTicketRequest request) {
+        Optional<TicketEntity> ticketOpt = ticketRepository.findById(ticketId);
+        ticketOpt.ifPresent(ticket -> {
+            if (request.title() != null) ticket.setTitle(request.title());
+            if (request.description() != null) ticket.setDescription(request.description());
+            if (request.dueDate() != null) ticket.setDueDate(request.dueDate());
+            if (request.location() != null) ticket.setLocation(request.location());
+            if (request.mediaType() != null) ticket.setMediaType(request.mediaType());
+            if (request.mediaId() != null) ticket.setMediaId(request.mediaId());
+            ticketRepository.save(ticket);
+        });
+        return ticketOpt;
+    }
+
     @Transactional
     public Optional<TicketEntity> assignTicket(Integer ticketId, Integer userId) {
         return ticketAssignmentTimer.record(() -> {
             Optional<TicketEntity> ticketOpt = ticketRepository.findById(ticketId);
             try {
                 if (ticketOpt.isPresent()) {
-                    UserEntity user = userRepository.findById(userId)
-                        .orElseThrow(() -> new IllegalArgumentException("User with ID " + userId + " not found"));
-                    ticketOpt.get().setAssignedTo(user);
+                    if (!userExists(userId)) {
+                        throw new IllegalArgumentException("User with ID " + userId + " not found");
+                    }
+
+                    ticketOpt.get().setAssignedTo(userId);
                     ticketRepository.save(ticketOpt.get());
                     ticketAssignedCounter.increment();
                 }
