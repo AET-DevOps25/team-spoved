@@ -83,7 +83,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-db}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-spoved}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-secret}
-      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.media-svc.loadbalancer.server.port=${MEDIA_PORT:-8083}"
