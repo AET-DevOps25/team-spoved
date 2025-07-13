@@ -27,6 +27,9 @@ scrape_configs:
     static_configs:
       - targets: ['media:8083']
 
+  - job_name: 'traefik'
+    static_configs:
+      - targets: ['traefik:8089']
 
   - job_name: 'genai'
     metrics_path: '/metrics'
