@@ -31,11 +31,13 @@ const WorkerTicketDetailsModal: React.FC<WorkerTicketDetailsModalProps> = ({ tic
   const handleStartTicket = () => {
     updateTicketStatus(ticket.ticketId, 'IN_PROGRESS');
     setTicketStatus('IN_PROGRESS');
+    window.location.reload();
   };
 
   const handleFinishTicket = () => {
     updateTicketStatus(ticket.ticketId, 'FINISHED');
     setTicketStatus('FINISHED');
+    window.location.reload();
   };
 
 

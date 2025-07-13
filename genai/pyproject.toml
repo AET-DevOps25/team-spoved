@@ -10,11 +10,30 @@ dependencies = [
     "fastapi",
     "uvicorn",
     "google-generativeai",
+    "google-cloud-speech",        
+    "google-cloud-texttospeech",
     "pydantic",
     "python-multipart",
-    "jwt"
+    "jwt",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-mock",
+    "httpx",
+    "fakeredis",
+    "responses"
 ]
+
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 packages = ["ticket_generator"]
-package-dir = { "" = "src" }
+package-dir = {"" = "src"}
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+addopts = "--tb=short -v"
