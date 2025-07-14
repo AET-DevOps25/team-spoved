@@ -1,5 +1,5 @@
 namespace:
-  name: 
+  name: spoved-2
   create: false
 
 geminiApiKey: ""
