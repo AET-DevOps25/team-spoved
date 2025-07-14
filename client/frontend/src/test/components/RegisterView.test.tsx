@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import RegisterView from '../../views/RegisterView';
+import { vi } from 'vitest';
 
 const renderWithRouter = (component: React.ReactElement) => {
   return render(
@@ -20,7 +21,7 @@ describe('RegisterView Component Tests', () => {
 
   beforeEach(() => {
     mockAxios = new MockAdapter(axios);
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
