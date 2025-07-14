@@ -3,8 +3,8 @@ namespace:
   create: false
 
 geminiApiKey: ""
-db-user: spoved
-db-secret: secret
+dbUser: spoved
+dbSecret: secret
 
 ticket:
   image:
@@ -29,9 +29,9 @@ ticket:
     - name: SPRING_DATASOURCE_URL
       value: "jdbc:postgresql://database-service:5432/db"
     - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.db-user }}"
+      value: "{{ .Values.dbUser }}"
     - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.db-password}}"
+      value: "{{.Values.dbPassword}}"
     - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
       value: health,info,prometheus
     - name: MANAGEMENT_ENDPOUNT_HEALTH_SHOWDETAILS
@@ -59,9 +59,9 @@ user:
     - name: SPRING_DATASOURCE_URL
       value: "jdbc:postgresql://database-service:5432/db"
     - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.db-user }}"
+      value: "{{ .Values.dbUser }}"
     - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.db-password}}"
+      value: "{{.Values.dbPassword}}"
     - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
       value: health,info,prometheus
     - name: MANAGEMENT_ENDPOUNT_HEALTH_SHOWDETAILS
@@ -90,9 +90,9 @@ media:
     - name: SPRING_DATASOURCE_URL
       value: "jdbc:postgresql://database-service:5432/db"
     - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.db-user }}"
+      value: "{{ .Values.dbUser }}"
     - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.db-password}}"
+      value: "{{.Values.dbPassword}}"
     - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
       value: health,info,prometheus
     - name: MANAGEMENT_ENDPOUNT_HEALTH_SHOWDETAILS
@@ -139,9 +139,9 @@ auth:
     - name: SPRING_DATASOURCE_URL
       value: "jdbc:postgresql://database-service:5432/db"
     - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.db-user }}"
+      value: "{{ .Values.dbUser }}"
     - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.db-password}}"
+      value: "{{.Values.dbPassword}}"
     - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
       value: health,info,prometheus
     - name: MANAGEMENT_ENDPOUNT_HEALTH_SHOWDETAILS
