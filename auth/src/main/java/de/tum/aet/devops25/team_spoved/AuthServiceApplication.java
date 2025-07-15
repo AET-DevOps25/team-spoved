@@ -19,7 +19,7 @@ public class AuthServiceApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-						.allowedOrigins("http://localhost:5173", "http://localhost:3000", "http://localhost:8090")
+						.allowedOrigins("http://localhost:5173", "http://localhost:3000", "http://localhost:8090", "https://team-spoved.student.k8s.aet.cit.tum.de")
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 						.allowedHeaders("*")
 						.allowCredentials(true);
