@@ -20,6 +20,36 @@ spec:
     - host: "team-spoved.devops25.student.k8s.aet.cit.tum.de"
       http:
         paths:
+          # API routes for backend services
+          - path: /api/v1/tickets
+            pathType: Prefix
+            backend:
+              service:
+                name: ticket-service
+                port:
+                  number: {{ .Values.ticket.service.port }}
+          - path: /api/v1/users
+            pathType: Prefix
+            backend:
+              service:
+                name: user-service
+                port:
+                  number: {{ .Values.user.service.port }}
+          - path: /api/v1/media
+            pathType: Prefix
+            backend:
+              service:
+                name: media-service
+                port:
+                  number: {{ .Values.media.service.port }}
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: {{ .Values.auth.service.port }}
+          # Frontend route (catch-all, must be last)
           - path: /
             pathType: Prefix
             backend:

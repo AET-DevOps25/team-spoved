@@ -32,6 +32,8 @@ ticket:
       value: "{{ .Values.db-user }}"
     - name: SPRING_DATASOURCE_PASSWORD
       value: "{{.Values.db-password}}"
+    - name: USER_SERVICE_URL
+      value: "http://user-service:8082/api/v1"
 user:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/user
