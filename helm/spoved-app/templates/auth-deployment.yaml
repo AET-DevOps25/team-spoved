@@ -7,11 +7,11 @@ spec:
   replicas: {{ .Values.auth.replicaCount }}
   selector:
     matchLabels:
-      app: auth-selector
+      app: spoved-auth-selector
   template:
     metadata:
       labels:
-        app: auth-selector
+        app: spoved-auth-selector
     spec:
       containers:
         - name: auth
@@ -19,6 +19,11 @@ spec:
           imagePullPolicy: {{ .Values.auth.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.auth.service.targetPort }}
+          envFrom:
+            - configMapRef:
+                name: springboot-datalayer-config
+            - configMapRef:
+                name: springboot-prometheus-config
           env:
             {{- range .Values.auth.env }}
             - name: {{ .name }}

@@ -8,6 +8,7 @@ google-cloud-texttospeech
 pydub
 ffmpeg-python
 python-multipart
+prometheus-client
 pytest
 pytest-asyncio
 pytest-mock

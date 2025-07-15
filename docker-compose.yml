@@ -26,8 +26,18 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-db}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-spoved}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-secret}
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA=db
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
       - USER_SERVICE_URL=http://user:${USER_PORT:-8082}/api/v1
-      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus
+      - MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED=true
+      - MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED=true
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+      - MANAGEMENT_ENDPOUNT_HEALTH_SHOWDETAILS=always
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.ticket-svc.loadbalancer.server.port=${TICKET_PORT:-8081}"
@@ -49,14 +59,21 @@ services:
     build:
       context: ./user
       dockerfile: Dockerfile
-      cache_from:
-        - ghcr.io/aet-devops25/user-service/user:latest
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-docker}
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-db}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-spoved}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-secret}
-      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA=db
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus
+      - MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED=true
+      - MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED=true
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.user-svc.loadbalancer.server.port=${USER_PORT:-8082}"
@@ -84,7 +101,16 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-db}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-spoved}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-secret}
-      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA=db
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus
+      - MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED=true
+      - MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED=true
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.media-svc.loadbalancer.server.port=${MEDIA_PORT:-8083}"
@@ -163,6 +189,16 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-db}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-spoved}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-secret}
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA=db
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus
+      - MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED=true
+      - MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED=true
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.auth-svc.loadbalancer.server.port=${AUTH_PORT:-8030}"
@@ -174,6 +210,24 @@ services:
       - database
     ports:
       - "${AUTH_PORT:-8030}:${AUTH_PORT:-8030}"
+    networks:
+      - spoved-network
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.52.0
+    container_name: prometheus
+    ports: 
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
     networks:
       - spoved-network
     restart: unless-stopped
@@ -208,6 +262,7 @@ services:
 
 volumes:
   pgdata:
+  prometheus_data:
 
 networks:
   spoved-network:

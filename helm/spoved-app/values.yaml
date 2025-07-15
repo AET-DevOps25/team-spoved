@@ -1,10 +1,10 @@
 namespace:
-  name: 
+  name: spoved-2
   create: false
 
 geminiApiKey: ""
-db-user: spoved
-db-secret: secret
+dbUser: spoved
+dbSecret: secret
 
 ticket:
   image:
@@ -23,15 +23,7 @@ ticket:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.db-user }}"
-    - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.db-password}}"
+    
 user:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/user
@@ -49,15 +41,6 @@ user:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.db-user }}"
-    - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.db-password}}"
 
 media:
   image:
@@ -76,15 +59,6 @@ media:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.db-user }}"
-    - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.db-password}}"
 
 genai:
   image:
@@ -121,15 +95,6 @@ auth:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.db-user }}"
-    - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.db-password}}"
 
 client:
   image:
@@ -148,7 +113,7 @@ database:
     tag: "15-alpine"
     pullPolicy: IfNotPresent
   service:
-    name: database-service
+    name: database
     port: 5432
   storage:
     size: 128Mi
@@ -159,9 +124,6 @@ database:
     requests:
       cpu: "100m"
       memory: "256Mi"
-  credentials:
-    username: spoved
-    password: secret
 
 ingress:
   enabled: true
