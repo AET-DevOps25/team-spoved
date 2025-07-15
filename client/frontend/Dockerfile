@@ -8,13 +8,19 @@ COPY package.json package-lock.json* ./
 # Copy source code (after dependencies are installed)
 COPY public ./public
 COPY src ./src
-COPY *.json *.ts *.js *.html ./
+# add *.mts so vite.config.mts is included
+COPY *.json *.ts *.mts *.js *.html ./
 
-ARG VITE_SERVER_API_URL
+ARG VITE_TICKET_API_URL
+ARG VITE_USER_API_URL
+ARG VITE_MEDIA_API_URL
 ARG VITE_AUTH_API_URL
 ARG VITE_GENAI_API_URL
 
-ENV VITE_SERVER_API_URL=$VITE_SERVER_API_URL
+
+ENV VITE_TICKET_API_URL=$VITE_TICKET_API_URL
+ENV VITE_USER_API_URL=$VITE_USER_API_URL
+ENV VITE_MEDIA_API_URL=$VITE_MEDIA_API_URL
 ENV VITE_AUTH_API_URL=$VITE_AUTH_API_URL
 ENV VITE_GENAI_API_URL=$VITE_GENAI_API_URL
 
@@ -25,6 +31,9 @@ RUN npm cache clean --force
 
 # Install dependencies
 RUN npm install
+
+# Run tests
+RUN npm test
 
 # Build the project
 RUN npm run build

@@ -22,7 +22,7 @@ const SupervisorTicketCard = ({
 
 	const isAlreadyAssigned = ticket.assignedTo !== null;
 	
-	const assignedUser = users.find((user) => user.userId === ticket.assignedTo?.userId);
+	const assignedUser = users.find((user) => user.userId === ticket.assignedTo);
 
 	const getInitials = (user: UserDto) =>{
 		if (!user) return '';

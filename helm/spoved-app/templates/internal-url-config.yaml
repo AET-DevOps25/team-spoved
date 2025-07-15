@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: internal-url-config
+  namespace: {{ .Values.namespace.name | default "spoved" }}
+data:
+  TICKET_API_URL: http://ticket-service:8081/api/v1
+  USER_API_URL: http://user-service:8082/api/v1
+  MEDIA_API_URL: http://media-service:8083/api/v1
+  AUTH_API_URL: http://auth-service:8030
+  GENAI_API_URL: http://genai-service:8000

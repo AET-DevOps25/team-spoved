@@ -11,3 +11,4 @@ export interface UserDto {
 
 export type LoginUserRequest = Omit<UserDto, 'userId' | 'password' | 'role'>;
 export type RegisterUserRequest = Omit<UserDto, 'userId'>;
+export type LoginUserRequestTest = Omit<UserDto, 'userId' | 'role'>;

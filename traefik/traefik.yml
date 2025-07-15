@@ -2,14 +2,20 @@ api:
   dashboard: true
   insecure: true
 
+metrics:
+  prometheus:
+    addEntryPointsLabels: true
+    addRoutersLabels: true
+    addServicesLabels: true
+
 log:
   level: DEBUG
 
 entryPoints:
   web:
-    address: ":8090"
+    address: ":8080" # app
   traefik:
-    address: ":8081"
+    address: ":8089" # dashboard
 
 providers:
   docker:

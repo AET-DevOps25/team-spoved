@@ -17,7 +17,7 @@ export default function WorkerTicketView() {
     const [isLoading, setIsLoading] = useState(false);
 
     const [media, setMedia] = useState<MediaDto | null>(null);
-    const [_, setMediaLoading] = useState(false);
+    const [, setMediaLoading] = useState(false);
 
     const userId = localStorage.getItem('userId') || '';
 
@@ -39,7 +39,7 @@ export default function WorkerTicketView() {
             setIsLoading(true);
             try {
                 const tickets = await getTickets();
-                const filteredTickets = tickets.filter((ticket) => ticket.assignedTo?.userId === parseInt(userId));
+                const filteredTickets = tickets.filter((ticket) => ticket.assignedTo === parseInt(userId));
                 setTickets(filteredTickets ?? []);
             } catch (error) {
                 console.error('Error fetching tickets:', error);

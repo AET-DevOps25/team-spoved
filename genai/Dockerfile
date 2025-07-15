@@ -14,11 +14,30 @@ RUN apt-get update && apt-get install -y \
 # Copy the application code
 COPY . .
 
+ARG TICKET_API_URL
+ARG USER_API_URL
+ARG MEDIA_API_URL
+ARG AUTH_API_URL
 ARG GEMINI_API_KEY
-ARG BACKEND_API_URL
 
+
+ENV TICKET_API_URL=$TICKET_API_URL
+ENV USER_API_URL=$USER_API_URL
+ENV MEDIA_API_URL=$MEDIA_API_URL
+ENV AUTH_API_URL=$AUTH_API_URL
 ENV GEMINI_API_KEY=$GEMINI_API_KEY
-ENV BACKEND_API_URL=$BACKEND_API_URL
+
+ENV NODE_ENV=dev
+
+# Install the package and dependencies
+RUN pip install --no-cache-dir -e .
+
+# Stage 1 (before running tests)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+RUN pip install -e ".[test]"
+RUN pytest tests/ -v
 
 # Stage 2: Install dependencies
 # Copy requirements and install dependencies

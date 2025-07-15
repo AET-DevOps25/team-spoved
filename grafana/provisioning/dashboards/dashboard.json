@@ -89,6 +89,12 @@
             "properties": [
               { "id": "displayName",     "value": "Prometheus" }
             ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "traefik:8089" },
+            "properties": [
+              { "id": "displayName",     "value": "Traefik" }
+            ]
           }
         ]
       },
@@ -152,9 +158,21 @@
             ]
           },
           {
-            "matcher": { "id": "byName", "options": "server:8080" },
+            "matcher": { "id": "byName", "options": "media:8083" },
+            "properties": [
+              { "id": "displayName",     "value": "Media Service" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "ticket:8081" },
             "properties": [
               { "id": "displayName",     "value": "Ticketing Service" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "user:8082" },
+            "properties": [
+              { "id": "displayName",     "value": "User Service" }
             ]
           }
         ]
@@ -236,9 +254,21 @@
             ]
           },
           {
-            "matcher": { "id": "byName", "options": "server:8080" },
+            "matcher": { "id": "byName", "options": "media:8083" },
+            "properties": [
+              { "id": "displayName",     "value": "Media Service" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "ticket:8081" },
             "properties": [
               { "id": "displayName",     "value": "Ticketing Service" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "user:8082" },
+            "properties": [
+              { "id": "displayName",     "value": "User Service" }
             ]
           }
         ]

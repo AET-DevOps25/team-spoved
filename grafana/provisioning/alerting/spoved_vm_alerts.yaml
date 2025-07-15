@@ -8,7 +8,7 @@ groups:
 
     rules:
       - uid: vm_high_usage
-        title: VM Memory > 80%
+        title: High memmory usage
         condition: A
         data:
           - refId: A
@@ -39,8 +39,8 @@ groups:
           summary: High VM memory on {{ $labels.instance }}
 
       - uid: service_startup_slow
-        title: Service Startup > 30s
-        condition: A > 30                 # seconds
+        title: Service startup duration over 30s
+        condition: A
         data:
           - refId: A
             datasourceUid: prom
@@ -53,9 +53,8 @@ groups:
               datasource:
                 type: prometheus
                 uid: prom
-              # replace `my_service_startup_seconds` with your actual metric
               expr: |
-                max by (service) (my_service_startup_seconds)
+                max by (service) (my_service_startup_seconds) > 30
               intervalMs: 1000
               maxDataPoints: 43200
         for: 5m
@@ -65,10 +64,9 @@ groups:
         annotations:
           summary: "Slow startup: {{ $labels.service }} took >30s"
 
-      # ── 2) HTTP Request Duration (95th pct) > 2s ────
       - uid: service_http_slow
-        title: Service HTTP 95th-pct > 2s
-        condition: A > 2                  # seconds
+        title: Duration of the HTTP requests longer than 2s
+        condition: A
         data:
           - refId: A
             datasourceUid: prom
@@ -81,14 +79,13 @@ groups:
               datasource:
                 type: prometheus
                 uid: prom
-              # replace `http_request_duration_seconds_bucket` & label names as needed
               expr: |
                 histogram_quantile(
                   0.95,
                   sum by (le,service) (
                     rate(http_request_duration_seconds_bucket[5m])
                   )
-                )
+                ) > 2
               intervalMs: 1000
               maxDataPoints: 43200
         for: 5m
@@ -96,5 +93,4 @@ groups:
           severity: critical
           service: "{{ $labels.service }}"
         annotations:
-          summary: "Slow HTTP: 95th-pct request for {{ $labels.service }} >2s"
-
+          summary: "Slow HTTP: 95th‑pct request for {{ $labels.service }} >2s"

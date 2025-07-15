@@ -5,7 +5,7 @@ on:
     branches: [ dev, main ]
 
 jobs:
-  test-server:
+  test-ticket:
     name: Run Java Tests
     runs-on: ubuntu-latest
     steps:
@@ -22,7 +22,67 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Run Gradle test
-        working-directory: ./server
+        working-directory: ./ticket
+        run: ./gradlew test
+
+  test-user:
+    name: Run Java Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run Gradle test
+        working-directory: ./user
+        run: ./gradlew test
+
+  test-media:
+    name: Run Java Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run Gradle test
+        working-directory: ./media
+        run: ./gradlew test
+
+  test-auth:
+    name: Run Java Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run Gradle test
+        working-directory: ./auth
         run: ./gradlew test
 
   test-frontend:
@@ -41,11 +101,22 @@ jobs:
         working-directory: ./client/frontend
         run: npm ci
 
-      - name: Run ESLint on changed files
-        working-directory: ./client/frontend
-        run: npm run lint
-
       - name: Run tests
         working-directory: ./client/frontend
-        # FIXME Since no testing framework was used, it's currently repeating the linting
-        run: npm run lint
+        run: npm test
+
+  test-genai:
+    name: Run Python Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with: 
+          python-version: 3.9
+
+      - name: Install dependencies (GenAI)
+        working-directory: ./genai
+        run: pip install -r requirements.txt

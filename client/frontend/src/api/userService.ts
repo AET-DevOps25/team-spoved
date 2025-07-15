@@ -4,7 +4,7 @@ import type { Jwt } from '../types/Jwt';
 import { getAuthHeaders } from './utils';
 
 // User endpoints
-const BASE_URL = import.meta.env.VITE_SERVER_API_URL + '/users';
+const BASE_URL = import.meta.env.VITE_USER_API_URL + '/users';
 const AUTH_BASE_URL = import.meta.env.VITE_AUTH_API_URL + '/auth';
 
 export const getUsers = async (): Promise<UserDto[]> => {
@@ -25,7 +25,7 @@ const params = new URLSearchParams();
     const response = await axios.get(`${BASE_URL}?${params.toString()}`, {headers: getAuthHeaders()});
     
     const data = Array.isArray(response.data) ? response.data : [];
-    return data.map((user: any) => ({
+    return data.map((user: UserDto) => ({
         userId: user.userId,
         name: user.name,
         role: user.role,
