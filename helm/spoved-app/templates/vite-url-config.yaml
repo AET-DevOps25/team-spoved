@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vite-url-config
+  namespace: {{ .Values.namespace.name | default "spoved" }}
+data:
+  VITE_TICKET_API_URL: https://team-spoved.student.k8s.aet.cit.tum.de/
+  VITE_USER_API_URL: https://team-spoved.student.k8s.aet.cit.tum.de/
+  VITE_MEDIA_API_URL: https://team-spoved.student.k8s.aet.cit.tum.de/
+  VITE_AUTH_API_URL: https://team-spoved.student.k8s.aet.cit.tum.de/
+  VITE_GENAI_API_URL: https://team-spoved.student.k8s.aet.cit.tum.de/
