@@ -19,6 +19,11 @@ spec:
           imagePullPolicy: {{ .Values.auth.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.auth.service.targetPort }}
+          envFrom:
+            - configMapRef:
+                name: springboot-datalayer-config
+            - configMapRef:
+                name: springboot-prometheus-config
           env:
             {{- range .Values.auth.env }}
             - name: {{ .name }}

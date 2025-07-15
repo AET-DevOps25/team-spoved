@@ -23,19 +23,7 @@ ticket:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.dbUser }}"
-    - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.dbPassword}}"
-    - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
-      value: health,info,prometheus
-    - name: MANAGEMENT_ENDPOUNT_HEALTH_SHOWDETAILS
-      value: always
+    
 user:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/user
@@ -53,19 +41,6 @@ user:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.dbUser }}"
-    - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.dbPassword}}"
-    - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
-      value: health,info,prometheus
-    - name: MANAGEMENT_ENDPOUNT_HEALTH_SHOWDETAILS
-      value: always
 
 media:
   image:
@@ -84,19 +59,6 @@ media:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.dbUser }}"
-    - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.dbPassword}}"
-    - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
-      value: health,info,prometheus
-    - name: MANAGEMENT_ENDPOUNT_HEALTH_SHOWDETAILS
-      value: always
 
 genai:
   image:
@@ -133,19 +95,6 @@ auth:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.dbUser }}"
-    - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.dbPassword}}"
-    - name: MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE
-      value: health,info,prometheus
-    - name: MANAGEMENT_ENDPOUNT_HEALTH_SHOWDETAILS
-      value: always
 
 client:
   image:
@@ -164,7 +113,7 @@ database:
     tag: "15-alpine"
     pullPolicy: IfNotPresent
   service:
-    name: database-service
+    name: database
     port: 5432
   storage:
     size: 128Mi
@@ -175,9 +124,6 @@ database:
     requests:
       cpu: "100m"
       memory: "256Mi"
-  credentials:
-    username: spoved
-    password: secret
 
 ingress:
   enabled: true

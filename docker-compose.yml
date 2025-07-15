@@ -26,8 +26,17 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-db}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-spoved}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-secret}
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA=db
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
       - USER_SERVICE_URL=http://user:${USER_PORT:-8082}/api/v1
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus
+      - MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED=true
+      - MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED=true
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
       - MANAGEMENT_ENDPOUNT_HEALTH_SHOWDETAILS=always
     labels:
       - "traefik.enable=true"
@@ -55,7 +64,16 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-db}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-spoved}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-secret}
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA=db
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus
+      - MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED=true
+      - MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED=true
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.user-svc.loadbalancer.server.port=${USER_PORT:-8082}"
@@ -83,7 +101,16 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-db}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-spoved}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-secret}
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA=db
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus
+      - MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED=true
+      - MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED=true
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.media-svc.loadbalancer.server.port=${MEDIA_PORT:-8083}"
@@ -162,7 +189,16 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-db}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-spoved}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-secret}
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=org.postgresql.Driver
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA=db
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL=true
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info,prometheus
+      - MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED=true
+      - MANAGEMENT_ENDPOINT_PROMETHEUS_ENABLED=true
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.auth-svc.loadbalancer.server.port=${AUTH_PORT:-8030}"

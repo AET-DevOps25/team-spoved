@@ -30,7 +30,7 @@ spec:
           - name: POSTGRES_USER
             value: "{{.Values.dbUser}}"
           - name: POSTGRES_PASSWORD
-            value: "{{.Values.dbPassword}}"
+            value: "{{.Values.dbSecret}}"
           - name: POSTGRES_DB
             value: "db"
           volumeMounts:
