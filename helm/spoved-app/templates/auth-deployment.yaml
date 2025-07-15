@@ -7,11 +7,11 @@ spec:
   replicas: {{ .Values.auth.replicaCount }}
   selector:
     matchLabels:
-      app: auth-selector
+      app: spoved-auth-selector
   template:
     metadata:
       labels:
-        app: auth-selector
+        app: spoved-auth-selector
     spec:
       containers:
         - name: auth
