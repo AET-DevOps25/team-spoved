@@ -99,4 +99,4 @@ The database includes pgTAP tests in [`database/tests/schema_test.sql`](database
 docker compose up --build -d database
 ```
 
-The initialization script [`init.sql`](database/init.sql) creates the schema, tables, and sample entries.
+The initialization script [`init.sql`](database/init.sql) creates the schema, tables, and sample entries. Any changes made to the schema should also be propagated in the ``docker-compose.yaml`` and ``helm/spoved-app/templates/database-init-job.yaml``
