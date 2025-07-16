@@ -25,7 +25,7 @@ public class SecurityConfig {
         // RBAC for the API points 
         // FIXME No CSRF is unsafe
         http
-            .csrf(csrf -> csrf.disable())  
+            .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configure(http))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/**","/api/v1/media/**").permitAll()
