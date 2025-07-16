@@ -51,7 +51,7 @@ public class UserControllerTest {
     @Test
     public void testGetUsers() throws Exception {
         when(userService.getFilteredUsers(any(), any(), any())).thenReturn(List.of(testUser));
-        mockMvc.perform(get("/api/v1/users"))
+        mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
                     .andExpect(jsonPath("$", hasSize(1)))
                     .andExpect(jsonPath("$[0].userId", is(testUser.getUserId())))
@@ -62,7 +62,7 @@ public class UserControllerTest {
     @Test
     public void testGetUserById() throws Exception {
         when(userService.getUserById(testUser.getUserId())).thenReturn(Optional.of(testUser));
-        mockMvc.perform(get("/api/v1/users/{userId}", testUser.getUserId()))
+        mockMvc.perform(get("/users/{userId}", testUser.getUserId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.userId", is(testUser.getUserId())))
                 .andExpect(jsonPath("$.name", is(testUser.getName())))
@@ -72,7 +72,7 @@ public class UserControllerTest {
     @Test
     public void testGetUserById_NotFound() throws Exception {
         when(userService.getUserById(99999)).thenReturn(Optional.empty());
-        mockMvc.perform(get("/api/v1/users/{userId}", 99999))
+        mockMvc.perform(get("/users/{userId}", 99999))
                 .andExpect(status().isNotFound());
     }
 }
