@@ -8,7 +8,7 @@ groups:
 
     rules:
       - uid: vm_high_usage
-        title: High memmory usage
+        title: High memory usage
         condition: A
         data:
           - refId: A
