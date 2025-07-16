@@ -24,6 +24,8 @@ spec:
                 name: springboot-datalayer-config
             - configMapRef:
                 name: springboot-prometheus-config
+            - configMapRef:
+                name: internal-url-config
           env:
             {{- range .Values.ticket.env }}
             - name: {{ .name }}
