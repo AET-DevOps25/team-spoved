@@ -75,7 +75,7 @@ describe('LoginView Component Tests', () => {
     mockAxios.onPost('http://localhost:8030/auth/login')
       .reply(200, mockJwt);
     
-    mockAxios.onGet('http://localhost:8082/api/v1/users?role=WORKER&name=testuser')
+    mockAxios.onGet('http://localhost:8082/users?role=WORKER&name=testuser')
       .reply(200, [mockUser]);
 
     renderWithRouter(<LoginView />);

@@ -1,0 +1,315 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Basic metric panels of the spOveD app",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "panels": [
+    {
+      "type": "row",
+      "title": "Data Volumes",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100
+    },
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Virtual Memory Usage",
+      "datasource": { "type": "prometheus", "uid": "prom" },
+      "gridPos": { "h": 15, "w": 24, "x": 0, "y": 1 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 2,
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green" },
+              { "color": "red", "value": 80 }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": "memory" },
+            "properties": [
+              { "id": "unit",     "value": "mbytes" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "genai:8000" },
+            "properties": [
+              { "id": "displayName",     "value": "Generative AI Service" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "localhost:9090" },
+            "properties": [
+              { "id": "displayName",     "value": "Prometheus" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "traefik:8089" },
+            "properties": [
+              { "id": "displayName",     "value": "Traefik" }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.1",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "process_virtual_memory_bytes",
+          "legendFormat": "{{instance}}",
+          "range": true
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Startup Time",
+      "datasource": { "type": "prometheus", "uid": "prom" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 9 },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "application_ready_time_seconds",
+          "legendFormat": "{{instance}}",
+          "range": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",            
+          "decimals": 2,          
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green",  "value": null },
+              { "color": "orange", "value": 1.0 },
+              { "color": "red",    "value": 2.0 }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "auth:8030" },
+            "properties": [
+              { "id": "displayName",     "value": "Authentication Service" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "media:8083" },
+            "properties": [
+              { "id": "displayName",     "value": "Media Service" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "ticket:8081" },
+            "properties": [
+              { "id": "displayName",     "value": "Ticketing Service" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "user:8082" },
+            "properties": [
+              { "id": "displayName",     "value": "User Service" }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": ["last"],     
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "text_mode": "value_and_name",
+        "wide_layout": false,
+        "text": {
+          "show": true,
+          "titleSize": "14px",
+          "valueSize": "24px"
+        },
+        "colorMode": "value",     
+        "graphMode": "none",      
+        "justifyMode": "center"
+      },
+      "pluginVersion": "12.0.1"
+    },
+    {
+      "type": "row",
+      "title": "Rates & Counters",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 32 },
+      "id": 102
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "The Longest HTTP Request Duration",
+      "datasource": { "type": "prometheus", "uid": "prom" },
+      "gridPos": { "h": 15, "w": 24, "x": 0, "y": 33 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "decimals": 2,
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green" },
+              { "color": "red", "value": 80 }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "auth:8030" },
+            "properties": [
+              { "id": "displayName",     "value": "Authentication Service" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "media:8083" },
+            "properties": [
+              { "id": "displayName",     "value": "Media Service" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "ticket:8081" },
+            "properties": [
+              { "id": "displayName",     "value": "Ticketing Service" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "user:8082" },
+            "properties": [
+              { "id": "displayName",     "value": "User Service" }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.1",
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "http_server_requests_active_seconds_max",
+          "legendFormat": "{{instance}}",
+          "range": true
+        }
+      ]
+    }
+  ],
+  "preload": false,
+  "schemaVersion": 41,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "dashboard",
+  "uid": "5d357a1a-5e3d-494b-a0d6-4cd15f3ace39",
+  "version": 2
+}

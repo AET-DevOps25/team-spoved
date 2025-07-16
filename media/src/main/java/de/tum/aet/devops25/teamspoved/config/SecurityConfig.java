@@ -29,9 +29,9 @@ public class SecurityConfig {
             .cors(cors -> cors.configure(http))
             .authorizeHttpRequests(auth -> auth
                 // Allow internal service access for GenAI automation
-                .requestMatchers("/api/v1/tickets/**").permitAll()
-                .requestMatchers("/api/v1/users/**").permitAll()
-                .requestMatchers("/api/v1/media/**").permitAll()
+                .requestMatchers("/tickets/**").permitAll()
+                .requestMatchers("/users/**").permitAll()
+                .requestMatchers("/media/**").permitAll()
                 .requestMatchers("/actuator/**").permitAll()
                 // Require authentication for everything else
                 .anyRequest().authenticated() 

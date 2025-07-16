@@ -26,12 +26,12 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-db}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER:-spoved}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-secret}
-      - USER_SERVICE_URL=http://user:${USER_PORT:-8082}/api/v1
+      - USER_SERVICE_URL=http://user:${USER_PORT:-8082}
       - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=health,info
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.ticket-svc.loadbalancer.server.port=${TICKET_PORT:-8081}"
-      - "traefik.http.routers.ticket.rule=PathPrefix(`/api/v1/tickets`)"
+      - "traefik.http.routers.ticket.rule=PathPrefix(`tickets`)"
       - "traefik.http.routers.ticket.entrypoints=web"
       - "traefik.http.routers.ticket.service=ticket-svc"
       - "traefik.http.routers.ticket.priority=100"
@@ -60,7 +60,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.user-svc.loadbalancer.server.port=${USER_PORT:-8082}"
-      - "traefik.http.routers.user.rule=PathPrefix(`/api/v1/users`)"
+      - "traefik.http.routers.user.rule=PathPrefix(`/users`)"
       - "traefik.http.routers.user.entrypoints=web"
       - "traefik.http.routers.user.service=user-svc"
       - "traefik.http.routers.user.priority=100"
@@ -88,7 +88,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.services.media-svc.loadbalancer.server.port=${MEDIA_PORT:-8083}"
-      - "traefik.http.routers.media.rule=PathPrefix(`/api/v1/media`)"
+      - "traefik.http.routers.media.rule=PathPrefix(`/media`)"
       - "traefik.http.routers.media.entrypoints=web"
       - "traefik.http.routers.media.service=media-svc"
       - "traefik.http.routers.media.priority=100"
@@ -106,15 +106,15 @@ services:
       context: ./client/frontend
       dockerfile: Dockerfile
       args:
-        VITE_TICKET_API_URL: http://${TRAEFIK_HOST:-localhost}:${TRAEFIK_PORT:-8080}/api/v1
-        VITE_USER_API_URL: http://${TRAEFIK_HOST:-localhost}:${TRAEFIK_PORT:-8080}/api/v1
-        VITE_MEDIA_API_URL: http://${TRAEFIK_HOST:-localhost}:${TRAEFIK_PORT:-8080}/api/v1
+        VITE_TICKET_API_URL: http://${TRAEFIK_HOST:-localhost}:${TRAEFIK_PORT:-8080}
+        VITE_USER_API_URL: http://${TRAEFIK_HOST:-localhost}:${TRAEFIK_PORT:-8080}
+        VITE_MEDIA_API_URL: http://${TRAEFIK_HOST:-localhost}:${TRAEFIK_PORT:-8080}
         VITE_AUTH_API_URL: http://${TRAEFIK_HOST:-localhost}:${TRAEFIK_PORT:-8080}
         VITE_GENAI_API_URL: http://${TRAEFIK_HOST:-localhost}:${GENAI_PORT:-8000}
     environment:
-      - VITE_TICKET_API_URL=http://${TRAEFIK_HOST:-localhost}:${TRAEFIK_PORT:-8080}/api/v1
-      - VITE_USER_API_URL=http://${TRAEFIK_HOST:-localhost}:${TRAEFIK_PORT:-8080}/api/v1
-      - VITE_MEDIA_API_URL=http://${TRAEFIK_HOST:-localhost}:${TRAEFIK_PORT:-8080}/api/v1
+      - VITE_TICKET_API_URL=http://${TRAEFIK_HOST:-localhost}:${TRAEFIK_PORT:-8080}
+      - VITE_USER_API_URL=http://${TRAEFIK_HOST:-localhost}:${TRAEFIK_PORT:-8080}
+      - VITE_MEDIA_API_URL=http://${TRAEFIK_HOST:-localhost}:${TRAEFIK_PORT:-8080}
       - VITE_AUTH_API_URL=http://${TRAEFIK_HOST:-localhost}:${TRAEFIK_PORT:-8080}
       - VITE_GENAI_API_URL=http://${TRAEFIK_HOST:-localhost}:${GENAI_PORT:-8000}
     expose:
@@ -184,15 +184,15 @@ services:
       context: ./genai
       dockerfile: Dockerfile
       args:
-        TICKET_API_URL: http://ticket:${TICKET_PORT:-8081}/api/v1
-        USER_API_URL: http://user:${USER_PORT:-8082}/api/v1
-        MEDIA_API_URL: http://media:${MEDIA_PORT:-8083}/api/v1
+        TICKET_API_URL: http://ticket:${TICKET_PORT:-8081}
+        USER_API_URL: http://user:${USER_PORT:-8082}
+        MEDIA_API_URL: http://media:${MEDIA_PORT:-8083}
         AUTH_API_URL: http://auth:${AUTH_PORT:-8030}
         GEMINI_API_KEY: ${GEMINI_API_KEY}
     environment:
-      - TICKET_API_URL=http://ticket:${TICKET_PORT:-8081}/api/v1
-      - USER_API_URL=http://user:${USER_PORT:-8082}/api/v1
-      - MEDIA_API_URL=http://media:${MEDIA_PORT:-8083}/api/v1
+      - TICKET_API_URL=http://ticket:${TICKET_PORT:-8081}
+      - USER_API_URL=http://user:${USER_PORT:-8082}
+      - MEDIA_API_URL=http://media:${MEDIA_PORT:-8083}
       - AUTH_API_URL=http://auth:${AUTH_PORT:-8030}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}

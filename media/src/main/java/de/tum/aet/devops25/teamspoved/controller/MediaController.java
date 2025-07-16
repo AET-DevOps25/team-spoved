@@ -15,7 +15,7 @@ import java.util.List;
 
 @CrossOrigin(origins = {"http://localhost:5173", "http://localhost:3000", "http://localhost:8000", "http://localhost:8082", "http://localhost:8083", "http://localhost:8081"})
 @RestController
-@RequestMapping("/api/v1/media")
+@RequestMapping("/media")
 public class MediaController {
     private final MediaService mediaService;
 

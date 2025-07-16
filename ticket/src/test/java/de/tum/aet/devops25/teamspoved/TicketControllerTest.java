@@ -60,7 +60,7 @@ public class TicketControllerTest {
     @Test
     public void testGetAllTickets() throws Exception {
         when(ticketService.getFilteredTickets(any(), any(), any(), any(), any(), any())).thenReturn(List.of(testTicket));
-        mockMvc.perform(get("/api/v1/tickets"))
+        mockMvc.perform(get("/tickets"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].ticketId", is(testTicket.getTicketId())))
@@ -72,7 +72,7 @@ public class TicketControllerTest {
     @Test
     public void testGetTicketById() throws Exception {
         when(ticketService.getTicketById(testTicket.getTicketId())).thenReturn(Optional.of(testTicket));
-        mockMvc.perform(get("/api/v1/tickets/{ticketId}", testTicket.getTicketId()))
+        mockMvc.perform(get("/tickets/{ticketId}", testTicket.getTicketId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.ticketId", is(testTicket.getTicketId())))
                 .andExpect(jsonPath("$.description", is(testTicket.getDescription())))
@@ -83,7 +83,7 @@ public class TicketControllerTest {
     @Test
     public void testGetTicketById_NotFound() throws Exception {
         when(ticketService.getTicketById(99999)).thenReturn(Optional.empty());
-        mockMvc.perform(get("/api/v1/tickets/{ticketId}", 99999))
+        mockMvc.perform(get("/tickets/{ticketId}", 99999))
                 .andExpect(status().isNotFound());
     }
 
@@ -100,7 +100,7 @@ public class TicketControllerTest {
                 null
         );
         when(ticketService.createTicket(any(CreateTicketRequest.class))).thenReturn(testTicket);
-        mockMvc.perform(post("/api/v1/tickets")
+        mockMvc.perform(post("/tickets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -123,7 +123,7 @@ public class TicketControllerTest {
         updatedTicket.setLocation(testTicket.getLocation());
         updatedTicket.setMediaType(testTicket.getMediaType());
         when(ticketService.updateTicketStatus(testTicket.getTicketId(), Status.FINISHED)).thenReturn(Optional.of(updatedTicket));
-        mockMvc.perform(put("/api/v1/tickets/{ticketId}/status", testTicket.getTicketId())
+        mockMvc.perform(put("/tickets/{ticketId}/status", testTicket.getTicketId())
                 .param("status", Status.FINISHED.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is(Status.FINISHED.toString())))
@@ -134,7 +134,7 @@ public class TicketControllerTest {
     @Test
     public void testGetAllTickets_withFilters() throws Exception {
         when(ticketService.getFilteredTickets(any(), any(), any(), any(), any(), any())).thenReturn(List.of(testTicket));
-        mockMvc.perform(get("/api/v1/tickets")
+        mockMvc.perform(get("/tickets")
                 .param("assignedTo", String.valueOf(testAssigneeId))
                 .param("createdBy", String.valueOf(testUserId))
                 .param("status", Status.IN_PROGRESS.toString())

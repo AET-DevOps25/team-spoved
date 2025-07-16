@@ -23,7 +23,8 @@ public class TicketService {
     private final TicketRepository ticketRepository;
     private final RestTemplate restTemplate;
 
-    @Value("${services.user.url}")
+    // Use @Value to inject the user service URL from application properties or environment variables.
+    @Value("${USER_API_URL:http://user-service:8080}")
     private String userServiceUrl;
 
     // Metrics
@@ -49,7 +50,7 @@ public class TicketService {
 
         /* Ticket Reading */
 
-    
+
         this.ticketRequestCounter = Counter.builder("ticket_service.tickets.requests.total")
                 .description("Total number of ticket requests")
                 .register(registry);
@@ -110,7 +111,7 @@ public class TicketService {
     public TicketEntity createTicket(CreateTicketRequest request) {
         return ticketsCreatedTimer.record(() -> {
             try {
-                
+
                 if (!userExists(request.createdBy())) {
                     System.out.println("User not found");
                     throw new IllegalArgumentException("User not found");

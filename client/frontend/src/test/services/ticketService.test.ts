@@ -51,7 +51,7 @@ describe('TicketService Tests', () => {
     ];
 
     it('should handle when there are no assigned tickets for worker', async () => {
-      mockAxios.onGet('http://localhost:8081/api/v1/tickets?assignedTo=1')
+      mockAxios.onGet('http://localhost:8081/tickets?assignedTo=1')
         .reply(200, []);
 
       const result = await getFilteredTickets({ assignedTo: 1 });
@@ -61,7 +61,7 @@ describe('TicketService Tests', () => {
     });
 
     it('should handle when there are some assigned tickets for worker', async () => {
-      mockAxios.onGet('http://localhost:8081/api/v1/tickets?assignedTo=1')
+      mockAxios.onGet('http://localhost:8081/tickets?assignedTo=1')
         .reply(200, mockWorkerTickets);
 
       const result = await getFilteredTickets({ assignedTo: 1 });
@@ -72,7 +72,7 @@ describe('TicketService Tests', () => {
     });
 
     it('should handle ticket service down for worker', async () => {
-      mockAxios.onGet('http://localhost:8081/api/v1/tickets?assignedTo=1')
+      mockAxios.onGet('http://localhost:8081/tickets?assignedTo=1')
         .networkError();
 
       await expect(getFilteredTickets({ assignedTo: 1 })).rejects.toThrow();
@@ -111,7 +111,7 @@ describe('TicketService Tests', () => {
     ];
 
     it('should handle when there are no open tickets for supervisor', async () => {
-      mockAxios.onGet('http://localhost:8081/api/v1/tickets?status=OPEN')
+      mockAxios.onGet('http://localhost:8081/tickets?status=OPEN')
         .reply(200, []);
 
       const result = await getFilteredTickets({ status: 'OPEN' });
@@ -120,7 +120,7 @@ describe('TicketService Tests', () => {
     });
 
     it('should handle when there are some open tickets for supervisor', async () => {
-      mockAxios.onGet('http://localhost:8081/api/v1/tickets?status=OPEN')
+      mockAxios.onGet('http://localhost:8081/tickets?status=OPEN')
         .reply(200, mockOpenTickets);
 
       const result = await getFilteredTickets({ status: 'OPEN' });
@@ -130,7 +130,7 @@ describe('TicketService Tests', () => {
     });
 
     it('should handle when there are no to-review tickets for supervisor', async () => {
-      mockAxios.onGet('http://localhost:8081/api/v1/tickets?status=FINISHED')
+      mockAxios.onGet('http://localhost:8081/tickets?status=FINISHED')
         .reply(200, []);
 
       const result = await getFilteredTickets({ status: 'FINISHED' });
@@ -139,7 +139,7 @@ describe('TicketService Tests', () => {
     });
 
     it('should handle when there are some to-review tickets for supervisor', async () => {
-      mockAxios.onGet('http://localhost:8081/api/v1/tickets?status=FINISHED')
+      mockAxios.onGet('http://localhost:8081/tickets?status=FINISHED')
         .reply(200, mockToReviewTickets);
 
       const result = await getFilteredTickets({ status: 'FINISHED' });
@@ -149,7 +149,7 @@ describe('TicketService Tests', () => {
     });
 
     it('should handle ticket service down for supervisor', async () => {
-      mockAxios.onGet('http://localhost:8081/api/v1/tickets')
+      mockAxios.onGet('http://localhost:8081/tickets')
         .networkError();
 
       await expect(getTickets()).rejects.toThrow();
@@ -175,7 +175,7 @@ describe('TicketService Tests', () => {
     };
 
     it('should successfully create a new ticket', async () => {
-      mockAxios.onPost('http://localhost:8081/api/v1/tickets')
+      mockAxios.onPost('http://localhost:8081/tickets')
         .reply(201, mockCreatedTicket);
 
       const result = await createTicket(mockTicketRequest);
@@ -186,14 +186,14 @@ describe('TicketService Tests', () => {
     });
 
     it('should handle ticket creation failure', async () => {
-      mockAxios.onPost('http://localhost:8081/api/v1/tickets')
+      mockAxios.onPost('http://localhost:8081/tickets')
         .reply(400, { message: 'Invalid ticket data' });
 
       await expect(createTicket(mockTicketRequest)).rejects.toThrow();
     });
 
     it('should handle ticket service down during creation', async () => {
-      mockAxios.onPost('http://localhost:8081/api/v1/tickets')
+      mockAxios.onPost('http://localhost:8081/tickets')
         .networkError();
 
       await expect(createTicket(mockTicketRequest)).rejects.toThrow();
@@ -202,25 +202,25 @@ describe('TicketService Tests', () => {
 
   describe('Ticket Assignment', () => {
     it('should successfully assign worker to ticket', async () => {
-      mockAxios.onPut('http://localhost:8081/api/v1/tickets/1/assign?userId=1')
+      mockAxios.onPut('http://localhost:8081/tickets/1/assign?userId=1')
         .reply(200, { message: 'Worker assigned successfully' });
 
       const result = await assignWorker(1, 1);
 
       expect(result.status).toBe(200);
       expect(mockAxios.history.put).toHaveLength(1);
-      expect(mockAxios.history.put[0].url).toBe('http://localhost:8081/api/v1/tickets/1/assign?userId=1');
+      expect(mockAxios.history.put[0].url).toBe('http://localhost:8081/tickets/1/assign?userId=1');
     });
 
     it('should handle assignment failure', async () => {
-      mockAxios.onPut('http://localhost:8081/api/v1/tickets/1/assign?userId=1')
+      mockAxios.onPut('http://localhost:8081/tickets/1/assign?userId=1')
         .reply(404, { message: 'Ticket or user not found' });
 
       await expect(assignWorker(1, 1)).rejects.toThrow();
     });
 
     it('should handle ticket service down during assignment', async () => {
-      mockAxios.onPut('http://localhost:8081/api/v1/tickets/1/assign?userId=1')
+      mockAxios.onPut('http://localhost:8081/tickets/1/assign?userId=1')
         .networkError();
 
       await expect(assignWorker(1, 1)).rejects.toThrow();

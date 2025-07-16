@@ -43,7 +43,7 @@ public class MediaControllerSecurityTest {
 
     @Test
     void whenNoAuthHeader_thenUnauthorized() throws Exception {
-        mockMvc.perform(get("/api/v1/media"))
+        mockMvc.perform(get("/media"))
                 .andExpect(status().isUnauthorized());
     }
 
