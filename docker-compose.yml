@@ -243,12 +243,14 @@ services:
         MEDIA_API_URL: http://media:${MEDIA_PORT:-8083}/api/v1
         AUTH_API_URL: http://auth:${AUTH_PORT:-8030}
         GEMINI_API_KEY: ${GEMINI_API_KEY}
+        GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS}
     environment:
       - TICKET_API_URL=http://ticket:${TICKET_PORT:-8081}/api/v1
       - USER_API_URL=http://user:${USER_PORT:-8082}/api/v1
       - MEDIA_API_URL=http://media:${MEDIA_PORT:-8083}/api/v1
       - AUTH_API_URL=http://auth:${AUTH_PORT:-8030}
       - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     depends_on:
       - traefik
       - ticket

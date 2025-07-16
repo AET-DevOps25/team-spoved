@@ -9,7 +9,8 @@ on:
         required: true
       GEMINI_API_KEY:
         required: true
-
+      GOOGLE_APPLICATION_CREDENTIALS:
+        required: true
 jobs:
 
   deploy:

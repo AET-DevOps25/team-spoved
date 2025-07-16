@@ -18,7 +18,10 @@ genai.configure(api_key=API_KEY)
 
 # Initialize Google Cloud Speech client
 try:
-    credentials_path = 'src/ticket_generator/credentials/credentials.json'
+    credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+    if not credentials_path:
+        raise Exception("GOOGLE_APPLICATION_CREDENTIALS environment variable not set")
+    
     if os.path.exists(credentials_path):
         credentials = service_account.Credentials.from_service_account_file(credentials_path)
         speech_client = speech.SpeechClient(credentials=credentials)

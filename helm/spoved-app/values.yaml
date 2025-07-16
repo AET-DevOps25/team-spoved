@@ -3,6 +3,7 @@ namespace:
   create: false
 
 geminiApiKey: ""
+googleCloudCredentialsJson: ""
 dbUser: spoved
 dbSecret: secret
 
