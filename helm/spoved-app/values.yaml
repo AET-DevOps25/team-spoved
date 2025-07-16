@@ -1,6 +1,10 @@
 namespace:
-  name: 
+  name: spoved-2
   create: false
+
+geminiApiKey: ""
+dbUser: spoved
+dbSecret: secret
 
 ticket:
   image:
@@ -19,21 +23,7 @@ ticket:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: username
-    - name: SPRING_DATASOURCE_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: password
+    
 user:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/user
@@ -51,21 +41,6 @@ user:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: username
-    - name: SPRING_DATASOURCE_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: password
 
 media:
   image:
@@ -84,21 +59,6 @@ media:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: username
-    - name: SPRING_DATASOURCE_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: password
 
 genai:
   image:
@@ -135,21 +95,7 @@ auth:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: username
-    - name: SPRING_DATASOURCE_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: db-credentials
-          key: password
+
 client:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/client
@@ -167,7 +113,7 @@ database:
     tag: "15-alpine"
     pullPolicy: IfNotPresent
   service:
-    name: database-service
+    name: database
     port: 5432
   storage:
     size: 128Mi
@@ -178,9 +124,6 @@ database:
     requests:
       cpu: "100m"
       memory: "256Mi"
-  credentials:
-    username: spoved
-    password: secret
 
 ingress:
   enabled: true
