@@ -9,7 +9,7 @@ import java.util.List;
 
 @CrossOrigin(origins = { "http://localhost:5173", "http://localhost:3000", "http://localhost:8090", "http://localhost:8082", "http://localhost:8083", "http://localhost:8081"})
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
