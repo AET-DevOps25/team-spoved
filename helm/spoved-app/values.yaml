@@ -11,7 +11,7 @@ ticket:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/ticket
     tag: latest
-    pullPolicy: Always
+    pullPolicy: Always # Change to 'Never' to try using a local image first. This is useful when building the Image with docker compose
   service:
     type: ClusterIP
     port: 8081
@@ -29,7 +29,7 @@ user:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/user
     tag: latest
-    pullPolicy: Always
+    pullPolicy: Always # Change to 'Never' to try using a local image first. This is useful when building the Image with docker compose
   service:
     type: ClusterIP
     port: 8082
@@ -47,7 +47,7 @@ media:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/media
     tag: latest
-    pullPolicy: Always
+    pullPolicy: Always # Change to 'Never' to try using a local image first. This is useful when building the Image with docker compose
   service:
     type: ClusterIP
     port: 8083
@@ -65,7 +65,7 @@ genai:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/genai
     tag: latest
-    pullPolicy: Always
+    pullPolicy: Always # Change to 'Never' to try using a local image first. This is useful when building the Image with docker compose
   service:
     type: ClusterIP
     port: 8000
@@ -83,7 +83,7 @@ auth:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/auth
     tag: latest
-    pullPolicy: Always
+    pullPolicy: Always # Change to 'Never' to try using a local image first. This is useful when building the Image with docker compose
   service:
     type: ClusterIP
     port: 8030
@@ -101,7 +101,7 @@ client:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/client
     tag: latest
-    pullPolicy: Always
+    pullPolicy: Always # Change to 'Never' to try using a local image first. This is useful when building the Image with docker compose
   service:
     type: ClusterIP
     port: 3000

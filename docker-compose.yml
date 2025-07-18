@@ -15,7 +15,7 @@ services:
       - spoved-network
 
   ticket:
-    image: ghcr.io/aet-devops25/ticketing-service/ticket:latest
+    image: ghcr.io/aet-devops25/team-spoved/ticket:latest
     build:
       context: ./ticket
       dockerfile: Dockerfile
@@ -55,7 +55,7 @@ services:
     restart: unless-stopped
 
   user:
-    image: ghcr.io/aet-devops25/user-service/user:latest
+    image: ghcr.io/aet-devops25/team-spoved/user:latest
     build:
       context: ./user
       dockerfile: Dockerfile
@@ -90,12 +90,10 @@ services:
     restart: unless-stopped
 
   media:
-    image: ghcr.io/aet-devops25/media-service/media:latest
+    image: ghcr.io/aet-devops25/team-spoved/media:latest
     build:
       context: ./media
       dockerfile: Dockerfile
-      cache_from:
-        - ghcr.io/aet-devops25/media-service/media:latest
     environment:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE:-docker}
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-db}
@@ -127,7 +125,7 @@ services:
     restart: unless-stopped
 
   client:
-    image: ghcr.io/aet-devops25/client-service/client:latest
+    image: ghcr.io/aet-devops25/team-spoved/client:latest
     build:
       context: ./client/frontend
       dockerfile: Dockerfile
@@ -180,7 +178,7 @@ services:
     restart: unless-stopped
 
   auth:
-    image: auth-service
+    image: ghcr.io/aet-devops25/team-spoved/auth:latest 
     build:
       context: ./auth
       dockerfile: Dockerfile
@@ -255,7 +253,7 @@ services:
     restart: unless-stopped
 
   genai:
-    image: genai-service
+    image: ghcr.io/aet-devops25/team-spoved/genai:latest
     build:
       context: ./genai
       dockerfile: Dockerfile
