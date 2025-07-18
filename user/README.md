@@ -12,8 +12,8 @@ A backend system for tracking maintenance tasks in service locations (airports, 
 
 ### Users
 
-- `GET /api/v1/users` - Get all users
-- `GET /api/v1/users/{userId}` - Get a specific user by ID
+- `GET /users` - Get all users
+- `GET /users/{userId}` - Get a specific user by ID
 
 ### User
 User model with name, ID, role and timestamps.

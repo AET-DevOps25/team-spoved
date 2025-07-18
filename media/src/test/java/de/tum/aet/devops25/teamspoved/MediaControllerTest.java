@@ -56,7 +56,7 @@ public class MediaControllerTest {
 
         when(mediaService.createMedia(any(MultipartFile.class), any(MediaTypeEnum.class), any(String.class))).thenReturn(testMedia);
         
-        mockMvc.perform(multipart("/api/v1/media")
+        mockMvc.perform(multipart("/media")
                 .file(file)
                 .param("mediaType", MediaTypeEnum.AUDIO.toString())
                 .param("blobType", "audio/wav"))
@@ -72,7 +72,7 @@ public class MediaControllerTest {
     @Test
     public void testGetMediaById() throws Exception {
         when(mediaService.getMediaById(testMedia.getMediaId())).thenReturn(testMedia);
-        mockMvc.perform(get("/api/v1/media/{mediaId}", testMedia.getMediaId()))
+        mockMvc.perform(get("/media/{mediaId}", testMedia.getMediaId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.mediaId", is(testMedia.getMediaId())))
                 .andExpect(jsonPath("$.mediaType", is(testMedia.getMediaType().toString())))
@@ -83,14 +83,14 @@ public class MediaControllerTest {
     public void testGetMediaById_NotFound() throws Exception {
         when(mediaService.getMediaById(99999)).thenThrow(new IllegalArgumentException("Media not found"));
         
-        mockMvc.perform(get("/api/v1/media/{mediaId}", 99999))
+        mockMvc.perform(get("/media/{mediaId}", 99999))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void testGetAllMedia() throws Exception {
         when(mediaService.getAllMedia()).thenReturn(List.of(testMedia));
-        mockMvc.perform(get("/api/v1/media"))
+        mockMvc.perform(get("/media"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].mediaId", is(testMedia.getMediaId())));
@@ -102,7 +102,7 @@ public class MediaControllerTest {
         
         when(mediaService.updateAnalyzed(testMedia.getMediaId(), true)).thenReturn(testMedia);
         
-        mockMvc.perform(put("/api/v1/media/{mediaId}/analyzed", testMedia.getMediaId())
+        mockMvc.perform(put("/media/{mediaId}/analyzed", testMedia.getMediaId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("true"))
                 .andExpect(status().isOk())
@@ -115,7 +115,7 @@ public class MediaControllerTest {
         
         when(mediaService.updateResult(testMedia.getMediaId(), "test result")).thenReturn(testMedia);
         
-        mockMvc.perform(put("/api/v1/media/{mediaId}/result", testMedia.getMediaId())
+        mockMvc.perform(put("/media/{mediaId}/result", testMedia.getMediaId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("test result"))
                 .andExpect(status().isOk())
@@ -128,7 +128,7 @@ public class MediaControllerTest {
         
         when(mediaService.updateReason(testMedia.getMediaId(), "test reason")).thenReturn(testMedia);
         
-        mockMvc.perform(put("/api/v1/media/{mediaId}/reason", testMedia.getMediaId())
+        mockMvc.perform(put("/media/{mediaId}/reason", testMedia.getMediaId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("test reason"))
                 .andExpect(status().isOk())
@@ -148,7 +148,7 @@ public class MediaControllerTest {
 
         when(mediaService.createMedia(any(MultipartFile.class), any(MediaTypeEnum.class), any(String.class))).thenReturn(videoMedia);
         
-        mockMvc.perform(multipart("/api/v1/media")
+        mockMvc.perform(multipart("/media")
                 .file(file)
                 .param("mediaType", MediaTypeEnum.VIDEO.toString())
                 .param("blobType", "video/webm"))
@@ -171,7 +171,7 @@ public class MediaControllerTest {
 
         when(mediaService.createMedia(any(MultipartFile.class), any(MediaTypeEnum.class), any(String.class))).thenReturn(photoMedia);
         
-        mockMvc.perform(multipart("/api/v1/media")
+        mockMvc.perform(multipart("/media")
                 .file(file)
                 .param("mediaType", MediaTypeEnum.PHOTO.toString())
                 .param("blobType", "image/png"))
@@ -188,7 +188,7 @@ public class MediaControllerTest {
         when(mediaService.createMedia(any(MultipartFile.class), any(MediaTypeEnum.class), any(String.class)))
                 .thenThrow(new RuntimeException("Service error"));
         
-        mockMvc.perform(multipart("/api/v1/media")
+        mockMvc.perform(multipart("/media")
                 .file(file)
                 .param("mediaType", MediaTypeEnum.AUDIO.toString())
                 .param("blobType", "webm"))

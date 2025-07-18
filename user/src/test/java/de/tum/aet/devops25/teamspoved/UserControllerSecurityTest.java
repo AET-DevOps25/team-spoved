@@ -41,7 +41,7 @@ public class UserControllerSecurityTest {
 
     @Test
     void whenNoAuthHeader_thenUnauthorized() throws Exception {
-        mockMvc.perform(get("/api/v1/users"))
+        mockMvc.perform(get("/users"))
                 .andExpect(status().isUnauthorized());
     }
 

@@ -7,6 +7,8 @@ import traceback
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from prometheus_client import make_asgi_app
+
 from ticket_generator.api.media_service import router as mediaServiceRouter
 from ticket_generator.api.video_photo_service import router as videoPhotoServiceRouter
 from ticket_generator.api.ticket_servce import router as ticketServiceRouter
@@ -15,6 +17,9 @@ from ticket_generator.automation.ticket_processing_workflow import router as aut
 from ticket_generator.api.voice_service import router as voiceServiceRouter
 
 app = FastAPI()
+metrics_app = make_asgi_app()
+app.mount("/metrics", metrics_app)
+
 
 # Add global exception handler for better debugging
 @app.exception_handler(Exception)

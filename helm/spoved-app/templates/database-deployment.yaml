@@ -1,8 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spoved-database
-  namespace: "spoved"
+  name: database
+  namespace: {{ .Values.namespace.name | default "spoved" }}
 spec:
   replicas: 1
   selector:
@@ -27,23 +27,17 @@ spec:
           ports:
             - containerPort: 5432
           env:
-            - name: POSTGRES_USER
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: username
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-credentials
-                  key: password
-            - name: POSTGRES_DB
-              value: "db"
+          - name: POSTGRES_USER
+            value: "{{.Values.dbUser}}"
+          - name: POSTGRES_PASSWORD
+            value: "{{.Values.dbSecret}}"
+          - name: POSTGRES_DB
+            value: "db"
           volumeMounts:
             - name: postgres-data
               mountPath: /var/lib/postgresql/data
               subPath: postgresql-db
       volumes:
-        - name: postgres-data
-          persistentVolumeClaim:
-            claimName: postgres-pvc
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: postgres-pvc

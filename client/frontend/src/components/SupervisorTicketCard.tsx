@@ -28,12 +28,10 @@ const SupervisorTicketCard = ({
 		if (!user) return '';
 		const firstName = user.name?.split(' ')[0];
 		const lastName = user.name?.split(' ')[1];
-		console.log(firstName, lastName);
 		return `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase();
 	}
 
 	const handleAssignClick = (e: React.MouseEvent) => {
-		console.log(ticket);
 		e.stopPropagation();
 		if (onAssign) {
 			onAssign(ticket);
