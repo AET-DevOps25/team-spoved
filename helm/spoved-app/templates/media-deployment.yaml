@@ -21,6 +21,11 @@ spec:
             {{- toYaml .Values.media.resources | nindent 12 }}
           ports:
             - containerPort: {{ .Values.media.service.targetPort }}
+          envFrom:
+            - configMapRef:
+                name: springboot-datalayer-config
+            - configMapRef:
+                name: springboot-prometheus-config
           env:
             {{- range .Values.media.env }}
             - name: {{ .name }}

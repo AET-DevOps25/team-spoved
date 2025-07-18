@@ -26,29 +26,6 @@ spec:
               memory: "50Mi"
           ports:
             - containerPort: {{ .Values.client.service.targetPort }}
-          env:
-            - name: VITE_TICKET_API_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: app-config
-                  key: TICKET_API_URL
-            - name: VITE_USER_API_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: app-config
-                  key: USER_API_URL
-            - name: VITE_MEDIA_API_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: app-config
-                  key: MEDIA_API_URL
-            - name: VITE_AUTH_API_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: app-config
-                  key: AUTH_API_URL
-            - name: VITE_GENAI_API_URL
-              valueFrom:
-                configMapKeyRef:
-                  name: app-config
-                  key: GENAI_API_URL
+          envFrom:
+          - configMapRef:
+              name: vite-url-config

@@ -12,7 +12,7 @@ describe('MediaService Tests', () => {
   let mockAxios: MockAdapter;
 
   // Common URLs used by the service
-  const BASE_MEDIA_URL = 'http://localhost:8083/api/v1/media';
+  const BASE_MEDIA_URL = 'http://localhost:8083/media';
   const AUTOMATION_URL = 'http://localhost:8000/automation/webhook/media-uploaded';
 
   beforeEach(() => {

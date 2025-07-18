@@ -16,7 +16,7 @@ variable "vpc_cidr_block" { default = "10.0.0.0/16" }
 variable "subnet_cidr_block" { default = "10.0.0.0/24" }
 variable "env_prefix" { default = "spOveD" }
 variable "ssh_private_key" { default = "~/.ssh/aws" }
-variable "docker_ports" { default = [8080, 3000, 5432] }
+variable "docker_ports" { default = [8080, 3000, 5432, 8089, 8082, 8081, 8083, 8000] }
 
 data "aws_ami" "ubuntu" {
   most_recent = true

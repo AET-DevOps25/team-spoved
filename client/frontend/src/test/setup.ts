@@ -19,10 +19,10 @@ import '@testing-library/jest-dom';
 Object.defineProperty(import.meta, 'env', {
   value: {
     VITE_GENAI_API_URL: 'http://localhost:8000',
-    VITE_TICKET_API_URL: 'http://localhost:8081/api/v1',
-    VITE_USER_API_URL: 'http://localhost:8082/api/v1',
+    VITE_TICKET_API_URL: 'http://localhost:8081',
+    VITE_USER_API_URL: 'http://localhost:8082',
     VITE_AUTH_API_URL: 'http://localhost:8030',
-    VITE_MEDIA_API_URL: 'http://localhost:8083/api/v1',
+    VITE_MEDIA_API_URL: 'http://localhost:8083',
   },
   writable: true,
 });
@@ -56,10 +56,10 @@ Object.defineProperty(globalThis, 'import', {
     meta: {
       env: {
         VITE_GENAI_API_URL: 'http://localhost:8000',
-        VITE_TICKET_API_URL: 'http://localhost:8081/api/v1',
-        VITE_USER_API_URL: 'http://localhost:8082/api/v1',
+        VITE_TICKET_API_URL: 'http://localhost:8081',
+        VITE_USER_API_URL: 'http://localhost:8082',
         VITE_AUTH_API_URL: 'http://localhost:8030',
-        VITE_MEDIA_API_URL: 'http://localhost:8083/api/v1',
+        VITE_MEDIA_API_URL: 'http://localhost:8083',
       },
     },
   },
@@ -69,9 +69,9 @@ Object.defineProperty(globalThis, 'import', {
 
 // src/test/setup.ts
 const env = {
-  VITE_TICKET_API_URL: 'http://localhost:8081/api/v1',
-  VITE_USER_API_URL:   'http://localhost:8082/api/v1',
-  VITE_MEDIA_API_URL:  'http://localhost:8083/api/v1',
+  VITE_TICKET_API_URL: 'http://localhost:8081',
+  VITE_USER_API_URL:   'http://localhost:8082',
+  VITE_MEDIA_API_URL:  'http://localhost:8083',
   VITE_AUTH_API_URL:   'http://localhost:8030',
   VITE_GENAI_API_URL:  'http://localhost:8000',
 };

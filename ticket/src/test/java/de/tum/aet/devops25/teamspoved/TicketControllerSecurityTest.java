@@ -49,7 +49,7 @@ public class TicketControllerSecurityTest {
 
     @Test
     void whenNoAuthHeader_thenUnauthorized() throws Exception {
-        mockMvc.perform(get("/api/v1/tickets"))
+        mockMvc.perform(get("/tickets"))
                 .andExpect(status().isUnauthorized());
     }
 }

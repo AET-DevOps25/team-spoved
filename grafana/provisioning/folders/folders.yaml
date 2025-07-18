@@ -1,0 +1,6 @@
+apiVersion: 1
+
+folders:
+  - name: "spOveD Alerts"
+    uid: spOveD_alerts
+    title: "spOveD Alerts"

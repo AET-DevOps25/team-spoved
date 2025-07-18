@@ -1,16 +1,17 @@
 namespace:
-  name: 
+  name: spoved-2
   create: false
 
 geminiApiKey: ""
-db-user: spoved
-db-secret: secret
+googleCloudCredentialsJson: ""
+dbUser: spoved
+dbSecret: secret
 
 ticket:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/ticket
     tag: latest
-    pullPolicy: Always
+    pullPolicy: Always # Change to 'Never' to try using a local image first. This is useful when building the Image with docker compose
   service:
     type: ClusterIP
     port: 8081
@@ -23,20 +24,12 @@ ticket:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.db-user }}"
-    - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.db-password}}"
+    
 user:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/user
     tag: latest
-    pullPolicy: Always
+    pullPolicy: Always # Change to 'Never' to try using a local image first. This is useful when building the Image with docker compose
   service:
     type: ClusterIP
     port: 8082
@@ -49,21 +42,12 @@ user:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.db-user }}"
-    - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.db-password}}"
 
 media:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/media
     tag: latest
-    pullPolicy: Always
+    pullPolicy: Always # Change to 'Never' to try using a local image first. This is useful when building the Image with docker compose
   service:
     type: ClusterIP
     port: 8083
@@ -76,21 +60,12 @@ media:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.db-user }}"
-    - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.db-password}}"
 
 genai:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/genai
     tag: latest
-    pullPolicy: Always
+    pullPolicy: Always # Change to 'Never' to try using a local image first. This is useful when building the Image with docker compose
   service:
     type: ClusterIP
     port: 8000
@@ -108,7 +83,7 @@ auth:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/auth
     tag: latest
-    pullPolicy: Always
+    pullPolicy: Always # Change to 'Never' to try using a local image first. This is useful when building the Image with docker compose
   service:
     type: ClusterIP
     port: 8030
@@ -121,21 +96,12 @@ auth:
     requests:
       cpu: "50m"
       memory: "50Mi"
-    env:
-    - name: SPRING_PROFILES_ACTIVE
-      value: docker
-    - name: SPRING_DATASOURCE_URL
-      value: "jdbc:postgresql://database-service:5432/db"
-    - name: SPRING_DATASOURCE_USERNAME
-      value: "{{ .Values.db-user }}"
-    - name: SPRING_DATASOURCE_PASSWORD
-      value: "{{.Values.db-password}}"
 
 client:
   image:
     repository: ghcr.io/aet-devops25/team-spoved/client
     tag: latest
-    pullPolicy: Always
+    pullPolicy: Always # Change to 'Never' to try using a local image first. This is useful when building the Image with docker compose
   service:
     type: ClusterIP
     port: 3000
@@ -148,7 +114,7 @@ database:
     tag: "15-alpine"
     pullPolicy: IfNotPresent
   service:
-    name: database-service
+    name: database
     port: 5432
   storage:
     size: 128Mi
@@ -159,9 +125,6 @@ database:
     requests:
       cpu: "100m"
       memory: "256Mi"
-  credentials:
-    username: spoved
-    password: secret
 
 ingress:
   enabled: true

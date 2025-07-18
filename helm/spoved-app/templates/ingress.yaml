@@ -2,7 +2,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: "team-spoved-ingress"
+  name: "spoved-ingress"
   namespace: {{ .Values.namespace.name | default "spoved" }}
   {{- $annotations := .Values.ingress.annotations | default dict }}
   {{- if $annotations }}
@@ -14,10 +14,10 @@ spec:
   tls:
     - hosts:
         - "team-spoved.student.k8s.aet.cit.tum.de"
-      secretName: "team-spoved-devops25-tls"
+      secretName: "team-spoved-tls"
   {{- end }}
   rules:
-    - host: "team-spoved.devops25.student.k8s.aet.cit.tum.de"
+    - host: "team-spoved.student.k8s.aet.cit.tum.de"
       http:
         paths:
           - path: /
@@ -27,4 +27,39 @@ spec:
                 name: client-service
                 port:
                   number: {{ .Values.client.service.port }}
+          - path: /auth
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port: 
+                  number: {{ .Values.auth.service.port }}
+          - path: /voice
+            pathType: Prefix
+            backend:
+              service:
+                name: genai-service
+                port:
+                  number: {{ .Values.genai.service.port }}
+          - path: /media
+            pathType: Prefix
+            backend:
+              service:
+                name: media-service
+                port:
+                  number: {{ .Values.media.service.port }}
+          - path: /user
+            pathType: Prefix
+            backend:
+              service:
+                name: user-service
+                port:
+                  number: {{ .Values.user.service.port }}
+          - path: /tickets
+            pathType: Prefix
+            backend:
+              service:
+                name: ticket-service
+                port:
+                  number: {{ .Values.ticket.service.port }}
 {{- end }}
