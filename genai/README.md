@@ -94,5 +94,3 @@ The GenAI service includes comprehensive Prometheus metrics:
 - Processing duration histograms
 - Success/error rate tracking
 - Resource usage monitoring
-
-## Project Structure
