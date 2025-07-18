@@ -227,8 +227,8 @@ Deploys applications to Kubernetes clusters using Helm.
 ***Manual Rollback:***
 
 ```
-helm rollback spoved <revision> -n devops25-team-spoved
-kubectl rollout undo deployment/ticket -n devops25-team-spoved
+helm rollback spoved <revision> -n spoved-2
+kubectl rollout undo deployment/ticket -n spoved-2
 ```
 
 ## Observability & Monitoring
