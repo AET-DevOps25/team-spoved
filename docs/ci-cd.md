@@ -185,33 +185,6 @@ Provision AWS infrastructure and deploy containerized applications using IaC too
 
 Deploys applications to Kubernetes clusters using Helm.
 
-### Key Features:
-
-- Reusable workflow triggered by other pipelines
-
-- Service token-based Kubernetes access
-
-- Environment-specific deployments via Helm values
-
-***Health Monitoring:***
-
-```
-livenessProbe:
-  httpGet:
-    path: /health
-    port: 8080
-```
-
-***Rolling Update Strategy:***
-
-```
-strategy:
-  type: RollingUpdate
-  rollingUpdate:
-    maxUnavailable: 1
-    maxSurge: 1
-```
-
 ## Security
 
 ### Authentication
@@ -274,13 +247,6 @@ kubectl rollout undo deployment/ticket -n devops25-team-spoved
 
 - Custom dashboards for service performance
 
-### Centralized Logging
-
-- ELK stack integration (Elasticsearch, Logstash, Kibana)
-
-- Structured logs with timestamps and thread information
-
-- Correlation IDs for distributed tracing
 
 ## Troubleshooting
 
