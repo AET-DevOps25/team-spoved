@@ -16,25 +16,25 @@ A microservice for handling media file uploads, storage, and analysis in the tea
 
 ### Media Management
 
-- `POST /api/v1/media` - Upload a new media file
+- `POST  /media` - Upload a new media file
   - **Form Data**: `file` (MultipartFile), `mediaType` (PHOTO/VIDEO/AUDIO), `blobType` (MIME type)
   - **Response**: MediaEntity with generated ID and metadata
 
-- `GET /api/v1/media` - Retrieve all media files
+- `GET  /media` - Retrieve all media files
   - **Response**: List of MediaEntity objects
 
-- `GET /api/v1/media/{mediaId}` - Get specific media by ID
+- `GET  /media/{mediaId}` - Get specific media by ID
   - **Response**: MediaEntity object
 
 ### Analysis Management
 
-- `PUT /api/v1/media/{mediaId}/analyzed` - Update analysis status
+- `PUT  /media/{mediaId}/analyzed` - Update analysis status
   - **Body**: Boolean indicating if media has been analyzed
 
-- `PUT /api/v1/media/{mediaId}/result` - Update analysis result
+- `PUT  /media/{mediaId}/result` - Update analysis result
   - **Body**: String containing analysis result
 
-- `PUT /api/v1/media/{mediaId}/reason` - Update analysis reasoning
+- `PUT  /media/{mediaId}/reason` - Update analysis reasoning
   - **Body**: String containing analysis reasoning
 
 ### Health & Monitoring
