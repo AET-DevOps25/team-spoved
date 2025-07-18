@@ -3,13 +3,23 @@ info:
   title: Spoved App 
   version: 1.0.0
   description: OpenAPI spec for all the microservices exposing endpoints. Schemas are also included.
-  servers: 
-  - url: 'https://team-spoved.student.k8s.aet.cit.tum.de'
-
+servers: 
+- url: 'https://team-spoved.student.k8s.aet.cit.tum.de'
+tags:
+  - name: Auth
+    description: Authentication endpoints
+  - name: Media
+    description: Media analysis endpoints
+  - name: Ticket
+    description: Ticket management endpoints
+  - name: User
+    description: User management endpoints
+  - name: GenAI
+    description: AI-powered endpoints
 paths:
-  # --- Auth Service Paths ---
   /auth/register:
     post:
+      tags: [Auth]
       summary: Register a new user
       description: Registers a new user with a username, password, and role.
       requestBody:
@@ -29,6 +39,7 @@ paths:
           description: User already exists or invalid input
   /auth/login:
     post:
+      tags: [Auth]
       summary: User login
       description: Authenticates a user and returns a JWT token if successful.
       requestBody:
@@ -53,6 +64,7 @@ paths:
   # --- Media Service Paths ---
   /media/{mediaId}:
     get:
+      tags: [Media]
       summary: Get media analysis data
       description: Retrieve analysis data for a specific media item by ID.
       parameters:
@@ -72,6 +84,7 @@ paths:
           description: Media not found
   /media/{mediaId}/analyzed:
     put:
+      tags: [Media]
       summary: Update analyzed status
       description: Mark a media item as analyzed or not.
       parameters:
@@ -100,6 +113,7 @@ paths:
           description: Media not found
   /media/{mediaId}/result:
     put:
+      tags: [Media]
       summary: Update analysis result
       description: Update the AI-generated result for a media item.
       parameters:
@@ -128,6 +142,7 @@ paths:
           description: Media not found
   /media/{mediaId}/reason:
     put:
+      tags: [Media]
       summary: Update analysis reason
       description: Update the reason for the analysis result of a media item.
       parameters:
@@ -158,6 +173,7 @@ paths:
   # --- Ticket Service Paths ---
   /tickets:
     get:
+      tags: [Ticket]
       summary: Get filtered tickets
       description: Retrieve tickets filtered by assignedToId, createdById, status, dueDate, location, or mediaType.
       parameters:
@@ -198,6 +214,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Ticket'
     post:
+      tags: [Ticket]
       summary: Create a new ticket
       description: Create a new service ticket.
       requestBody:
@@ -217,6 +234,7 @@ paths:
           description: Invalid input
   /tickets/{ticketId}:
     get:
+      tags: [Ticket]
       summary: Get ticket by ID
       description: Retrieve a ticket by its unique ID.
       parameters:
@@ -235,6 +253,7 @@ paths:
         '404':
           description: Ticket not found
     put:
+      tags: [Ticket]
       summary: Update ticket status
       description: Update the status of a ticket.
       parameters:
@@ -268,6 +287,7 @@ paths:
   # --- User Service Paths ---
   /users/{userId}:
     get:
+      tags: [User]
       summary: Get user by ID
       description: Retrieve a user by their unique ID.
       parameters:
@@ -287,6 +307,7 @@ paths:
           description: User not found
   /users:
     get:
+      tags: [User]
       summary: Get filtered users
       description: Retrieve users filtered by ID, role, or name.
       parameters:
@@ -314,8 +335,9 @@ paths:
                   $ref: '#/components/schemas/User'
 
   # --- GenAI Service Paths ---
-  /voice/speech-to-text:
+  genai/voice/speech-to-text:
     post:
+      tags: [GenAI]
       summary: Convert speech audio to text
       description: Converts uploaded audio (WAV or WebM) to text using Google Cloud Speech-to-Text.
       requestBody:
@@ -340,8 +362,9 @@ paths:
           description: Invalid audio or no speech detected
         '500':
           description: Internal server error
-  /voice/query-ai:
+  genai/voice/query-ai:
     post:
+      tags: [GenAI]
       summary: Query Gemini AI for conversational response
       description: Generates a conversational response based on user input and conversation history.
       requestBody:
@@ -359,8 +382,9 @@ paths:
                 $ref: '#/components/schemas/QueryAIResponse'
         '500':
           description: Internal server error
-  voice/text-to-speech:
+  genai/voice/text-to-speech:
     post:
+      tags: [GenAI]
       summary: Convert text to speech
       description: Converts input text to speech audio using Google Cloud Text-to-Speech.
       requestBody:
@@ -379,8 +403,9 @@ paths:
                 format: binary
         '500':
           description: Internal server error
-  /media:
+  genai/media:
     get:
+      tags: [GenAI]
       summary: Get all media items
       description: Retrieve all media items.
       parameters:
@@ -398,8 +423,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/MediaAnalysis'
-  /media/{media_id}:
+  genai/media/{media_id}:
     get:
+      tags: [GenAI]
       summary: Get media by ID
       description: Retrieve a media item by its ID.
       parameters:
@@ -420,8 +446,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MediaAnalysis'
-  /video-photo/{media_id}:
+  genai/video-photo/{media_id}:
     get:
+      tags: [GenAI]
       summary: Get video/photo analysis data
       description: Retrieve analysis data for a specific video/photo media item by ID.
       parameters:
@@ -442,8 +469,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MediaAnalysis'
-  /video-photo/{media_id}/analyzed:
+  genai/video-photo/{media_id}/analyzed:
     put:
+      tags: [GenAI]
       summary: Update analyzed status
       description: Mark a video/photo media item as analyzed or not.
       parameters:
@@ -473,8 +501,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MediaAnalysis'
-  /video-photo/{media_id}/result:
+  genai/video-photo/{media_id}/result:
     put:
+      tags: [GenAI]
       summary: Update analysis result
       description: Update the AI-generated result for a video/photo media item.
       parameters:
@@ -504,8 +533,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MediaAnalysis'
-  /video-photo/{media_id}/reason:
+  genai/video-photo/{media_id}/reason:
     put:
+      tags: [GenAI]
       summary: Update analysis reason
       description: Update the reason for the analysis result of a video/photo media item.
       parameters:
@@ -535,8 +565,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MediaAnalysis'
-  /tickets:
+  genai/tickets:
     get:
+      tags: [GenAI]
       summary: Get all tickets
       description: Retrieve all tickets.
       parameters:
@@ -555,6 +586,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Ticket'
     post:
+      tags: [GenAI]
       summary: Create a new ticket
       description: Create a new ticket.
       requestBody:
@@ -576,8 +608,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Ticket'
-  /tickets/{ticket_id}:
+  genai/tickets/{ticket_id}:
     get:
+      tags: [GenAI]
       summary: Get ticket by ID
       description: Retrieve a ticket by its ID.
       parameters:
@@ -598,8 +631,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Ticket'
-  /automation/media-uploaded:
+  genai/automation/media-uploaded:
     post:
+      tags: [GenAI]
       summary: Handle media upload event
       description: Trigger automation workflow for uploaded media.
       requestBody:
@@ -621,8 +655,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WorkflowResponse'
-  /automation/trigger-automation:
+  genai/automation/trigger-automation:
     post:
+      tags: [GenAI]
       summary: Main automation endpoint for ticket creation
       description: Triggers automation workflow when new media is uploaded (photo/video/audio).
       requestBody:
@@ -644,8 +679,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WorkflowResponse'
-  /automation/webhook/media-uploaded:
+  genai/automation/webhook/media-uploaded:
     post:
+      tags: [GenAI]
       summary: Webhook for media upload event
       description: Webhook endpoint called by backend API to trigger ticket creation for new media uploads.
       requestBody:
@@ -667,8 +703,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WorkflowResponse'
-  /gemini/auto-create-ticket:
+  genai/gemini/auto-create-ticket:
     post:
+      tags: [GenAI]
       summary: Automatically create a ticket from media using Gemini AI analysis
       description: Main endpoint for automated ticket creation feature.
       requestBody:
@@ -684,8 +721,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AutoTicketResponse'
-  /gemini/health:
+  genai/gemini/health:
     get:
+      tags: [GenAI]
       summary: Gemini health check
       description: Returns the health status of the Gemini service.
       responses:
@@ -791,6 +829,12 @@ components:
       type: object
       properties:
         userId:
+          type: integer
+        name:
+          type: string
+        role:
+          type: string
+          enum: [SUPERVISOR, WORKER]
     # --- GenAI Schemas --- 
     SpeechToTextResponse:
       type: object
@@ -822,70 +866,6 @@ components:
         text:
           type: string
           description: The text to convert to speech
-    MediaAnalysis:
-      type: object
-      properties:
-        mediaId:
-          type: integer
-        analyzed:
-          type: boolean
-        result:
-          type: string
-        reason:
-          type: string
-        url:
-          type: string
-          description: URL to the media file
-    Ticket:
-      type: object
-      properties:
-        ticketId:
-          type: integer
-        title:
-          type: string
-        description:
-          type: string
-        status:
-          type: string
-          enum: [OPEN, IN_PROGRESS, FINISHED]
-        dueDate:
-          type: string
-          format: date
-        location:
-          type: string
-        mediaType:
-          type: string
-          enum: [PHOTO, VIDEO, AUDIO]
-        createdBy:
-          type: integer
-        assignedTo:
-          type: integer
-        mediaId:
-          type: integer
-    CreateTicketRequest:
-      type: object
-      properties:
-        title:
-          type: string
-        description:
-          type: string
-        status:
-          type: string
-          enum: [OPEN, IN_PROGRESS, FINISHED]
-        dueDate:
-          type: string
-          format: date
-        location:
-          type: string
-        mediaType:
-          type: string
-          enum: [PHOTO, VIDEO, AUDIO]
-        createdBy:
-          type: integer
-        assignedTo:
-          type: integer
-        mediaId:
-          type: integer
     MediaUploadEvent:
       type: object
       properties:
