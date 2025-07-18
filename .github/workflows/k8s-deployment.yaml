@@ -57,7 +57,7 @@ jobs:
     # Run helm upgrade to upgrade deployment
     - name: Upgrade Deployment with Helm
       run: |
-        helm upgrade --install spoved ./helm/spoved-app \
-         -n devops25-team-spoved \
+        helm upgrade --install spoved-app ./helm/spoved-app \
+         -n spoved-2 \
          --set geminiApiKey=${{ secrets.GEMINI_API_KEY }} \
          --set GOOGLE_APPLICATION_CREDENTIALS=${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
