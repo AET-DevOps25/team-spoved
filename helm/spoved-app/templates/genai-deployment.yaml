@@ -25,4 +25,14 @@ spec:
           env:
           - name: GEMINI_API_KEY
             value: "{{.Values.geminiApiKey}}"
+          - name: GOOGLE_APPLICATION_CREDENTIALS
+            value: "/app/src/ticket_generator/credentials/credentials.json"
+          volumeMounts:
+          - name: gcp-credentials
+            mountPath: /app/src/ticket_generator/credentials
+            readOnly: true
+      volumes:
+      - name: gcp-credentials
+        secret:
+          secretName: gcp-credentials-secret
 

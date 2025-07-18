@@ -30,8 +30,12 @@ genai.configure(api_key=GEMINI_API_KEY)
 
 # Initialize Google Cloud credentials
 try:
+    credentials_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+    if not credentials_path:
+        raise Exception("GOOGLE_APPLICATION_CREDENTIALS environment variable not set")
+    
     credentials = service_account.Credentials.from_service_account_file(
-        'src/ticket_generator/credentials/credentials.json'
+        credentials_path
     )
     speech_client = speech.SpeechClient(credentials=credentials)
     tts_client = texttospeech.TextToSpeechClient(credentials=credentials)
