@@ -12,7 +12,7 @@ This project includes:
 A more detailed overview of the problem we're trying to solve can be found in the [problem statement](problem_statement.md). For an architectural
 overview, refer to the [system description](system_description.md).
 
-![systemdesign](sysdesign.jpg)
+![systemdesign](resources/sysdesign.jpg)
 
 ## Prerequisites
 
