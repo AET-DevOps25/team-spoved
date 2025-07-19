@@ -22,112 +22,57 @@ overview, refer to the [system description](system_description.md).
 - Docker and Docker Compose
 - Git
 
-## Local Setup Instructions - No Docker
+## Deployment Options
 
-### Client Setup
+### 1. Local Development (Docker Compose)
 
-1. Navigate to the `client` directory:
-   ```bash
-   cd client
-   ```
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-### Server Setup
-
-1. Navigate to the `server` directory:
-   ```bash
-   cd server
-   ```
-2. Build the project:
-   ```bash
-   ./gradlew build
-   ```
-
-### DB setup
-```bash
-postgres createuser myuser --superuser
-postgres createdb mydatabase -O myuser
-PGPASSWORD=mypassword psql -h localhost -U myuser -d mydatabase -f init.sql
-```
-
-## Local Setup Instructions - Docker
-
-Use the Docker-Compose file to spin up the
-- Client app
-- Backend
-- Postgres
-containers
-
-```docker compose build```
-
-## Development Workflow
-
-### Client Development
-
-- Built with ReactJS and TypeScript for a modern, reactive UI.
-- Components and routes are organized in the `src` directory.
-
-### Server Development
-
-- Built with Spring Boot for scalable and maintainable server services.
-- Gradle is used for dependency management and building.
-- Source code is in the `src/main/java` directory.
-- Tests are in the `src/test/java` directory.
-
-### Publishing the code
-All tests are ran automatically through the CI pipeline found under ```.github/workflow``` on the ```dev``` branch. If all tests pass,
-the build will be published as a package in Github. Then the CD pipeline found under the same directory will
-publish it to the AES Cluster.
-
-## Building for Production - No Docker
-
-### Client Build
+To run the entire stack locally:
 
 ```bash
-cd client
-npm run build
+docker compose up --build
 ```
 
-### Server Build
+This will start all services (auth, user, ticket, media, genai, client, database, traefik, prometheus, grafana) and their dependencies. See each service's subdirectory for API details and configuration options.
+
+All required env variables for the deployment are in `.env-template`
+
+### 2. AWS Cloud Deployment (Terraform + Ansible)
+
+Infrastructure and automated deployment are managed via Terraform and Ansible:
+
+- **Terraform** provisions AWS EC2 instances and networking (see `terraform/`)
+- **Ansible** installs Docker and deploys the application stack (see `ansible/`)
+
+To deploy:
 
 ```bash
-cd server
-./gradlew clean build
+cd terraform
+terraform init
+export $(grep -v '^#' .env | xargs)
+terraform apply
 ```
 
-## Building for Production - Docker
-Just run
+This will automatically trigger the Ansible playbook to install Docker and start the containers on the created EC2 instance.
+
+### 3. Kubernetes Cluster (Helm)
+
+For production or scalable deployments, use the Helm chart in `helm/spoved-app/`:
+
 ```bash
-docker compose up
+helm upgrade spoved-app ./helm/spoved-app -n spoved-2 --install
 ```
 
-## Deploying in the AES Cluster (Rancher) - First time
-To deploy in the AES cluster, it is necessary to obtain the a kubeconfig file with the information on
-- Clusters
-- Users
-- Namespaces
-- Authentication
+Configure values in `helm/spoved-app/values.yaml` as needed for your environment. See the Helm README for details on working with Minikube, Rancher, or other clusters.
 
-Head to [AES Rancher](https://rancher.ase.cit.tum.de/) and log-in with your TUM-ID. Download the ```student.yaml``` file
-and store it as a config in ```~/.kube/```.
+## Further Information
 
+- **Service APIs & configuration:** See each microservice's subdirectory (`auth/`, `user/`, `ticket/`, `media/`, `genai/`, `client/`)
+- **Infrastructure:** See `terraform/` and `ansible/`
+- **Monitoring & Observability:** See `grafana/provisioning/README.md` and `docs/monitoring.md`
+- **System Architecture & Design:** See `docs/system_description.md` and diagrams in `resources/`
+- **CI/CD & Security:** See `docs/ci-cd.md`
 
-## Project Structure
-
-```
-├── client/                  # ReactJS client
-│   ├── src/                 # Source code
-│   ├── public/              # Static assets
-│   └── package.json         # Client dependencies
-│
-└── server/                  # Spring Boot server
-    ├── src/                 # Source code
-    ├── build.gradle         # Gradle build file
-    └── Dockerfile           # Server Dockerfile
-```
+For troubleshooting, usage examples, and advanced configuration, refer to the documentation in the relevant subdirectories.
 
 ## License
 
