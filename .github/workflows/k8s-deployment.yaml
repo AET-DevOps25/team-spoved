@@ -58,7 +58,7 @@ jobs:
 
       - name: Upgrade Deployment with Helm
         run: |
-          helm upgrade --install spoved-app ./helm/spoved-app \
+          helm upgrade spoved-app ./helm/spoved-app --install \
             -n spoved-2 \
             --set geminiApiKey=${GEMINI_API_KEY} \
             --set GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
