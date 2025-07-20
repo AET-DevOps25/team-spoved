@@ -1,0 +1,68 @@
+openapi: 3.0.3
+info:
+  title: User Service API
+  version: 1.0.0
+  description: |
+    Manages user data and roles for the Spoved platform.
+    Provides endpoints to retrieve user information and filter users by various criteria.
+    Supports role-based access and integrates with authentication and ticketing services.
+    Metrics and health endpoints are exposed for monitoring.
+paths:
+  /users/{userId}:
+    get:
+      summary: Get user by ID
+      description: Retrieve a user by their unique ID.
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+  /users:
+    get:
+      summary: Get filtered users
+      description: Retrieve users filtered by ID, role, or name.
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+        - in: query
+          name: role
+          schema:
+            type: string
+            enum: [SUPERVISOR, WORKER]
+        - in: query
+          name: name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        userId:
+          type: integer
+        name:
+          type: string
+        role:
+          type: string
+          enum: [SUPERVISOR, WORKER]

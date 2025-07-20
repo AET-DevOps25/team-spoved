@@ -1,19 +1,22 @@
-# User Service (Spoved Platform)
+# Auth Service (Spoved Platform)
 
 ## Overview
 
-The User Service manages user data and roles for the Spoved platform. It is built with Spring Boot and uses PostgreSQL for persistence. The service exposes REST endpoints for user management and integrates with monitoring via Prometheus.
+The Auth Service provides user registration, authentication, and JWT issuance for the Spoved platform. It is built with Spring Boot and uses PostgreSQL for persistence. The service exposes REST endpoints for login and registration, and integrates with monitoring via Prometheus.
 
 ## Tech Stack
 
 - **Java Version:** 21 (see Dockerfile: `eclipse-temurin:21-jre`)
 - **Framework:** Spring Boot
+- **Authentication:** JWT (JSON Web Token)
 - **Database:** PostgreSQL
 
 ## Endpoints
 
-- `GET /users` — Get all users
-- `GET /users/{userId}` — Get a specific user by ID
+- `POST /auth/register` — Register a new user (`name`, `password`, `role`)
+- `POST /auth/login` — Authenticate and receive JWT token
+
+To see the precise expected responses in the API, look at the `openapi.yaml` file in this directory or at the under `api/`
 
 ## Environment Variables
 
@@ -36,15 +39,15 @@ The User Service manages user data and roles for the Spoved platform. It is buil
 ### Helm Chart (`helm/spoved-app/values.yaml`):
 
 ```yaml
-user:
+auth:
   image:
-    repository: ghcr.io/aet-devops25/team-spoved/user
+    repository: ghcr.io/aet-devops25/team-spoved/auth
     tag: latest
     pullPolicy: Always
   service:
     type: ClusterIP
-    port: 8082
-    targetPort: 8082
+    port: 8030
+    targetPort: 8030
   replicaCount: 1
   resources:
     limits:
@@ -65,15 +68,15 @@ user:
    ./gradlew bootJar
    java -jar build/libs/app.jar
    ```
-5. **Access API:** `http://localhost:8082/users`
+5. **Access API:** `http://localhost:8030/auth`
 
 ## Running in Docker
 
 1. **Build and start with Docker Compose:**
    ```bash
-   docker compose up --build user
+   docker compose up --build auth
    ```
-2. **Service will be available at:** `http://localhost:8082/users`
+2. **Service will be available at:** `http://localhost:8030/auth`
 3. **Database and other dependencies are managed by Docker Compose.**
 
 ## Running in Kubernetes (Helm)
@@ -90,11 +93,12 @@ user:
 ## Monitoring
 
 - Prometheus metrics exposed at `/actuator/prometheus`
+    - Request and error counters
+    - Timers for request duration
 - Health endpoint at `/actuator/health`
 
 ## Security
 
 - Change default secrets in production!
+- JWT secret should be managed securely (not hardcoded).
 - Enable HTTPS and restrict network access as needed.
-
----
