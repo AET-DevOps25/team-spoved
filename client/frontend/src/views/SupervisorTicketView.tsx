@@ -193,6 +193,7 @@ function SupervisorTicketsView() {
       if (statusFilter === 'in_progress') return ticket.status === 'IN_PROGRESS' && ticket.dueDate && new Date(ticket.dueDate) >= new Date();
       if (statusFilter === 'finished') return ticket.status === 'FINISHED';
       if (statusFilter === 'overdue') return (ticket.status === 'OPEN' || ticket.status === 'IN_PROGRESS') && ticket.dueDate && new Date(ticket.dueDate) < new Date();
+      return [];
     });
     setFilteredTickets(filtered);
   }, [statusFilter, tickets]);

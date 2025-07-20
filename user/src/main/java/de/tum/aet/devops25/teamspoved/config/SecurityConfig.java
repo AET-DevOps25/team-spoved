@@ -28,7 +28,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configure(http))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/actuator/**","/users/**").permitAll()
+                .requestMatchers("/actuator/**","/users/**", "/media/**", "/tickets/**", "/auth/**").permitAll()
                 // Require authentication for everything else
                 .anyRequest().authenticated() 
             )
