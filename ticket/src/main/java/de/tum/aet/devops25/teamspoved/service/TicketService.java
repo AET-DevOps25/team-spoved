@@ -24,7 +24,7 @@ public class TicketService {
     private final RestTemplate restTemplate;
 
     // Use @Value to inject the user service URL from application properties or environment variables.
-    @Value("${USER_API_URL:http://user-service:8080}")
+    @Value("${USER_SERVICE_URL:http://user:8082}")
     private String userServiceUrl;
 
     // Metrics
