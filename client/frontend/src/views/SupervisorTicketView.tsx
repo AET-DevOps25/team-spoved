@@ -79,11 +79,13 @@ function SupervisorTicketsView() {
       // Fetch the tickets from the server
       const data = await getTickets();
 
-      // Set the tickets to the state
-      setTickets(data);
+      // Set the tickets to the state, ensure it's always an array
+      setTickets(Array.isArray(data) ? data : []);
     } catch (error) {
       // Show an error message
       console.error("Error fetching tickets:", error);
+      // Reset tickets to empty array on error
+      setTickets([]);
     } finally {
       // Hide the loading spinner
       setLoading(false);
@@ -193,7 +195,7 @@ function SupervisorTicketsView() {
       if (statusFilter === 'in_progress') return ticket.status === 'IN_PROGRESS' && ticket.dueDate && new Date(ticket.dueDate) >= new Date();
       if (statusFilter === 'finished') return ticket.status === 'FINISHED';
       if (statusFilter === 'overdue') return (ticket.status === 'OPEN' || ticket.status === 'IN_PROGRESS') && ticket.dueDate && new Date(ticket.dueDate) < new Date();
-      return [];
+      return false
     });
     setFilteredTickets(filtered);
   }, [statusFilter, tickets]);
